@@ -8,6 +8,16 @@ internal class InventoryItemConfiguration : IEntityTypeConfiguration<InventoryIt
 {
     public void Configure(EntityTypeBuilder<InventoryItem> builder)
     {
-        
+        builder.ToTable("InventoryItems");
+
+        builder.HasKey(e => e.Id);
+
+        builder.Property(e => e.Name)
+               .IsRequired()
+               .HasMaxLength(45);
+
+        builder.Property(e => e.Price)
+               .IsRequired()
+               .HasPrecision(10, 4);
     }
 }

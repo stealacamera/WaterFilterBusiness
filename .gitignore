@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+/backend/WaterFilterBusiness/WaterFilterBusiness.API/appsettings.json
+/backend/WaterFilterBusiness/WaterFilterBusiness.API/appsettings.Development.json
