@@ -364,3 +364,5 @@ FodyWeavers.xsd
 
 /backend/WaterFilterBusiness/WaterFilterBusiness.API/appsettings.json
 /backend/WaterFilterBusiness/WaterFilterBusiness.API/appsettings.Development.json
+/backend/WaterFilterBusiness/WaterFilterBusiness.API/WeatherForecast.cs
+/backend/WaterFilterBusiness/WaterFilterBusiness.API/Controllers/WeatherForecastController.cs
