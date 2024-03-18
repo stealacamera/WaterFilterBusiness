@@ -19,7 +19,5 @@ public static class Startup
         })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();
-
-        services.AddScoped<IWorkUnit, WorkUnit>();
     }
 }
