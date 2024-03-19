@@ -12,11 +12,11 @@ public static class Startup
         services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbConnectionString")));
 
         services.AddIdentityCore<User>(options =>
-        {
-            options.SignIn.RequireConfirmedAccount = false;
-            options.User.RequireUniqueEmail = true;
-            options.Lockout.AllowedForNewUsers = false;
-        })
+                    {
+                        options.SignIn.RequireConfirmedAccount = false;
+                        options.User.RequireUniqueEmail = true;
+                        options.Lockout.AllowedForNewUsers = false;
+                    })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();
 

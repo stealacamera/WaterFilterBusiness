@@ -8,7 +8,7 @@ public interface IWorkUnit
     Task<IDbContextTransaction> BeginTransactionAsync();
 }
 
-internal sealed class WorkUnit
+internal sealed class WorkUnit : IWorkUnit
 {
     private readonly AppDbContext _dbContext;
 
