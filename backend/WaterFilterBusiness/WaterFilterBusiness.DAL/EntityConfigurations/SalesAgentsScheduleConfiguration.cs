@@ -17,10 +17,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.Property(e => e.EndHour)
                    .IsRequired();
-
-            builder.HasOne(e => e.SalesAgent)
-                   .WithMany()
-                   .HasForeignKey(e => e.SalesAgentId);
         }
     }
 }

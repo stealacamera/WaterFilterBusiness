@@ -12,13 +12,11 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.InventoryRequestId);
 
-            builder.HasOne(e => e.InventoryRequest)
-                   .WithOne()
-                   .HasForeignKey<InventoryRequest>(e => e.Id);
+            builder.Property(e => e.TechnicianId)
+                   .IsRequired();
 
-            builder.HasOne(e => e.Technician)
-                   .WithMany()
-                   .HasForeignKey(e => e.TechnicianId);
+            builder.Property(e => e.Note)
+                   .HasColumnType("text");
         }
     }
 }

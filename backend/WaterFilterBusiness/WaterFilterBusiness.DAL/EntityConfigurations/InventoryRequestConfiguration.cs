@@ -4,21 +4,18 @@ using WaterFilterBusiness.DAL.Entities;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations
 {
-    internal class SalesConfiguration : IEntityTypeConfiguration<Sale>
+    internal class InventoryRequestConfiguration : IEntityTypeConfiguration<InventoryRequest>
     {
-        public void Configure(EntityTypeBuilder<Sale> builder)
+        public void Configure(EntityTypeBuilder<InventoryRequest> builder)
         {
-            builder.ToTable("Sales");
+            builder.ToTable("InventoryRequests");
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.MeetingId)
+            builder.Property(e => e.ToolId)
                    .IsRequired();
 
-            builder.Property(e => e.IsVerified)
-                   .IsRequired();
-
-            builder.Property(e => e.Price)
+            builder.Property(e => e.Status)
                    .IsRequired();
 
             builder.Property(e => e.Quantity)
@@ -27,10 +24,13 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
             builder.Property(e => e.CreatedAt)
                    .IsRequired();
 
-            builder.Property(e => e.AuthenticatedAt)
+            builder.Property(e => e.ConcludedAt)
                    .IsRequired();
 
-            builder.Property(e => e.AuthenticationNote)
+            builder.Property(e => e.RequestNote)
+                   .HasColumnType("text");
+
+            builder.Property(e => e.ConclusionNote)
                    .HasColumnType("text");
         }
     }

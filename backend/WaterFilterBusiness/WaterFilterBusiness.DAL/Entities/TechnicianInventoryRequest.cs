@@ -1,11 +1,9 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities
 {
-    public class TechnicianInventoryRequest
+    public class TechnicianInventoryRequest : Entity
     {
         public int InventoryRequestId { get; set; }
-        public InventoryRequest InventoryRequest { get; set; }
-
         public int TechnicianId { get; set; }
-        public User User { get; set; }
+        public string Note { get; set; }
     }
 }

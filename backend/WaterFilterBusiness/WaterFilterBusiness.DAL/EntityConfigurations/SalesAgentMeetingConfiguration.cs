@@ -2,36 +2,33 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.DAL.Entities;
 
-namespace WaterFilterBusiness.DAL.EntityConfigurations;
-
-internal class SalesAgentMeetingConfiguration : IEntityTypeConfiguration<SalesAgentMeeting>
+namespace WaterFilterBusiness.DAL.EntityConfigurations
 {
-    public void Configure(EntityTypeBuilder<SalesAgentMeeting> builder)
+    internal class SalesAgentMeetingConfiguration : IEntityTypeConfiguration<SalesAgentMeeting>
     {
-        builder.ToTable("SalesAgentsMeetings");
+        public void Configure(EntityTypeBuilder<SalesAgentMeeting> builder)
+        {
+            builder.ToTable("SalesAgentsMeetings");
 
-        builder.HasKey(e => e.Id);
+            builder.HasKey(e => e.Id);
 
-        builder.Property(e => e.DateTime)
-               .IsRequired();
+            builder.Property(e => e.PhoneOperatorId)
+                   .IsRequired();
 
-        builder.Property(e => e.InitialNotes)
-               .HasColumnType("text");
+            builder.Property(e => e.SalesAgentId)
+                   .IsRequired();
 
-        builder.Property(e => e.IsSuccessful)
-               .IsRequired();
+            builder.Property(e => e.CustomerId)
+                   .IsRequired();
 
-        // Configure foreign key relationships
-        builder.HasOne(e => e.PhoneOperator)
-               .WithMany()
-               .HasForeignKey(e => e.PhoneOperatorId);
+            builder.Property(e => e.DateTime)
+                   .IsRequired();
 
-        builder.HasOne(e => e.SalesAgent)
-               .WithMany()
-               .HasForeignKey(e => e.SalesAgentId);
+            builder.Property(e => e.InitialNotes)
+                   .HasColumnType("tinytext");
 
-        builder.HasOne(e => e.Customer)
-               .WithMany()
-               .HasForeignKey(e => e.CustomerId);
+            builder.Property(e => e.IsSuccessful)
+                   .IsRequired();
+        }
     }
 }
