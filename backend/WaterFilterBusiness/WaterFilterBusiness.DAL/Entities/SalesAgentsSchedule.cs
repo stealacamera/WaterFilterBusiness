@@ -1,25 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace WaterFilterBusiness.DAL.Entities
+namespace WaterFilterBusiness.DAL.Entities;
+
+public class SalesAgentSchedule : Entity
 {
-    public class SalesAgentSchedule : Entity
+    public int SalesAgentId { get; set; }
+
+    public DayOfWeek DayOfWeek { get; set; }
+
+    public TimeSpan BeginHour { get; set; }
+
+    public TimeSpan EndHour { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        public int SalesAgentId { get; set; }
-
-        public DayOfWeek DayOfWeek { get; set; }
-
-        public TimeSpan BeginHour { get; set; }
-
-        public TimeSpan EndHour { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        if (EndHour <= BeginHour)
         {
-            if (EndHour <= BeginHour)
-            {
-                yield return new ValidationResult("EndHour must be greater than BeginHour.", new[] { nameof(EndHour) });
-            }
+            yield return new ValidationResult("EndHour must be greater than BeginHour.", new[] { nameof(EndHour) });
         }
     }
 }
+

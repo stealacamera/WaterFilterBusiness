@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.DAL.Entities;
 
-namespace WaterFilterBusiness.DAL.EntityConfigurations
+namespace WaterFilterBusiness.DAL.EntityConfigurations;
+
+internal class SalesAgentsScheduleConfiguration : IEntityTypeConfiguration<SalesAgentsSchedule>
 {
-    internal class SalesAgentsScheduleConfiguration : IEntityTypeConfiguration<SalesAgentsSchedule>
+    public void Configure(EntityTypeBuilder<SalesAgentsSchedule> builder)
     {
-        public void Configure(EntityTypeBuilder<SalesAgentsSchedule> builder)
-        {
             builder.ToTable("SalesAgentsSchedules");
 
             builder.HasKey(e => new { e.SalesAgentId, e.DayOfWeek });
@@ -17,6 +17,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.Property(e => e.EndHour)
                    .IsRequired();
-        }
     }
 }
+*/
