@@ -15,8 +15,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
             builder.Property(e => e.TechnicianId)
                    .IsRequired();
 
-            builder.Property(e => e.Note)
-                   .HasColumnType("text");
         }
     }
 }

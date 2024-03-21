@@ -27,11 +27,10 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
             builder.Property(e => e.CreatedAt)
                    .IsRequired();
 
-            builder.Property(e => e.AuthenticatedAt)
-                   .IsRequired();
+            builder.Property(e => e.AuthenticatedAt);
 
             builder.Property(e => e.AuthenticationNote)
-                   .HasColumnType("text");
+                   .HasColumnType("tinytext");
         }
     }
 }

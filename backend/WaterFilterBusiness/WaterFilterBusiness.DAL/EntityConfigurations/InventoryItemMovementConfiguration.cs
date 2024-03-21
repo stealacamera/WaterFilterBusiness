@@ -12,9 +12,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.ToolId)
-                   .IsRequired();
-
             builder.Property(e => e.Quantity)
                    .IsRequired();
 
@@ -26,6 +23,13 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.Property(e => e.OccurredAt)
                    .IsRequired();
+
+            builder.HasOne<InventoryItem>()
+               .WithMany()
+               .IsRequired()
+               .HasForeignKey(e => e.ToolId)
+               .OnDelete(DeleteBehavior.Restrict);
+
         }
     }
 }

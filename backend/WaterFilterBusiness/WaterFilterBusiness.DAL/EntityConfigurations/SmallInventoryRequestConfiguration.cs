@@ -10,7 +10,11 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
         {
             builder.ToTable("SmallInventoryRequests");
 
-            builder.HasKey(e => e.Id);
+            builder.HasOne<InventoryRequest>()
+                   .WithOne() 
+                   .IsRequired()
+                   .HasForeignKey<SmallInventoryRequest>(e => e.InventoryRequestId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

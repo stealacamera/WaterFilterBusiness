@@ -28,10 +28,10 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
                    .IsRequired();
 
             builder.Property(e => e.RequestNote)
-                   .HasColumnType("text");
+                   .HasColumnType("tinytext");
 
             builder.Property(e => e.ConclusionNote)
-                   .HasColumnType("text");
+                   .HasColumnType("tinytext");
         }
     }
 }

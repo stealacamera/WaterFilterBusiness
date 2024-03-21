@@ -2,7 +2,7 @@
 
 namespace WaterFilterBusiness.DAL.Entities;
 
-public class SalesAgentSchedule : Entity
+public class SalesAgentSchedule : Entity<int>, IValidatableObject
 {
     public int SalesAgentId { get; set; }
 
