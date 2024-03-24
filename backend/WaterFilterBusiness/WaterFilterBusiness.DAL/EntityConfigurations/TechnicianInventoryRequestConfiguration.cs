@@ -12,8 +12,18 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.InventoryRequestId);
 
-            builder.Property(e => e.TechnicianId)
-                   .IsRequired();
+            builder.HasOne<InventoryRequest>()
+                   .WithOne()
+                   .IsRequired()
+                   .HasForeignKey<TechnicianInventoryRequest>(e => e.InventoryRequestId)
+                   .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<User>()
+                   .WithMany()
+                   .HasForeignKey(e => e.TechnicianId)
+                   .IsRequired()
+                   .OnDelete(DeleteBehavior.Restrict);
+
 
         }
     }

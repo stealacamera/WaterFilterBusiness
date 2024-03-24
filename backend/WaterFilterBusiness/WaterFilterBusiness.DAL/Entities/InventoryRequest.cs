@@ -3,7 +3,7 @@
     public class InventoryRequest : Entity
     {
         public int ToolId { get; set; }
-        public int Status { get; set; }
+        public InventoryRequestStatus Status { get; set; }
         public int Quantity { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime ConcludedAt { get; set; }

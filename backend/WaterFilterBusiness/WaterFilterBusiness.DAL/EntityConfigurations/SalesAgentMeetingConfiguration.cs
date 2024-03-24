@@ -12,13 +12,19 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.PhoneOperatorId)
+            builder.HasOne<User>()
+                   .WithMany()
+                   .HasForeignKey(e => e.PhoneOperatorId)
                    .IsRequired();
 
-            builder.Property(e => e.SalesAgentId)
+            builder.HasOne<User>()
+                   .WithMany()
+                   .HasForeignKey(e => e.SalesAgentId)
                    .IsRequired();
 
-            builder.Property(e => e.CustomerId)
+            builder.HasOne<Customer>()
+                   .WithMany()
+                   .HasForeignKey(e => e.CustomerId)
                    .IsRequired();
 
             builder.Property(e => e.DateTime)

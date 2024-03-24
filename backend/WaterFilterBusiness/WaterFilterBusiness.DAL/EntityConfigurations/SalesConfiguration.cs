@@ -10,24 +10,23 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
         {
             builder.ToTable("Sales");
 
-            builder.HasKey(e => e.Id);
-
-            builder.Property(e => e.MeetingId)
-                   .IsRequired();
+            builder.HasOne<SalesAgentMeeting>()
+                   .WithOne()
+                   .HasForeignKey<Sale>(e => e.MeetingId)
+                   .IsRequired(false);
 
             builder.Property(e => e.IsVerified)
                    .IsRequired();
 
             builder.Property(e => e.Price)
-                   .IsRequired();
+                               .IsRequired()
+                               .HasPrecision(10, 4);
 
             builder.Property(e => e.Quantity)
                    .IsRequired();
 
             builder.Property(e => e.CreatedAt)
                    .IsRequired();
-
-            builder.Property(e => e.AuthenticatedAt);
 
             builder.Property(e => e.AuthenticationNote)
                    .HasColumnType("tinytext");

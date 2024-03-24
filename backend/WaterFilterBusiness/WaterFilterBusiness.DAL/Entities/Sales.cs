@@ -1,6 +1,6 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities
 {
-    public class Sale : Entity
+    public class Sale : Entity<int>
     {
         public int MeetingId { get; set; }
         public bool IsVerified { get; set; }

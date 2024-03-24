@@ -12,7 +12,9 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.ToolId)
+            builder.HasOne<InventoryItem>()
+                   .WithMany()
+                   .HasForeignKey(e => e.ToolId)
                    .IsRequired();
 
             builder.Property(e => e.Status)
@@ -22,9 +24,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
                    .IsRequired();
 
             builder.Property(e => e.CreatedAt)
-                   .IsRequired();
-
-            builder.Property(e => e.ConcludedAt)
                    .IsRequired();
 
             builder.Property(e => e.RequestNote)

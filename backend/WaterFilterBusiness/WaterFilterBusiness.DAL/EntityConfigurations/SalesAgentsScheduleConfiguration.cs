@@ -12,6 +12,11 @@ internal class SalesAgentsScheduleConfiguration : IEntityTypeConfiguration<Sales
 
         builder.HasKey(e => new { e.SalesAgentId, e.DayOfWeek });
 
+        builder.HasOne<User>()
+               .WithMany()
+               .HasForeignKey(e => e.SalesAgentId)
+               .IsRequired();
+
         builder.Property(e => e.BeginHour)
                .IsRequired();
 
