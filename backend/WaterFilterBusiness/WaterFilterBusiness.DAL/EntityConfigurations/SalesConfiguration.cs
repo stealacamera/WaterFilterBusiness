@@ -10,6 +10,7 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
         {
             builder.ToTable("Sales");
 
+            builder.HasKey(e => e.MeetingId);
             builder.HasOne<SalesAgentMeeting>()
                    .WithOne()
                    .HasForeignKey<Sale>(e => e.MeetingId)
