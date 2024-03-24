@@ -8,6 +8,11 @@ namespace WaterFilterBusiness.BLL;
 public interface IServicesManager
 {
     Task<Result<T>> WrapInTransactionAsync<T>(Func<Task<Result<T>>> asyncFunc);
+
+    #region Services
+    IUsersService UsersService { get; }
+    ICustomersService CustomersService { get; }
+    #endregion
 }
 
 public sealed class ServicesManager : IServicesManager
@@ -50,5 +55,25 @@ public sealed class ServicesManager : IServicesManager
         }
 
         return result;
+    }
+
+    private ICustomersService _customersService;
+    public ICustomersService CustomersService
+    {
+        get
+        {
+            _customersService ??= new CustomersService(_workUnit);
+            return _customersService;
+        }
+    }
+
+    private IUsersService _usersService;
+    public IUsersService UsersService
+    {
+        get
+        {
+            _usersService ??= new UsersService(_serviceProvider);
+            return _usersService;
+        }
     }
 }
