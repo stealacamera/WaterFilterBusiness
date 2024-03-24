@@ -2,11 +2,11 @@
 
 namespace WaterFilterBusiness.BLL.Services;
 
-public abstract class _Service
+public abstract class Service
 {
     protected readonly IWorkUnit _workUnit;
 
-    public _Service(IWorkUnit workUnit)
+    public Service(IWorkUnit workUnit)
     {
         _workUnit = workUnit;
     }
