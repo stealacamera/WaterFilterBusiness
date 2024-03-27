@@ -11,8 +11,11 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaterFilterBusiness.BLL", "WaterFilterBusiness.BLL\WaterFilterBusiness.BLL.csproj", "{A117C5A1-D116-4E6D-83A2-0B1EBBEBD589}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaterFilterBusiness.API", "WaterFilterBusiness.API\WaterFilterBusiness.API.csproj", "{D338D085-7D87-4663-8E4C-2089BF9C76B0}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A117C5A1-D116-4E6D-83A2-0B1EBBEBD589} = {A117C5A1-D116-4E6D-83A2-0B1EBBEBD589}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterFilterBusiness.Common", "WaterFilterBusiness.Common\WaterFilterBusiness.Common.csproj", "{F76D0839-97E6-4455-96B7-43A97C4EF59C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaterFilterBusiness.Common", "WaterFilterBusiness.Common\WaterFilterBusiness.Common.csproj", "{F76D0839-97E6-4455-96B7-43A97C4EF59C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

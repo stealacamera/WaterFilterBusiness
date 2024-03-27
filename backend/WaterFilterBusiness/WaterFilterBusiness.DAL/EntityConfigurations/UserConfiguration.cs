@@ -13,5 +13,9 @@ internal class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(e => e.Name)
                .IsRequired()
                .HasMaxLength(35);
+
+        builder.Property(e => e.Surname)
+               .IsRequired()
+               .HasMaxLength(35);
     }
 }
