@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WaterFilterBusiness.DAL;
 
@@ -11,9 +12,11 @@ using WaterFilterBusiness.DAL;
 namespace WaterFilterBusiness.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240402021501_UpdatedCustomers")]
+    partial class UpdatedCustomers
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,6 +180,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Afternotes")
+                        .IsRequired()
                         .HasMaxLength(210)
                         .HasColumnType("nvarchar(210)");
 
@@ -184,13 +188,14 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("InitialNotes")
+                        .IsRequired()
                         .HasMaxLength(210)
                         .HasColumnType("nvarchar(210)");
 
-                    b.Property<int?>("MeetingOutcomeId")
+                    b.Property<int>("MeetingOutcomeId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("PhoneOperatorId")
+                    b.Property<int>("PhoneOperatorId")
                         .HasColumnType("int");
 
                     b.Property<int>("SalesAgentId")
@@ -628,11 +633,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                         {
                             Id = 2,
                             Name = "Client cancelled"
-                        },
-                        new
-                        {
-                            Id = 4,
-                            Name = "Failed"
                         },
                         new
                         {
@@ -1541,15 +1541,17 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.HasOne("WaterFilterBusiness.DAL.Entities.Enums.MeetingOutcome", null)
                         .WithMany()
                         .HasForeignKey("MeetingOutcomeId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("PhoneOperatorId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
-                        .WithMany("ClientMeetings")
+                        .WithMany()
                         .HasForeignKey("SalesAgentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1582,7 +1584,7 @@ namespace WaterFilterBusiness.DAL.Migrations
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CustomerCall", b =>
                 {
                     b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
-                        .WithMany("CallHistory")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -1761,13 +1763,11 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", "SalesAgent")
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
                         .WithMany()
                         .HasForeignKey("SalesAgentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("SalesAgent");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.SalesAgentScheduleChange", b =>
@@ -1790,7 +1790,7 @@ namespace WaterFilterBusiness.DAL.Migrations
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ScheduledCall", b =>
                 {
                     b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
-                        .WithOne("ScheduledCall")
+                        .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.ScheduledCall", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1800,19 +1800,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasForeignKey("PhoneAgentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Customer", b =>
-                {
-                    b.Navigation("CallHistory");
-
-                    b.Navigation("ScheduledCall")
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.User", b =>
-                {
-                    b.Navigation("ClientMeetings");
                 });
 #pragma warning restore 612, 618
         }
