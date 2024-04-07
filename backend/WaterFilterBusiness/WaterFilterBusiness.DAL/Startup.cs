@@ -12,7 +12,9 @@ public static class Startup
     public static void RegisterDALServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUserStore<User>, AppUserStore>();
-        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("DbConnectionString")));
+        services.AddDbContext<AppDbContext>(options => options.UseSqlServer(
+                                                                    configuration.GetConnectionString("DbConnectionString"),
+                                                                    e => e.UseDateOnlyTimeOnly()));
 
         services.AddIdentityCore<User>(options =>
                     {

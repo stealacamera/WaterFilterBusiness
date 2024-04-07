@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WaterFilterBusiness.DAL.Entities;
 
 namespace WaterFilterBusiness.DAL;
@@ -16,9 +17,9 @@ internal static class Seeder
             EmailConfirmed = true
         };
 
-        var admins = await userManager.GetUsersInRoleAsync(Common.Enums.Role.Admin.Name);
+        var doAdminsExistInSystem = (await userManager.GetUsersInRoleAsync(Common.Enums.Role.Admin.Name)).Any();
 
-        if(!admins.Any())
+        if(!doAdminsExistInSystem)
         {
             await userManager.CreateAsync(admin, "@Password123");
             await workUnit.SaveChangesAsync();
