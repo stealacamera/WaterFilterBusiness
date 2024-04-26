@@ -5,7 +5,7 @@ namespace WaterFilterBusiness.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public abstract class Controller : ControllerBase
+    public abstract class Controller : ControllerBase;
     {
         protected readonly IServicesManager _servicesManager;
 
