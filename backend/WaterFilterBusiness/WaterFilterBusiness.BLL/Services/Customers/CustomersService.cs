@@ -2,7 +2,7 @@
 using Microsoft.IdentityModel.Tokens;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
-using WaterFilterBusiness.Common.Errors;
+using WaterFilterBusiness.Common.ErrorHandling.Errors;
 using WaterFilterBusiness.DAL;
 
 namespace WaterFilterBusiness.BLL.Services.Customers;

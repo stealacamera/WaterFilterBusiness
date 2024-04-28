@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WaterFilterBusiness.Common.Utils;
+using WaterFilterBusiness.Common.Converters.JsonConverters;
 
 namespace WaterFilterBusiness.Common.Attributes;
 

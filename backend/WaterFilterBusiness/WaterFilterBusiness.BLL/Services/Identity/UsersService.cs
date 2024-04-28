@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.Errors;
+using WaterFilterBusiness.Common.ErrorHandling.Errors;
 using WaterFilterBusiness.Common.Results;
 using WaterFilterBusiness.DAL;
 
@@ -17,7 +17,7 @@ public interface IUsersService
     Task<Result<Role>> GetRoleAsync(int id);
     Task<Result> RemoveAsync(int id);
 
-    Task<Result<User>> AddAsync(UserAddRequestModel user);
+    Task<Result<User>> AddAsync(User_AddRequestModel user);
     Task<Result<User>> AddUserToRole(int userId, string roleName);
     Task<Result<User>> AddUserToRole(int userId, Role role);
 
@@ -55,7 +55,7 @@ internal sealed class UsersService : Service, IUsersService
         };
     }
 
-    public async Task<Result<User>> AddAsync(UserAddRequestModel model)
+    public async Task<Result<User>> AddAsync(User_AddRequestModel model)
     {
         var entity = new DAL.Entities.User
         {

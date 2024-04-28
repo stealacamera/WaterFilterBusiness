@@ -3,7 +3,7 @@ using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.Errors.Inventory;
+using WaterFilterBusiness.Common.ErrorHandling.Errors.Inventory;
 using WaterFilterBusiness.DAL;
 
 namespace WaterFilterBusiness.BLL.Services.Inventory;

@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace WaterFilterBusiness.Common.Errors;
+namespace WaterFilterBusiness.Common.ErrorHandling.Errors.Finance;
 
 public static class ClientDebtErrors
 {

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WaterFilterBusiness.Common.DTOs;
+namespace WaterFilterBusiness.Common.DTOs.Calls;
 
 public record ScheduledCall
 {

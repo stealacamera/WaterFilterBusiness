@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
-using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.DTOs.Finance;
 using WaterFilterBusiness.Common.Enums;
 
 namespace WaterFilterBusiness.API.Controllers.Finance

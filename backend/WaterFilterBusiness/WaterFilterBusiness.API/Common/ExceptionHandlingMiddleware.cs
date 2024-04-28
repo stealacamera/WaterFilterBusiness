@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using WaterFilterBusiness.Common.Exceptions;
+using WaterFilterBusiness.Common.ErrorHandling.Exceptions;
 
 namespace WaterFilterBusiness.API.Common;
 

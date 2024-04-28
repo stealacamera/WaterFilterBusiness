@@ -1,4 +1,4 @@
-﻿namespace WaterFilterBusiness.Common.Exceptions;
+﻿namespace WaterFilterBusiness.Common.ErrorHandling.Exceptions;
 
 public class InvalidEnumConversionException : BaseException
 {

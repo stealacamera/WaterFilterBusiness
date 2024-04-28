@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace WaterFilterBusiness.Common.Errors;
+namespace WaterFilterBusiness.Common.ErrorHandling.Errors;
 
 public static class CallErrors
 {

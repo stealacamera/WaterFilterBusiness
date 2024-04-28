@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WaterFilterBusiness.Common.Enums;
 
 namespace WaterFilterBusiness.Common.DTOs;
 
@@ -32,7 +33,7 @@ public record User
     public string Role { get; set; }
 }
 
-public record UserAddRequestModel
+public record User_AddRequestModel
 {
     [Required]
     [StringLength(35)]
@@ -52,7 +53,7 @@ public record UserAddRequestModel
     public string Email { get; set; }
 
     [Required]
-    public string Role { get; set; }
+    public Role Role { get; set; }
 
     [Required]
     [StringLength(50)]

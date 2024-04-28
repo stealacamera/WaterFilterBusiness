@@ -15,7 +15,7 @@ namespace WaterFilterBusiness.API.Controllers
         {
         }
 
-        [HasPermission(Permission.ReadUsers)]
+        //[HasPermission(Permission.ReadUsers)]
         [HttpGet]
         public async Task<IActionResult> GetAll(int pageSize, int page = 1)
         {
@@ -24,7 +24,7 @@ namespace WaterFilterBusiness.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserAddRequestModel model)
+        public async Task<IActionResult> Create(User_AddRequestModel model)
         {
             var transactionResult = await _servicesManager.WrapInTransactionAsync(async () =>
             {

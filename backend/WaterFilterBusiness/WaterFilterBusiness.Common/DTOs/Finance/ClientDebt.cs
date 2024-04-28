@@ -1,10 +1,10 @@
-﻿namespace WaterFilterBusiness.Common.DTOs;
+﻿namespace WaterFilterBusiness.Common.DTOs.Finance;
 
 public record ClientDebt(
     int Id,
-    Sale_BriefDecsription Sale, 
-    decimal Amount, 
-    DateOnly DeadlineAt, 
+    Sale_BriefDecsription Sale,
+    decimal Amount,
+    DateOnly DeadlineAt,
     bool IsCompleted);
 
 public record ClientDebt_AddRequestModel

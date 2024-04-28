@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 
-namespace WaterFilterBusiness.Common.Errors.Inventory;
+namespace WaterFilterBusiness.Common.ErrorHandling.Errors.Inventory;
 
 public class InventoryRequestErrors
 {

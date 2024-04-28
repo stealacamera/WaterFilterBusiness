@@ -81,7 +81,7 @@ namespace WaterFilterBusiness.API.Controllers
         }
 
         [HttpPatch("{id:int}")]
-        public async Task<IActionResult> Update(CLientMeeting_UpdateRequestModel meeting)
+        public async Task<IActionResult> Update(ClientMeeting_UpdateRequestModel meeting)
         {
             var result = await _servicesManager.ClientMeetings.UpdateAsync(meeting);
             return result.IsFailed ? BadRequest(result.Errors.First()) : Ok(result.Value);

@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
-using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.DTOs.Calls;
 using WaterFilterBusiness.Common.Enums;
 
 namespace WaterFilterBusiness.API.Controllers.Calls;
@@ -17,7 +17,7 @@ public class CustomerCallsController : Controller
     public async Task<IActionResult> GetAll(
         int page, int pageSize,
         DateOnly? from = null, DateOnly? to = null,
-        CallOutcome? filterByOutcome = null)
+        [FromQuery] CallOutcome? filterByOutcome = null)
     {
         var calls = await _servicesManager.CustomerCallsService
                                           .GetAllAsync(page, pageSize, from, to, filterByOutcome);

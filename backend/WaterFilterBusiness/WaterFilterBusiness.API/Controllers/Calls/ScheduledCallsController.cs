@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
-using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.DTOs.Calls;
 
 namespace WaterFilterBusiness.API.Controllers.Calls;
 

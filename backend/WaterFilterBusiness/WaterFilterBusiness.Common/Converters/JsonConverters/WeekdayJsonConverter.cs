@@ -1,9 +1,9 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.Exceptions;
+using WaterFilterBusiness.Common.ErrorHandling.Exceptions;
 
-namespace WaterFilterBusiness.Common.Utils;
+namespace WaterFilterBusiness.Common.Converters.JsonConverters;
 
 public sealed class WeekdayJsonConverter : JsonConverter<Weekday>
 {

@@ -25,7 +25,7 @@ public record ClientMeeting_BriefDescription
     public Customer_BriefDescription Customer { get; set; }
 }
 
-public record CLientMeeting_UpdateRequestModel
+public record ClientMeeting_UpdateRequestModel
 {
     public int Id { get; set; }
     public MeetingOutcome Outcome { get; set; }

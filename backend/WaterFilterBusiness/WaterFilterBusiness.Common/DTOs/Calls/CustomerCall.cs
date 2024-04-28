@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.Common.Enums;
 
-namespace WaterFilterBusiness.Common.DTOs;
+namespace WaterFilterBusiness.Common.DTOs.Calls;
 
 public record CustomerCall
 {

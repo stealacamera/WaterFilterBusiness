@@ -1,7 +1,10 @@
 ﻿using Ardalis.SmartEnum;
+using System.ComponentModel;
+using WaterFilterBusiness.Common.Converters.TypeConverters;
 
 namespace WaterFilterBusiness.Common.Enums;
 
+[TypeConverter(typeof(CallOutcomeConverter))]
 public sealed class CallOutcome : SmartEnum<CallOutcome>
 {
     public static readonly CallOutcome Success = new("Success", 1);

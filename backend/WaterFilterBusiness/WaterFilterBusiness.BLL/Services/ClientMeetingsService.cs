@@ -3,7 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.Errors;
+using WaterFilterBusiness.Common.ErrorHandling.Errors;
 using WaterFilterBusiness.DAL;
 using WaterFilterBusiness.DAL.DAOs;
 
@@ -12,7 +12,7 @@ namespace WaterFilterBusiness.BLL.Services;
 public interface IClientMeetingsService
 {
     Task<Result<ClientMeeting>> CreateAsync(ClientMeeting_AddRequestModel clientMeeting);
-    Task<Result<ClientMeeting>> UpdateAsync(CLientMeeting_UpdateRequestModel meeting);
+    Task<Result<ClientMeeting>> UpdateAsync(ClientMeeting_UpdateRequestModel meeting);
 
     Task<CursorPaginatedList<ClientMeeting, int>> GetAllAsync(
         int paginationCursor,
@@ -157,7 +157,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    public async Task<Result<ClientMeeting>> UpdateAsync(CLientMeeting_UpdateRequestModel updatedMeeting)
+    public async Task<Result<ClientMeeting>> UpdateAsync(ClientMeeting_UpdateRequestModel updatedMeeting)
     {
         var dbModel = await _workUnit.ClientMeetingsRepository.GetByIdAsync(updatedMeeting.Id);
 
@@ -215,7 +215,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    private Result IsMeetingUpdateValid(DAL.Entities.Clients.ClientMeeting meeting, CLientMeeting_UpdateRequestModel updatedMeeting)
+    private Result IsMeetingUpdateValid(DAL.Entities.Clients.ClientMeeting meeting, ClientMeeting_UpdateRequestModel updatedMeeting)
     {
         if (meeting.MeetingOutcomeId != null)
             return ClientMeetingErrors.CannotUpdate_OutcomeAlreadySet;
