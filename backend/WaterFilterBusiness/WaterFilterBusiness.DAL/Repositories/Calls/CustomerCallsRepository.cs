@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.DAL.DAOs;
-using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Repository.Calls;
 
-public interface ICustomerCallsRepository : IRepository<CustomerCall, int>
+public interface ICustomerCallsRepository : ISimpleRepository<CustomerCall, int>
 {
     Task<OffsetPaginatedEnumerable<CustomerCall>> GetAllAsync(
         int page, int pageSize,
@@ -16,7 +16,7 @@ public interface ICustomerCallsRepository : IRepository<CustomerCall, int>
     Task<int> CountByPhoneAgent(int phoneAgentId);
 }
 
-internal class CustomerCallsRepository : Repository<CustomerCall, int>, ICustomerCallsRepository
+internal class CustomerCallsRepository : SimpleRepository<CustomerCall, int>, ICustomerCallsRepository
 {
     public CustomerCallsRepository(AppDbContext dbContext) : base(dbContext)
     {

@@ -1,5 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Exceptions;
 
 namespace WaterFilterBusiness.Common.Utils;
 
@@ -12,7 +14,7 @@ public sealed class TimeOnlyJsonConverter : JsonConverter<TimeOnly>
         TimeOnly time;
 
         if (!TimeOnly.TryParseExact(reader.GetString(), TimeFormat, out time))
-            throw new JsonException();
+            throw new InvalidEnumConversionException("Time");
 
         return time;
     }

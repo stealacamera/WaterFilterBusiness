@@ -18,6 +18,13 @@ public record ClientMeeting
     public string? Afternotes { get; set; }
 }
 
+public record ClientMeeting_BriefDescription
+{
+    public int Id { get; set; }
+    public User_BriefDescription SalesAgent { get; set; }
+    public Customer_BriefDescription Customer { get; set; }
+}
+
 public record CLientMeeting_UpdateRequestModel
 {
     public int Id { get; set; }

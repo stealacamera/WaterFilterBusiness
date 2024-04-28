@@ -10,6 +10,18 @@ public record User_BriefDescription
     public string Surname { get; set; }
 }
 
+public record LoginCredentials
+{
+    [Required]
+    [EmailAddress]
+    [StringLength(150)]
+    public string Email { get; set; }
+
+    [Required]
+    [StringLength(50)]
+    public string Password { get; set; }
+}
+
 public record User
 {
     public int Id { get; set; }

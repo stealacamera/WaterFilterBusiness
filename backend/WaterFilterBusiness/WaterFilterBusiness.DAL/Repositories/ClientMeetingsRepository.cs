@@ -3,11 +3,11 @@ using System.Linq;
 using WaterFilterBusiness.Common;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.DAL.DAOs;
-using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Repository;
 
-public interface IClientMeetingsRepository : IRepository<ClientMeeting, int>
+public interface IClientMeetingsRepository : ISimpleRepository<ClientMeeting, int>
 {
     Task<CursorPaginatedEnumerable<ClientMeeting, int>> GetAllAsync(
         int paginationCursor,
@@ -15,26 +15,26 @@ public interface IClientMeetingsRepository : IRepository<ClientMeeting, int>
         DateOnly? from = null,
         DateOnly? to = null,
         bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
 
     Task<CursorPaginatedEnumerable<ClientMeeting, int>> GetAllByDayForWorkerAsync(
         DateOnly date,
         int paginationCursor, int pageSize,
         int? salesAgentId = null, int? phoneOperatorId = null,
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
 
     Task<CursorPaginatedEnumerable<ClientMeeting, int>> GetAllByWeekForWorkerAsync(
         DateOnly date,
         int paginationCursor, int pageSize,
         int? salesAgentId = null, int? phoneOperatorId = null,
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
 
     Task<bool> DoesCustomerHaveSuccessfulMeetingsAsync(int customerId);
     Task<bool> IsCustomerAlreadyScheduledAsync(int customerId, DateTime date);
     Task<bool> DoesSalesAgentHaveMeetingsInTimespan(int salesAgentId, DateTime date);
 }
 
-internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClientMeetingsRepository
+internal class ClientMeetingsRepository : SimpleRepository<ClientMeeting, int>, IClientMeetingsRepository
 {
     public ClientMeetingsRepository(AppDbContext dbContext) : base(dbContext)
     {
@@ -68,9 +68,9 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         DateOnly date,
         int paginationCursor, int pageSize,
         int? salesAgentId = null, int? phoneOperatorId = null,
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {
-        IQueryable<ClientMeeting> query = QueryAllForWorkerAsync(salesAgentId, phoneOperatorId, onlyExpressMeetings);
+        IQueryable<ClientMeeting> query = QueryAllForWorkerAsync(salesAgentId, phoneOperatorId, filterExpressMeetings);
         query = query.Where(e => DateOnly.FromDateTime(e.ScheduledAt).Equals(date));
 
         return await CursorPaginatedEnumerable<ClientMeeting, int>.CreateFromStrongEntityAsync(query, paginationCursor, pageSize);
@@ -80,9 +80,9 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         DateOnly date,
         int paginationCursor, int pageSize,
         int? salesAgentId = null, int? phoneOperatorId = null,
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {  
-        IQueryable<ClientMeeting> query = QueryAllForWorkerAsync(salesAgentId, phoneOperatorId, onlyExpressMeetings);
+        IQueryable<ClientMeeting> query = QueryAllForWorkerAsync(salesAgentId, phoneOperatorId, filterExpressMeetings);
 
         DateTime datetime = date.ToDateTime(TimeOnly.MinValue),
                  weekStartDate = datetime.StartOfWeek(),
@@ -93,7 +93,10 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         return await CursorPaginatedEnumerable<ClientMeeting, int>.CreateFromStrongEntityAsync(query, paginationCursor, pageSize);
     }
 
-    private IQueryable<ClientMeeting> QueryAllForWorkerAsync(int? salesAgentId = null, int? phoneOperatorId = null, bool onlyExpressMeetings = false)
+    private IQueryable<ClientMeeting> QueryAllForWorkerAsync(
+        int? salesAgentId = null, 
+        int? phoneOperatorId = null, 
+        bool? filterExpressMeetings = false)
     {
         if (salesAgentId.HasValue && phoneOperatorId.HasValue)
             throw new InvalidOperationException("Querying can be performed only for sales agent or phone operator");
@@ -108,8 +111,10 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         else
             query = query.Where(e => e.PhoneOperatorId == phoneOperatorId);
 
-        if (onlyExpressMeetings)
-            query = query.Where(e => e.PhoneOperatorId == null);
+        if (filterExpressMeetings.HasValue)
+            query = query.Where(e => filterExpressMeetings.Value 
+                                     ? e.PhoneOperatorId == null 
+                                     : e.PhoneOperatorId != null);
 
         return query;
     }
@@ -118,7 +123,7 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         int paginationCursor, int pageSize, 
         DateOnly? from = null, DateOnly? to = null,
         bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {
         if (onlyCompleted && onlyUpcoming)
             throw new InvalidCastException("Cannot query only completed and only uncompleted meetings simultaneously");
@@ -131,8 +136,10 @@ internal class ClientMeetingsRepository : Repository<ClientMeeting, int>, IClien
         if (to.HasValue)
             query = query.Where(e => DateOnly.FromDateTime(e.ScheduledAt) <= to);
 
-        if (onlyExpressMeetings)
-            query = query.Where(e => e.PhoneOperatorId == null);
+        if (filterExpressMeetings.HasValue)
+            query = query.Where(e => filterExpressMeetings.Value 
+                                     ? e.PhoneOperatorId == null 
+                                     : e.PhoneOperatorId != null);
 
         if (onlyCompleted)
             query = query.Where(e => e.MeetingOutcomeId != null);

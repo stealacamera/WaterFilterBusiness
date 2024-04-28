@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Exceptions;
 
 namespace WaterFilterBusiness.Common.JsonConverters;
 
@@ -11,7 +12,7 @@ public sealed class MeetingOutcomeJsonConverter : JsonConverter<MeetingOutcome>
         MeetingOutcome outcome;
 
         if (!MeetingOutcome.TryFromName(reader.GetString(), ignoreCase: true, out outcome))
-            throw new JsonException();
+            throw new InvalidEnumConversionException(nameof(MeetingOutcome));
 
         return outcome;
     }

@@ -20,6 +20,9 @@ internal class InventoryPurchaseConfiguration : IEntityTypeConfiguration<Invento
                .IsRequired()
                .HasPrecision(10, 4);
 
+        builder.Property(e => e.OccurredAt)
+               .IsRequired();
+
         builder.HasOne<InventoryItem>()
                .WithMany()
                .IsRequired()

@@ -20,19 +20,19 @@ public interface IClientMeetingsService
         DateOnly? from = null,
         DateOnly? to = null,
         bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
     
     Task<CursorPaginatedList<ClientMeeting, int>> GetAllByDayForWorkerAsync(
         int workerId,
         DateOnly date, 
         int paginationCursor, int pageSize, 
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
     
     Task<CursorPaginatedList<ClientMeeting, int>> GetAllByWeekForWorkerAsync(
         int workerId,
         DateOnly date, 
         int paginationCursor, int pageSize, 
-        bool onlyExpressMeetings = false);
+        bool? filterExpressMeetings = false);
 }
 
 internal class ClientMeetingsService : Service, IClientMeetingsService
@@ -57,7 +57,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
             return Result.Fail(validationResult.Errors);
 
         var dbModel = await _workUnit.ClientMeetingsRepository
-                                     .AddAsync(new DAL.Entities.ClientMeeting
+                                     .AddAsync(new DAL.Entities.Clients.ClientMeeting
                                      {
                                          CustomerId = clientMeeting.CustomerId,
                                          InitialNotes = clientMeeting.InitialNotes,
@@ -96,9 +96,9 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         DateOnly date,
         int paginationCursor,
         int pageSize,
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {
-        CursorPaginatedEnumerable<DAL.Entities.ClientMeeting, int> result;
+        CursorPaginatedEnumerable<DAL.Entities.Clients.ClientMeeting, int> result;
 
         if (await _utilityService.IsUserInRoleAsync(workerId, Role.PhoneOperator))
             result = await _workUnit.ClientMeetingsRepository
@@ -106,14 +106,14 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         phoneOperatorId: workerId,
-                                        onlyExpressMeetings: onlyExpressMeetings);
+                                        filterExpressMeetings: filterExpressMeetings);
         else if (await _utilityService.IsUserInRoleAsync(workerId, Role.SalesAgent))
             result = await _workUnit.ClientMeetingsRepository
                                     .GetAllByDayForWorkerAsync(
                                         date,
                                         paginationCursor, pageSize,
                                         salesAgentId: workerId,
-                                        onlyExpressMeetings: onlyExpressMeetings);
+                                        filterExpressMeetings: filterExpressMeetings);
         else
             throw new InvalidOperationException("Only sales agents and phone operators can view meetings");
 
@@ -129,9 +129,9 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         DateOnly date, 
         int paginationCursor, 
         int pageSize, 
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {
-        CursorPaginatedEnumerable<DAL.Entities.ClientMeeting, int> result;
+        CursorPaginatedEnumerable<DAL.Entities.Clients.ClientMeeting, int> result;
 
         if (await _utilityService.IsUserInRoleAsync(workerId, Role.PhoneOperator))
             result = await _workUnit.ClientMeetingsRepository
@@ -139,14 +139,14 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         phoneOperatorId: workerId,
-                                        onlyExpressMeetings: onlyExpressMeetings);
+                                        filterExpressMeetings: filterExpressMeetings);
         else if (await _utilityService.IsUserInRoleAsync(workerId, Role.SalesAgent))
             result = await _workUnit.ClientMeetingsRepository
                                     .GetAllByWeekForWorkerAsync(
                                         date,
                                         paginationCursor, pageSize,
                                         salesAgentId: workerId,
-                                        onlyExpressMeetings: onlyExpressMeetings);
+                                        filterExpressMeetings: filterExpressMeetings);
         else
             throw new InvalidOperationException("Only sales agents and phone operators can view meetings");
 
@@ -184,13 +184,14 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         DateOnly? from = null,
         DateOnly? to = null,
         bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool onlyExpressMeetings = false)
+        bool? filterExpressMeetings = false)
     {
         var result = await _workUnit.ClientMeetingsRepository
                                     .GetAllAsync(
                                         paginationCursor, pageSize, 
                                         from, to, 
-                                        onlyCompleted, onlyUpcoming, onlyExpressMeetings);
+                                        onlyCompleted, onlyUpcoming, 
+                                        filterExpressMeetings);
 
         return new CursorPaginatedList<ClientMeeting, int> 
         { 
@@ -199,7 +200,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    private ClientMeeting ConvertEntityToModel(DAL.Entities.ClientMeeting entity)
+    private ClientMeeting ConvertEntityToModel(DAL.Entities.Clients.ClientMeeting entity)
     {
         return new ClientMeeting
         {
@@ -214,7 +215,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    private Result IsMeetingUpdateValid(DAL.Entities.ClientMeeting meeting, CLientMeeting_UpdateRequestModel updatedMeeting)
+    private Result IsMeetingUpdateValid(DAL.Entities.Clients.ClientMeeting meeting, CLientMeeting_UpdateRequestModel updatedMeeting)
     {
         if (meeting.MeetingOutcomeId != null)
             return ClientMeetingErrors.CannotUpdate_OutcomeAlreadySet;

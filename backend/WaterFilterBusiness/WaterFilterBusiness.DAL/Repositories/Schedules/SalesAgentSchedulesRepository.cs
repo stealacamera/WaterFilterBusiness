@@ -4,7 +4,7 @@ using WaterFilterBusiness.DAL.Entities;
 
 namespace WaterFilterBusiness.DAL.Repository.Schedules;
 
-public interface ISalesAgentSchedulesRepository : IRepository<SalesAgentSchedule, int>
+public interface ISalesAgentSchedulesRepository : ISimpleRepository<SalesAgentSchedule, int>
 {
     Task<IEnumerable<SalesAgentSchedule>> GetAllByTimeAsync(Weekday? dayOfWeek, TimeOnly? time);
     Task<bool> IsScheduleTakenForSalesAgentAsync(SalesAgentSchedule schedule);
@@ -12,7 +12,7 @@ public interface ISalesAgentSchedulesRepository : IRepository<SalesAgentSchedule
     void Remove(SalesAgentSchedule schedule);
 }
 
-internal class SalesAgentSchedulesRepository : Repository<SalesAgentSchedule, int>, ISalesAgentSchedulesRepository
+internal class SalesAgentSchedulesRepository : SimpleRepository<SalesAgentSchedule, int>, ISalesAgentSchedulesRepository
 {
     public SalesAgentSchedulesRepository(AppDbContext dbContext) : base(dbContext)
     {

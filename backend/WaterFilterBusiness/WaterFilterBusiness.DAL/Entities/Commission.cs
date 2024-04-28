@@ -11,7 +11,7 @@ public class Commission : StrongEntity
     public DateTime ReleasedAt { get; set; }
 }
 
-public class CommissionRequest : WeakEntity<int>
+public class CommissionRequest : BaseEntity<int>
 {
     public int CommissionId { get; set; }
     public DateTime CreatedAt { get; set; }

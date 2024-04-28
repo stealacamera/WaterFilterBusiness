@@ -3,6 +3,11 @@ using Microsoft.Extensions.DependencyInjection;
 using WaterFilterBusiness.BLL.Services;
 using WaterFilterBusiness.BLL.Services.Calls;
 using WaterFilterBusiness.BLL.Services.Customers;
+using WaterFilterBusiness.BLL.Services.Finance;
+using WaterFilterBusiness.BLL.Services.Identity;
+using WaterFilterBusiness.BLL.Services.Inventory;
+using WaterFilterBusiness.BLL.Services.Inventory.Items;
+using WaterFilterBusiness.BLL.Services.Inventory.Requests;
 using WaterFilterBusiness.BLL.Services.Schedules;
 using WaterFilterBusiness.DAL;
 
@@ -16,11 +21,35 @@ public interface IServicesManager
     IUsersService UsersService { get; }
     ISalesAgentSchedulesService SalesAgentSchedulesService { get; }
     ISalesAgentScheduleChangesService SalesAgentScheduleChangesService { get; }
-    ICustomersService CustomersService { get; }
-    ICustomerChangesService CustomerChangesService { get; }
     ICustomerCallsService CustomerCallsService { get; }
     IScheduledCallsService ScheduledCallsService { get; }
+
+    #region Finance
+    ISalesService SalesService { get; }
+    IClientDebtsService ClientDebtsService { get; }
+    #endregion
+
+    #region Clients
+    ICustomersService CustomersService { get; }
+    ICustomerChangesService CustomerChangesService { get; }
     IClientMeetingsService ClientMeetings { get; }
+    #endregion
+
+    #region Inventory services
+    IInventoryMovementsService InventoryMovementsService { get; }
+    IInventoryPurchasesService InventoryPurchasesService { get; }
+
+    #region Items
+    IInventoryItemsService InventoryItemsService { get; }
+    ITechnicianInventoryItemsService TechnicianInventoryItemsService { get; }
+    ISmallInventoryItemsService SmallInventoryItemsService { get; }
+    IBigInventoryItemsService BigInventoryItemsService { get; }
+    #endregion
+    #region Requests
+    ITechnicianInventoryRequestsService TechnicianInventoryRequestsService { get; }
+    ISmallInventoryRequestsService SmallInventoryRequestsService { get; }
+    #endregion
+    #endregion
     #endregion
 }
 
@@ -35,9 +64,9 @@ public sealed class ServicesManager : IServicesManager
     public ServicesManager(IServiceProvider serviceProvider)
     {
         _serviceProvider = serviceProvider;
-        _workUnit = _serviceProvider.GetRequiredService<IWorkUnit>();
 
-        _utilityService = new UtilityService(_workUnit);
+        _workUnit = _serviceProvider.GetRequiredService<IWorkUnit>();
+        _utilityService = _serviceProvider.GetRequiredService<IUtilityService>();
     }
 
     public async Task<Result<T>> WrapInTransactionAsync<T>(Func<Task<Result<T>>> asyncFunc)
@@ -79,6 +108,16 @@ public sealed class ServicesManager : IServicesManager
         }
     }
 
+    private ISalesService _salesService;
+    public ISalesService SalesService
+    {
+        get
+        {
+            _salesService ??= new SalesService(_workUnit, _utilityService);
+            return _salesService;
+        }
+    }
+
     private ISalesAgentSchedulesService _salesAgentSchedulesService;
     public ISalesAgentSchedulesService SalesAgentSchedulesService
     {
@@ -99,6 +138,7 @@ public sealed class ServicesManager : IServicesManager
         }
     }
 
+    #region Clients
     private ICustomersService _customersService;
     public ICustomersService CustomersService
     {
@@ -120,6 +160,28 @@ public sealed class ServicesManager : IServicesManager
     }
 
     private ICustomerCallsService _customerCallsService;
+    
+    private IClientDebtsService _clientDebtsService;
+    public IClientDebtsService ClientDebtsService
+    {
+        get
+        {
+            _clientDebtsService ??= new ClientDebtsService(_workUnit, _utilityService);
+            return _clientDebtsService;
+        }
+    }
+    
+    private IClientMeetingsService _clientMeetings;
+    public IClientMeetingsService ClientMeetings
+    {
+        get
+        {
+            _clientMeetings ??= new ClientMeetingsService(_workUnit, _utilityService);
+            return _clientMeetings;
+        }
+    }
+    #endregion
+
     public ICustomerCallsService CustomerCallsService
     {
         get
@@ -139,13 +201,90 @@ public sealed class ServicesManager : IServicesManager
         }
     }
 
-    private IClientMeetingsService _clientMeetings;
-    public IClientMeetingsService ClientMeetings
+    #region Inventory
+    private IInventoryMovementsService _inventoryMovementsService;
+    public IInventoryMovementsService InventoryMovementsService
     {
         get
         {
-            _clientMeetings ??= new ClientMeetingsService(_workUnit, _utilityService);
-            return _clientMeetings;
+            _inventoryMovementsService ??= new InventoryMovementsService(_workUnit, _utilityService);
+            return _inventoryMovementsService;
         }
     }
+
+    #region Items
+    private IInventoryItemsService _inventoryItemsService;
+    public IInventoryItemsService InventoryItemsService
+    {
+        get
+        {
+            _inventoryItemsService ??= new InventoryItemsService(_workUnit, _utilityService);
+            return _inventoryItemsService;
+        }
+    }
+
+    private ITechnicianInventoryItemsService _technicianInventoryItemsService;
+    public ITechnicianInventoryItemsService TechnicianInventoryItemsService
+    {
+        get
+        {
+            _technicianInventoryItemsService ??= new TechnicianInventoryItemsService(_workUnit, _utilityService);
+            return _technicianInventoryItemsService;
+        }
+    }
+
+    private ISmallInventoryItemsService _smallInventoryItemsService;
+    public ISmallInventoryItemsService SmallInventoryItemsService
+    {
+        get
+        {
+            _smallInventoryItemsService ??= new SmallInventoryItemsService(_workUnit, _utilityService);
+            return _smallInventoryItemsService;
+        }
+    }
+
+    private IBigInventoryItemsService _bigInventoryItemsService;
+    public IBigInventoryItemsService BigInventoryItemsService
+    {
+        get
+        {
+            _bigInventoryItemsService ??= new BigInventoryItemsService(_workUnit, _utilityService);
+            return _bigInventoryItemsService;
+        }
+    }
+
+    private IInventoryPurchasesService _inventoryPurchasesService;
+    public IInventoryPurchasesService InventoryPurchasesService
+    {
+        get
+        {
+            _inventoryPurchasesService ??= new InventoryPurchasesService(_workUnit, _utilityService);
+            return _inventoryPurchasesService;
+        }
+    }
+    #endregion
+
+    #region Requests
+    private ITechnicianInventoryRequestsService _technicianInventoryRequestsService;
+    public ITechnicianInventoryRequestsService TechnicianInventoryRequestsService
+    {
+        get
+        {
+            _technicianInventoryRequestsService ??= new TechnicianInventoryRequestsService(_workUnit, _utilityService);
+            return _technicianInventoryRequestsService;
+        }
+    }
+
+    private ISmallInventoryRequestsService _smallInventoryRequestsService;
+    public ISmallInventoryRequestsService SmallInventoryRequestsService
+    {
+        get
+        {
+            _smallInventoryRequestsService ??= new SmallInventoryRequestsService(_workUnit, _utilityService);
+            return _smallInventoryRequestsService;
+        }
+    }
+
+    #endregion
+    #endregion
 }

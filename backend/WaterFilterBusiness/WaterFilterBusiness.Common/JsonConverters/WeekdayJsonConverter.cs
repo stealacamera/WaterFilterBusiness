@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Exceptions;
 
 namespace WaterFilterBusiness.Common.Utils;
 
@@ -11,7 +12,7 @@ public sealed class WeekdayJsonConverter : JsonConverter<Weekday>
         Weekday weekday;
 
         if (!Weekday.TryFromName(reader.GetString(), ignoreCase: true, out weekday))
-            throw new JsonException();
+            throw new InvalidEnumConversionException(nameof(Weekday));
 
         return weekday;
     }

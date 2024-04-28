@@ -1,7 +1,6 @@
-﻿using FluentResults;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Results;
@@ -16,6 +15,7 @@ namespace WaterFilterBusiness.API.Controllers
         {
         }
 
+        [HasPermission(Permission.ReadUsers)]
         [HttpGet]
         public async Task<IActionResult> GetAll(int pageSize, int page = 1)
         {

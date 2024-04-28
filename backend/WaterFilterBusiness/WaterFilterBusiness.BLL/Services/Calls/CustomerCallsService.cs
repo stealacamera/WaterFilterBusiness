@@ -35,7 +35,7 @@ internal class CustomerCallsService : Service, ICustomerCallsService
             return CallErrors.NotPhoneAgent;
 
         var dbModel = await _workUnit.CustomerCallsRepository
-                                     .AddAsync(new DAL.Entities.CustomerCall
+                                     .AddAsync(new DAL.Entities.Clients.CustomerCall
                                      {
                                          CustomerId = customerCall.CustomerId,
                                          OccuredAt = customerCall.OccuredAt,
@@ -81,7 +81,7 @@ internal class CustomerCallsService : Service, ICustomerCallsService
         };
     }
 
-    private CustomerCall ConvertEntityToModel(DAL.Entities.CustomerCall entity)
+    private CustomerCall ConvertEntityToModel(DAL.Entities.Clients.CustomerCall entity)
     {
         return new CustomerCall
         {

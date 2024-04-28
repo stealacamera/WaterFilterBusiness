@@ -31,7 +31,7 @@ internal class CustomerChangesService : Service, ICustomerChangesService
             return GeneralErrors.UnchangedUpdate;
 
         var dbModel = await _workUnit.CustomerChangesRepository
-                                     .AddAsync(new DAL.Entities.CustomerChange
+                                     .AddAsync(new DAL.Entities.Clients.CustomerChange
                                      {
                                          ChangedAt = DateTime.Now,
                                          CustomerId = updatedCustomer.Id,

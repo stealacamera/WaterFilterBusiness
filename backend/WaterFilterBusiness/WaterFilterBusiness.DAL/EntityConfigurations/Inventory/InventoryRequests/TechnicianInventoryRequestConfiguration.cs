@@ -13,7 +13,7 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations.Inventory.InventoryReques
 
             builder.HasKey(e => e.InventoryRequestId);
 
-            builder.HasOne<InventoryRequest>()
+            builder.HasOne(e => e.InventoryRequest)
                    .WithOne()
                    .IsRequired()
                    .HasForeignKey<TechnicianInventoryRequest>(e => e.InventoryRequestId)

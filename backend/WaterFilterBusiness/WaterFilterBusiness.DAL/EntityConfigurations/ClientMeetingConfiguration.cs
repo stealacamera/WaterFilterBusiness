@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 using WaterFilterBusiness.DAL.Entities.Enums;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations

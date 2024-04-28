@@ -39,7 +39,7 @@ internal class ScheduledCallsService : Service, IScheduledCallsService
             return CallErrors.NotPhoneAgent;
 
         var dbModel = await _workUnit.ScheduledCallsRepository
-                                     .AddAsync(new DAL.Entities.ScheduledCall
+                                     .AddAsync(new DAL.Entities.Clients.ScheduledCall
                                      {
                                          CustomerId = call.CustomerId,
                                          PhoneAgentId = call.PhoneAgentId,

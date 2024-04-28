@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Entities;
 
@@ -20,7 +21,7 @@ public class Permission : StrongEntity
     public string Name { get; set; }
 }
 
-public class RolePermission
+public class RolePermission : WeakCompositeEntity<int, int>
 {
     public int RoleId { get; set; }
     public int PermissionId { get; set; }

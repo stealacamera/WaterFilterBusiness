@@ -2,7 +2,7 @@
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs;
 
-namespace WaterFilterBusiness.API.Controllers;
+namespace WaterFilterBusiness.API.Controllers.Calls;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -14,16 +14,16 @@ public class ScheduledCallsController : Controller
 
     [HttpGet("phone-operator/{phoneOperatorId:int}")]
     public async Task<IActionResult> GetAllForPhoneOperator(
-        int phoneOperatorId, 
-        int pageSize, 
-        int paginationCursor = 0, 
+        int phoneOperatorId,
+        int pageSize,
+        int paginationCursor = 0,
         DateOnly? scheduledFor = null)
     {
         var result = await _servicesManager.ScheduledCallsService
                                            .GetAllForPhoneOperator(
-                                                phoneOperatorId, 
-                                                paginationCursor, 
-                                                pageSize, 
+                                                phoneOperatorId,
+                                                paginationCursor,
+                                                pageSize,
                                                 scheduledFor);
 
         return result.IsFailed ? BadRequest(result) : Ok(result.Value);

@@ -1,4 +1,4 @@
-﻿namespace WaterFilterBusiness.DAL.Entities;
+﻿namespace WaterFilterBusiness.DAL.Entities.Clients;
 
 public class ClientMeeting : StrongEntity
 {

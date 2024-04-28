@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using System.Text.Json.Serialization;
+using WaterFilterBusiness.Common.Exceptions;
 
 namespace WaterFilterBusiness.Common.JsonConverters;
 
@@ -12,7 +13,7 @@ public sealed class DateOnlyJsonConverter : JsonConverter<DateOnly>
         DateOnly date;
 
         if (!DateOnly.TryParseExact(reader.GetString(), DateFormat, out date))
-            throw new JsonException();
+            throw new InvalidEnumConversionException("Date");
 
         return date;
     }

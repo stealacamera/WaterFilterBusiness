@@ -7,17 +7,20 @@ public class InventoryRequest : StrongEntity
     public int Quantity { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime ConcludedAt { get; set; }
-    public string RequestNote { get; set; }
-    public string ConclusionNote { get; set; }
+    public string? RequestNote { get; set; }
+    public string? ConclusionNote { get; set; }
 }
 
-public class SmallInventoryRequest : StrongEntity<int>
+public class SmallInventoryRequest : BaseEntity<int>
 {
     public int InventoryRequestId { get; set; }
+    internal InventoryRequest InventoryRequest { get; set; }
+    public int RequesterId { get; set; }
 }
 
-public class TechnicianInventoryRequest : StrongEntity<int>
+public class TechnicianInventoryRequest : BaseEntity<int>
 {
     public int InventoryRequestId { get; set; }
+    internal InventoryRequest InventoryRequest { get; set; }
     public int TechnicianId { get; set; }
 }
