@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations;
 
@@ -16,7 +17,7 @@ internal class ClientDebtConfiguration : IEntityTypeConfiguration<ClientDebt>
         builder.Property(e => e.SaleId)
                .IsRequired();
 
-        builder.HasOne<Sale>()
+        builder.HasOne(e => e.Sale)
                .WithMany()
                .HasForeignKey(e => e.SaleId)
                .IsRequired()

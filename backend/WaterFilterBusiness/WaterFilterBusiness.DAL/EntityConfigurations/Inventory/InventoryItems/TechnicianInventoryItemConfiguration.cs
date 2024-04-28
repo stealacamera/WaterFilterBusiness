@@ -13,7 +13,7 @@ internal class TechnicianInventoryItemConfiguration : IEntityTypeConfiguration<T
 
         builder.HasKey(e => new { e.TechnicianId, e.ToolId });
 
-        builder.HasOne<InventoryItem>()
+        builder.HasOne(e => e.Tool)
                .WithOne()
                .HasForeignKey<TechnicianInventoryItem>(e => e.ToolId)
                .IsRequired()

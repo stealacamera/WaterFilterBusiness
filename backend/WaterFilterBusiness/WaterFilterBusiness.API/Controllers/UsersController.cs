@@ -1,7 +1,6 @@
-﻿using FluentResults;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Results;
@@ -16,6 +15,7 @@ namespace WaterFilterBusiness.API.Controllers
         {
         }
 
+        //[HasPermission(Permission.ReadUsers)]
         [HttpGet]
         public async Task<IActionResult> GetAll(int pageSize, int page = 1)
         {
@@ -24,7 +24,7 @@ namespace WaterFilterBusiness.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(UserAddRequestModel model)
+        public async Task<IActionResult> Create(User_AddRequestModel model)
         {
             var transactionResult = await _servicesManager.WrapInTransactionAsync(async () =>
             {

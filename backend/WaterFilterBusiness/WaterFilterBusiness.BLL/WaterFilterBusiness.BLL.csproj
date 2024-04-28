@@ -11,6 +11,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\WaterFilterBusiness.Common\WaterFilterBusiness.Common.csproj" />
 		<ProjectReference Include="..\WaterFilterBusiness.DAL\WaterFilterBusiness.DAL.csproj" />
 	</ItemGroup>
 

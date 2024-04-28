@@ -18,10 +18,14 @@ public static class Startup
 
         services.AddIdentityCore<User>(options =>
                     {
+                        options.Password.RequireNonAlphanumeric = false;
+                        options.Password.RequireUppercase = false;
+
                         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
-                        options.SignIn.RequireConfirmedAccount = false;
                         options.User.RequireUniqueEmail = true;
+
                         options.Lockout.AllowedForNewUsers = false;
+                        options.SignIn.RequireConfirmedAccount = false;
                     })
                 .AddRoles<Role>()
                 .AddEntityFrameworkStores<AppDbContext>();

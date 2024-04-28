@@ -59,7 +59,6 @@ namespace WaterFilterBusiness.API.Controllers
 
             var result = await _servicesManager.WrapInTransactionAsync<CustomerUpdate>(async () =>
             {
-                Result<CustomerUpdate> result = new();
                 var currentCustomerResult = await _servicesManager.CustomersService
                                                                   .GetByIdAsync(id);
 

@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WaterFilterBusiness.DAL.DAOs;
-using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Repository.Calls;
 
-public interface IScheduledCallsRepository : IRepository<ScheduledCall, int>
+public interface IScheduledCallsRepository : ISimpleRepository<ScheduledCall, int>
 {
     Task<bool> DoesCustomerHaveAny(int customerId);
     void Remove(ScheduledCall call);
@@ -15,7 +15,7 @@ public interface IScheduledCallsRepository : IRepository<ScheduledCall, int>
         DateOnly? scheduledFor = null);
 }
 
-internal class ScheduledCallsRepository : Repository<ScheduledCall, int>, IScheduledCallsRepository
+internal class ScheduledCallsRepository : SimpleRepository<ScheduledCall, int>, IScheduledCallsRepository
 {
     public ScheduledCallsRepository(AppDbContext dbContext) : base(dbContext)
     {

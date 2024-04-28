@@ -17,12 +17,13 @@ internal class InventoryRequestStatusConfiguration : IEntityTypeConfiguration<In
                .HasMaxLength(15);
 
         // Seeding
-        var data = Common.Enums.InventoryRequestStatus.List
-                                                      .Select(e => new InventoryRequestStatus
-                                                      {
-                                                          Id = e.Value,
-                                                          Name = e.Name
-                                                      });
+        var data = Common.Enums
+                         .InventoryRequestStatus.List
+                         .Select(e => new InventoryRequestStatus
+                         {
+                            Id = e.Value,
+                            Name = e.Name
+                         });
 
         builder.HasData(data);
     }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 using WaterFilterBusiness.DAL.Entities.Enums;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations
@@ -13,7 +14,7 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations
 
             builder.HasKey(e => e.MeetingId);
             
-            builder.HasOne<ClientMeeting>()
+            builder.HasOne(e => e.Meeting)
                    .WithOne()
                    .HasForeignKey<Sale>(e => e.MeetingId)
                    .IsRequired();

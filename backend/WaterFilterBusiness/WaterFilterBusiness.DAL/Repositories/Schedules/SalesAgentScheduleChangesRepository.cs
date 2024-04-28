@@ -4,13 +4,13 @@ using WaterFilterBusiness.DAL.Entities;
 
 namespace WaterFilterBusiness.DAL.Repository.Schedules;
 
-public interface ISalesAgentScheduleChangesRepository : IRepository<SalesAgentScheduleChange, int>
+public interface ISalesAgentScheduleChangesRepository : ISimpleRepository<SalesAgentScheduleChange, int>
 {
     Task<CursorPaginatedEnumerable<SalesAgentScheduleChange, int>> GetAllForSalesAgentAsync(int salesAgentId, int paginationCursor, int pageSize);
     Task RemoveAllForScheduleAsync(int scheduleId);
 }
 
-internal class SalesAgentScheduleChangesRepository : Repository<SalesAgentScheduleChange, int>, ISalesAgentScheduleChangesRepository
+internal class SalesAgentScheduleChangesRepository : SimpleRepository<SalesAgentScheduleChange, int>, ISalesAgentScheduleChangesRepository
 {
     public SalesAgentScheduleChangesRepository(AppDbContext dbContext) : base(dbContext)
     {

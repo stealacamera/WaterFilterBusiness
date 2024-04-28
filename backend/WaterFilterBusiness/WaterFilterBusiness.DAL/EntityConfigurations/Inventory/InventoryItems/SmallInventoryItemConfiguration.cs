@@ -12,7 +12,7 @@ internal class SmallInventoryItemConfiguration : IEntityTypeConfiguration<SmallI
 
         builder.HasKey(e => e.ToolId);
 
-        builder.HasOne<InventoryItem>()
+        builder.HasOne(e => e.Tool)
                .WithOne()
                .HasForeignKey<SmallInventoryItem>(e => e.ToolId)
                .IsRequired()

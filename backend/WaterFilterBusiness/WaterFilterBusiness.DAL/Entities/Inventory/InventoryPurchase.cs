@@ -18,6 +18,5 @@ public class InventoryPurchase : StrongEntity
         }
     }
 
-    public bool IsCompleted { get; set; }
-    public DateTime CompletedAt { get; set; }
+    public DateTime OccurredAt { get; set; }
 }

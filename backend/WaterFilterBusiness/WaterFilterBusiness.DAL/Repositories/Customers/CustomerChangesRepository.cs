@@ -1,14 +1,14 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WaterFilterBusiness.DAL.Entities;
+using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Repository.Customers;
 
-public interface ICustomerChangesRepository : IRepository<CustomerChange, int>
+public interface ICustomerChangesRepository : ISimpleRepository<CustomerChange, int>
 {
     Task<IEnumerable<CustomerChange>> GetAllForCustomer(int customerId);
 }
 
-internal class CustomerChangesRepository : Repository<CustomerChange, int>, ICustomerChangesRepository
+internal class CustomerChangesRepository : SimpleRepository<CustomerChange, int>, ICustomerChangesRepository
 {
     public CustomerChangesRepository(AppDbContext dbContext) : base(dbContext)
     {

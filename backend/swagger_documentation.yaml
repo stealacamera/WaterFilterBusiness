@@ -1,0 +1,1602 @@
+openapi: 3.0.1
+info:
+  title: WaterFilterBusiness.API
+  version: '1.0'
+paths:
+  /api/BigInventoryItems:
+    get:
+      tags:
+        - BigInventoryItems
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: orderByQuantity
+          in: query
+          style: form
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+  /api/BigInventoryItems/tool/{toolId}/stock-up:
+    patch:
+      tags:
+        - BigInventoryItems
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: increaseBy
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/BigInventoryItems/tool/{toolId}/reduce-stock:
+    patch:
+      tags:
+        - BigInventoryItems
+      parameters:
+        - name: toolId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: decreaseBy
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/ClientDebts:
+    get:
+      tags:
+        - ClientDebts
+      parameters:
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: filterByClient
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: filterByCompletionStatus
+          in: query
+          style: form
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+  /api/ClientDebts/{id}/complete:
+    patch:
+      tags:
+        - ClientDebts
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/ClientMeetings:
+    get:
+      tags:
+        - ClientMeetings
+      parameters:
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: from
+          in: query
+          style: form
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: to
+          in: query
+          style: form
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: onlyCompleted
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+        - name: onlyUpcoming
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+        - name: onlyExpressMeetings
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - ClientMeetings
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/ClientMeetings/worker/{userId}/date/{date}:
+    get:
+      tags:
+        - ClientMeetings
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: date
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: onlyExpressMeetings
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Success
+  /api/ClientMeetings/worker/{userId}/week/{date}:
+    get:
+      tags:
+        - ClientMeetings
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: date
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: onlyExpressMeetings
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Success
+  /api/ClientMeetings/{id}:
+    patch:
+      tags:
+        - ClientMeetings
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_UpdateRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_UpdateRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ClientMeeting_UpdateRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/CustomerCalls:
+    get:
+      tags:
+        - CustomerCalls
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: from
+          in: query
+          style: form
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: to
+          in: query
+          style: form
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+        - name: filterByOutcome
+          in: query
+          style: form
+          schema:
+            type: string
+            example: Success
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - CustomerCalls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCall_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CustomerCall_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CustomerCall_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/CustomerCalls/customers/{customerId}:
+    get:
+      tags:
+        - CustomerCalls
+      parameters:
+        - name: customerId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 1
+      responses:
+        '200':
+          description: Success
+  /api/Customers:
+    get:
+      tags:
+        - Customers
+      parameters:
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: excludeWithCalls
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: true
+        - name: excludeRedListed
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: true
+        - name: includeOnlyRedListed
+          in: query
+          style: form
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - Customers
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Customer'
+          text/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Customer'
+          application/*+json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Customer'
+      responses:
+        '200':
+          description: Success
+  /api/Customers/{id}:
+    get:
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    patch:
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CustomerUpdateRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/Customers/{id}/change-history:
+    get:
+      tags:
+        - Customers
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /login:
+    post:
+      tags:
+        - Identity
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginCredentials'
+      responses:
+        '200':
+          description: Success
+  /api/InventoryItems:
+    post:
+      tags:
+        - InventoryItems
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+    get:
+      tags:
+        - InventoryItems
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/InventoryItems/{id}:
+    delete:
+      tags:
+        - InventoryItems
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    patch:
+      tags:
+        - InventoryItems
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_PatchRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_PatchRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/InventoryItem_PatchRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/InventoryMovements:
+    get:
+      tags:
+        - InventoryMovements
+      parameters:
+        - name: cursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/InventoryPurchases:
+    get:
+      tags:
+        - InventoryPurchases
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - InventoryPurchases
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryPurchase_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/InventoryPurchase_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/InventoryPurchase_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/Sales:
+    post:
+      tags:
+        - Sales
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Sale_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Sale_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Sale_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+    get:
+      tags:
+        - Sales
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/Sales/{meetingId}:
+    patch:
+      tags:
+        - Sales
+      parameters:
+        - name: meetingId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+      responses:
+        '200':
+          description: Success
+  /api/SalesAgentSchedules/salesAgents/{salesAgentId}:
+    get:
+      tags:
+        - SalesAgentSchedules
+      parameters:
+        - name: salesAgentId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - SalesAgentSchedules
+      parameters:
+        - name: salesAgentId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/SalesAgentSchedules/{id}:
+    delete:
+      tags:
+        - SalesAgentSchedules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+    put:
+      tags:
+        - SalesAgentSchedules
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_UpdateRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_UpdateRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/SalesAgentSchedule_UpdateRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/SalesAgentSchedules/salesAgents/{salesAgentId}/changes:
+    get:
+      tags:
+        - SalesAgentSchedules
+      parameters:
+        - name: salesAgentId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 0
+      responses:
+        '200':
+          description: Success
+  /api/ScheduledCalls/phone-operator/{phoneOperatorId}:
+    get:
+      tags:
+        - ScheduledCalls
+      parameters:
+        - name: phoneOperatorId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: paginationCursor
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 0
+        - name: scheduledFor
+          in: query
+          style: form
+          schema:
+            type: string
+            format: date
+            example: 0001-1-1
+      responses:
+        '200':
+          description: Success
+  /api/ScheduledCalls:
+    post:
+      tags:
+        - ScheduledCalls
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledCall_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ScheduledCall_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ScheduledCall_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/ScheduledCalls/{id}:
+    delete:
+      tags:
+        - ScheduledCalls
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/SmallInventoryItems:
+    get:
+      tags:
+        - SmallInventoryItems
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: orderByQuantity
+          in: query
+          style: form
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: Success
+  /api/SmallInventoryRequests/{id}/accept:
+    patch:
+      tags:
+        - SmallInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/SmallInventoryRequests/{id}/cancel:
+    patch:
+      tags:
+        - SmallInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+      responses:
+        '200':
+          description: Success
+  /api/SmallInventoryRequests/{id}/complete:
+    patch:
+      tags:
+        - SmallInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+      responses:
+        '200':
+          description: Success
+  /api/SmallInventoryRequests:
+    post:
+      tags:
+        - SmallInventoryRequests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+    get:
+      tags:
+        - SmallInventoryRequests
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryItems/technician/{technicianId}:
+    get:
+      tags:
+        - TechnicianInventoryItems
+      parameters:
+        - name: technicianId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryItems/technician/{technicianId}/tool/{toolId}/reduce-stock:
+    patch:
+      tags:
+        - TechnicianInventoryItems
+      parameters:
+        - name: technicianId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+        - name: toolId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: integer
+              format: int32
+          text/json:
+            schema:
+              type: integer
+              format: int32
+          application/*+json:
+            schema:
+              type: integer
+              format: int32
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryRequests:
+    post:
+      tags:
+        - TechnicianInventoryRequests
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/InventoryRequest_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+    get:
+      tags:
+        - TechnicianInventoryRequests
+      parameters:
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryRequests/{id}/complete:
+    patch:
+      tags:
+        - TechnicianInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryRequests/{id}/accept:
+    patch:
+      tags:
+        - TechnicianInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: Success
+  /api/TechnicianInventoryRequests/{id}/cancel:
+    patch:
+      tags:
+        - TechnicianInventoryRequests
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+      responses:
+        '200':
+          description: Success
+  /api/Users:
+    get:
+      tags:
+        - Users
+      parameters:
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          example: 0
+                        username: 
+                          type: string
+                          example: string
+                        name:
+                          type: string
+                          example: string
+                        surname:
+                          type: string
+                          example: string
+                        email:
+                          type: string
+                          example: string
+                        role:
+                          type: string
+                          example: string
+                  page:
+                    type: integer
+                    example: 0
+                  pageSize:
+                    type: integer
+                    example: 0
+                  totalCount:
+                    type: integer
+                    example: 0
+                  hasNextPage:
+                    type: boolean
+                    example: false
+                  hasPreviousPage:
+                    type: boolean
+                    example: false
+    post:
+      tags:
+        - Users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User_AddRequestModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/User_AddRequestModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/User_AddRequestModel'
+      responses:
+        '200':
+          description: Success
+  /api/Users/{id}:
+    delete:
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '204':
+          description: No content
+        '404':
+          description: Not found
+components:
+  schemas:
+    ClientMeeting_AddRequestModel:
+      required:
+        - customerId
+        - salesAgentId
+        - scheduledAt
+      type: object
+      properties:
+        phoneOperatorId:
+          type: integer
+          format: int32
+          nullable: true
+        salesAgentId:
+          type: integer
+          format: int32
+        customerId:
+          type: integer
+          format: int32
+        scheduledAt:
+          type: string
+          format: date-time
+        initialNotes:
+          maxLength: 210
+          minLength: 0
+          type: string
+          nullable: true
+      additionalProperties: false
+    ClientMeeting_UpdateRequestModel:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        outcome:
+          type: string
+          nullable: true
+          example: Successful
+        afternotes:
+          type: string
+          nullable: true
+      additionalProperties: false
+    Customer:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        fullName:
+          type: string
+          nullable: true
+        phoneNumber:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        profession:
+          type: string
+          nullable: true
+        isQualified:
+          type: boolean
+          nullable: true
+        redListedAt:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    CustomerCall_AddRequestModel:
+      required:
+        - customerId
+        - occuredAt
+        - outcome
+        - phoneAgentId
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int32
+        phoneAgentId:
+          type: integer
+          format: int32
+        outcome:
+          type: string
+          example: Success
+        occuredAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    CustomerUpdateRequestModel:
+      type: object
+      properties:
+        fullName:
+          maxLength: 55
+          minLength: 0
+          type: string
+          nullable: true
+        phoneNumber:
+          maxLength: 30
+          minLength: 0
+          type: string
+          nullable: true
+        address:
+          maxLength: 70
+          minLength: 0
+          type: string
+          nullable: true
+        city:
+          maxLength: 70
+          minLength: 0
+          type: string
+          nullable: true
+        profession:
+          maxLength: 65
+          minLength: 0
+          type: string
+          nullable: true
+        isQualified:
+          type: boolean
+          nullable: true
+        redListedAt:
+          type: string
+          format: date-time
+          nullable: true
+      additionalProperties: false
+    InventoryItem_AddRequestModel:
+      required:
+        - name
+        - price
+      type: object
+      properties:
+        name:
+          maxLength: 45
+          minLength: 0
+          type: string
+        price:
+          minimum: 0.0001
+          type: number
+          format: double
+      additionalProperties: false
+    InventoryItem_PatchRequestModel:
+      type: object
+      properties:
+        name:
+          maxLength: 45
+          minLength: 0
+          type: string
+          nullable: true
+        price:
+          minimum: 0.0001
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    InventoryPurchase_AddRequestModel:
+      required:
+        - toolId
+      type: object
+      properties:
+        toolId:
+          type: integer
+          format: int32
+      additionalProperties: false
+    InventoryRequest_AddRequestModel:
+      required:
+        - quantity
+        - toolId
+      type: object
+      properties:
+        toolId:
+          type: integer
+          format: int32
+        quantity:
+          type: integer
+          format: int32
+        requestNote:
+          maxLength: 210
+          minLength: 0
+          type: string
+          nullable: true
+      additionalProperties: false
+    LoginCredentials:
+      required:
+        - email
+        - password
+      type: object
+      properties:
+        email:
+          maxLength: 150
+          minLength: 0
+          type: string
+          format: email
+        password:
+          maxLength: 50
+          minLength: 0
+          type: string
+      additionalProperties: false
+    Sale_AddRequestModel:
+      required:
+        - meetingId
+        - paymentType
+        - totalAmount
+        - upfrontPaymentAmount
+      type: object
+      properties:
+        meetingId:
+          type: integer
+          format: int32
+        paymentType:
+          type: string
+          example: Full payment upfront
+        totalAmount:
+          minimum: 1
+          type: number
+          format: double
+        upfrontPaymentAmount:
+          minimum: 1
+          type: number
+          format: double
+        monthlyInstallmentPayment:
+          minimum: 1
+          type: number
+          format: double
+          nullable: true
+      additionalProperties: false
+    SalesAgentSchedule_AddRequestModel:
+      required:
+        - beginHour
+        - dayOfWeek
+      type: object
+      properties:
+        beginHour:
+          type: string
+          format: time
+          example: '0:00:00'
+        dayOfWeek:
+          type: string
+          example: Friday
+      additionalProperties: false
+    SalesAgentSchedule_UpdateRequestModel:
+      type: object
+      properties:
+        dayOfWeek:
+          type: string
+          nullable: true
+          example: Friday
+        beginHour:
+          type: string
+          format: time
+          nullable: true
+          example: '0:00:00'
+      additionalProperties: false
+    ScheduledCall_AddRequestModel:
+      required:
+        - customerId
+        - phoneAgentId
+        - scheduledAt
+      type: object
+      properties:
+        customerId:
+          type: integer
+          format: int32
+        phoneAgentId:
+          type: integer
+          format: int32
+        scheduledAt:
+          type: string
+          format: date-time
+      additionalProperties: false
+    User_AddRequestModel:
+      required:
+        - email
+        - name
+        - password
+        - role
+        - surname
+        - username
+      type: object
+      properties:
+        name:
+          maxLength: 35
+          minLength: 0
+          type: string
+        surname:
+          maxLength: 35
+          minLength: 0
+          type: string
+        username:
+          maxLength: 50
+          minLength: 0
+          type: string
+        email:
+          maxLength: 150
+          minLength: 0
+          type: string
+          format: email
+        role:
+          type: string
+          example: Admin
+        password:
+          maxLength: 50
+          minLength: 0
+          type: string
+      additionalProperties: false

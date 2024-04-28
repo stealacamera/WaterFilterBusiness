@@ -12,7 +12,7 @@ internal class BigInventoryItemConfiguration : IEntityTypeConfiguration<BigInven
 
         builder.HasKey(e => e.ToolId);
 
-        builder.HasOne<InventoryItem>()
+        builder.HasOne(e => e.Tool)
                .WithOne()
                .HasForeignKey<BigInventoryItem>(e => e.ToolId)
                .IsRequired()

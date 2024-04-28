@@ -9,9 +9,12 @@ public interface IUsersRepository
 {
     Task<OffsetPaginatedEnumerable<User>> GetAllAsync(int page, int pageSize, bool excludeDeleted = true);
     Task<User?> GetByIdAsync(int id);
+    Task<Common.Enums.Role> GetRoleAsync(User user);
+
     Task<IdentityResult> AddAsync(User user, string password);
     Task<IdentityResult> AddToRoleAsync(User user, Common.Enums.Role role);
-    Task<Common.Enums.Role> GetRoleAsync(User user);
+
+    Task<User?> GetByCredentials(string email, string password);
 }
 
 internal sealed class UsersRepository : IUsersRepository
@@ -54,5 +57,15 @@ internal sealed class UsersRepository : IUsersRepository
     {
         string roleName = (await _userManager.GetRolesAsync(user)).First();
         return Common.Enums.Role.FromName(roleName);
+    }
+
+    public async Task<User?> GetByCredentials(string email, string password)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if(user == null || !await _userManager.CheckPasswordAsync(user, password))
+            return null;
+
+        return user;
     }
 }

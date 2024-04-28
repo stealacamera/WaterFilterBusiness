@@ -24,7 +24,7 @@ public record Customer
     public DateTime? RedListedAt { get; set; }
 }
 
-public record CustomerAddRequestModel
+public record Customer_AddRequestModel
 {
     [Required]
     [StringLength(55)]

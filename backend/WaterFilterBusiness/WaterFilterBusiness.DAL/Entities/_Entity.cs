@@ -1,23 +1,27 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities;
 
-public abstract class BaseEntity<TKey>
+public abstract class BaseEntity
 {
 }
 
-public class WeakEntity<TKey> : BaseEntity<TKey>
+public abstract class BaseEntity<TKey> : BaseEntity
 {
 }
 
-public class StrongEntity<TKey> : BaseEntity<TKey>
+public abstract class WeakCompositeEntity<TKey1, TKey2> : BaseEntity
+{
+}
+
+public abstract class StrongEntity<TKey> : BaseEntity<TKey>
 {
     public TKey Id { get; set; }
 }
 
-public class StrongEntity : StrongEntity<int>
+public abstract class StrongEntity : StrongEntity<int>
 {
 }
 
-public class PlainStrongEntity : StrongEntity
+public abstract class PlainStrongEntity : StrongEntity
 {
     public string Name { get; set; }
 }

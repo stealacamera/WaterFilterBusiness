@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WaterFilterBusiness.BLL\WaterFilterBusiness.BLL.csproj" />
-    <ProjectReference Include="..\WaterFilterBusiness.DAL\WaterFilterBusiness.DAL.csproj" />
   </ItemGroup>
 
 </Project>

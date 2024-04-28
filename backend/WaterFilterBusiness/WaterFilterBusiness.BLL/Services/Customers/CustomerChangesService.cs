@@ -1,6 +1,6 @@
 ﻿using FluentResults;
 using WaterFilterBusiness.Common.DTOs;
-using WaterFilterBusiness.Common.Errors;
+using WaterFilterBusiness.Common.ErrorHandling.Errors;
 using WaterFilterBusiness.DAL;
 
 namespace WaterFilterBusiness.BLL.Services.Customers;
@@ -31,7 +31,7 @@ internal class CustomerChangesService : Service, ICustomerChangesService
             return GeneralErrors.UnchangedUpdate;
 
         var dbModel = await _workUnit.CustomerChangesRepository
-                                     .AddAsync(new DAL.Entities.CustomerChange
+                                     .AddAsync(new DAL.Entities.Clients.CustomerChange
                                      {
                                          ChangedAt = DateTime.Now,
                                          CustomerId = updatedCustomer.Id,
@@ -44,18 +44,7 @@ internal class CustomerChangesService : Service, ICustomerChangesService
                                      });
 
         await _workUnit.SaveChangesAsync();
-
-        return new CustomerChange
-        {
-            Id = dbModel.Id,
-            ChangedAt = dbModel.ChangedAt,
-            OldAddress = dbModel.OldAddress,
-            OldCity = dbModel.OldCity,
-            OldFullName = dbModel.OldFullName,
-            OldIsQualified = dbModel.OldIsQualified,
-            OldPhoneNumber = dbModel.OldPhoneNumber,
-            OldProfession = dbModel.OldProfession
-        };
+        return ConvertEntityToModel(dbModel);
     }
 
     public async Task<Result<IList<CustomerChange>>> GetAllForCustomer(int customerId)
@@ -65,17 +54,22 @@ internal class CustomerChangesService : Service, ICustomerChangesService
 
         return (await _workUnit.CustomerChangesRepository
                                .GetAllForCustomer(customerId))
-                               .Select(e => new CustomerChange
-                               {
-                                   Id = e.Id,
-                                   ChangedAt = e.ChangedAt,
-                                   OldAddress = e.OldAddress,
-                                   OldCity = e.OldCity,
-                                   OldFullName = e.OldFullName,
-                                   OldIsQualified = e.OldIsQualified,
-                                   OldPhoneNumber = e.OldPhoneNumber,
-                                   OldProfession = e.OldProfession
-                               })
+                               .Select(ConvertEntityToModel)
                                .ToList();
+    }
+
+    private CustomerChange ConvertEntityToModel(DAL.Entities.Clients.CustomerChange entity)
+    {
+        return new CustomerChange
+        {
+            Id = entity.Id,
+            ChangedAt = entity.ChangedAt,
+            OldAddress = entity.OldAddress,
+            OldCity = entity.OldCity,
+            OldFullName = entity.OldFullName,
+            OldIsQualified = entity.OldIsQualified,
+            OldPhoneNumber = entity.OldPhoneNumber,
+            OldProfession = entity.OldProfession
+        };
     }
 }

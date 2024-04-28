@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using WaterFilterBusiness.DAL.Entities;
 using WaterFilterBusiness.DAL.Entities.Inventory;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations.Inventory.InventoryRequests
@@ -12,12 +13,17 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations.Inventory.InventoryReques
 
             builder.HasKey(e => e.InventoryRequestId);
 
-            builder.HasOne<InventoryRequest>()
+            builder.HasOne(e => e.InventoryRequest)
                    .WithOne()
                    .IsRequired()
                    .HasForeignKey<SmallInventoryRequest>(e => e.InventoryRequestId)
                    .OnDelete(DeleteBehavior.Restrict);
 
+            builder.HasOne<User>()
+                   .WithMany()
+                   .IsRequired()
+                   .HasForeignKey(e => e.RequesterId)
+                   .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
