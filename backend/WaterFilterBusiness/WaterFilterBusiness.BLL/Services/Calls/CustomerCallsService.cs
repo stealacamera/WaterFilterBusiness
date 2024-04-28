@@ -45,7 +45,6 @@ internal class CustomerCallsService : Service, ICustomerCallsService
                                      });
 
         await _workUnit.SaveChangesAsync();
-
         return ConvertEntityToModel(dbModel);
     }
 

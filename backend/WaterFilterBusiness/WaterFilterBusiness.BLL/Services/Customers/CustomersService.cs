@@ -63,17 +63,7 @@ internal class CustomersService : Service, ICustomersService
         dbModel = UpdateEntity(customer, dbModel);
         await _workUnit.SaveChangesAsync();
 
-        return new Customer
-        {
-            Id = dbModel.Id,
-            Address = dbModel.Address,
-            City = dbModel.City,
-            FullName = dbModel.FullName,
-            IsQualified = dbModel.IsQualified,
-            PhoneNumber = dbModel.PhoneNumber,
-            Profession = dbModel.Profession,
-            RedListedAt = dbModel.RedListedAt
-        };
+        return ConvertEntityToModel(dbModel);
     }
 
     private DAL.Entities.Clients.Customer UpdateEntity(CustomerUpdateRequestModel update, DAL.Entities.Clients.Customer entity)
@@ -119,7 +109,7 @@ internal class CustomersService : Service, ICustomersService
     public async Task<OffsetPaginatedList<Customer>> GetAllAsync(
         int page,
         int pageSize,
-        bool? filterClients = true, 
+        bool? filterClients = true,
         bool? filterRedListed = true)
     {
         var customers = await _workUnit.CustomersRepository
@@ -130,19 +120,7 @@ internal class CustomersService : Service, ICustomersService
             Page = page,
             PageSize = pageSize,
             TotalCount = customers.TotalCount,
-            Values = customers.Values
-                              .Select(e => new Customer
-                              {
-                                  Id = e.Id,
-                                  Address = e.Address,
-                                  City = e.City,
-                                  FullName = e.FullName,
-                                  IsQualified = e.IsQualified,
-                                  PhoneNumber = e.PhoneNumber,
-                                  Profession = e.Profession,
-                                  RedListedAt = e.RedListedAt
-                              })
-                              .ToList()
+            Values = customers.Values.Select(ConvertEntityToModel).ToList()
         };
     }
 
@@ -197,19 +175,22 @@ internal class CustomersService : Service, ICustomersService
             Page = page,
             PageSize = pageSize,
             TotalCount = result.TotalCount,
-            Values = result.Values
-                           .Select(e => new Customer
-                           {
-                               Id = e.Id,
-                               FullName = e.FullName,
-                               Address = e.Address,
-                               City = e.City,
-                               PhoneNumber = e.PhoneNumber,
-                               Profession = e.Profession,
-                               IsQualified = e.IsQualified,
-                               RedListedAt = e.RedListedAt
-                           })
-                           .ToList()
+            Values = result.Values.Select(ConvertEntityToModel).ToList()
+        };
+    }
+
+    private Customer ConvertEntityToModel(DAL.Entities.Clients.Customer entity)
+    {
+        return new Customer
+        {
+            Id = entity.Id,
+            FullName = entity.FullName,
+            Address = entity.Address,
+            City = entity.City,
+            PhoneNumber = entity.PhoneNumber,
+            Profession = entity.Profession,
+            IsQualified = entity.IsQualified,
+            RedListedAt = entity.RedListedAt
         };
     }
 }

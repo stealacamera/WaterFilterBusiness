@@ -77,7 +77,10 @@ internal class ClientDebtsService : Service, IClientDebtsService
         bool? filterByCompletionStatus = null)
     {
         var debts = await _workUnit.ClientDebtsRepository
-                                   .GetAllAsync(cursor, pageSize, filterByClient, filterByCompletionStatus);
+                                   .GetAllAsync(
+                                        cursor, pageSize, 
+                                        filterByClient, 
+                                        filterByCompletionStatus);
 
         return new CursorPaginatedList<ClientDebt, int>
         {
