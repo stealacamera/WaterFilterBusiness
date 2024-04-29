@@ -34,7 +34,7 @@ function CoverLayout({ title, description, image, imgPosition, button, children 
   return (
     <PageLayout>
       <ArgonBox mt={1}>
-        <DefaultNavbar
+        {/* <DefaultNavbar
           action={{
             type: "external",
             route: "https://creative-tim.com/product/argon-dashboard-material-ui",
@@ -43,7 +43,7 @@ function CoverLayout({ title, description, image, imgPosition, button, children 
           }}
           transparent
           light
-        />
+        /> */}
       </ArgonBox>
       <ArgonBox
         width="calc(100% - 2rem)"

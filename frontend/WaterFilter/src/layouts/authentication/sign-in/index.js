@@ -9,7 +9,7 @@
 Coded by www.creative-tim.com
 
  =========================================================
-brinaldo
+
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
@@ -35,19 +35,19 @@ const bgImage =
   "https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signin-ill.jpg";
 
 function Illustration() {
-  const [rememberMe, setRememberMe] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
-  const handleSetRememberMe = () => setRememberMe(!rememberMe);
-
+  const handleSetRememberMe = () => {
+    setShowPassword(!showPassword);
+  };
   return (
     <IllustrationLayout
       title="Sign In"
       description="Enter your email and password to sign in"
       illustration={{
         image: bgImage,
-        title: '"Attention is the new currency"',
-        description:
-          "The more effortless the writing looks, the more effort the writer actually put into the process.",
+        title: '"Welcome to AquaTech!"',
+        description: "Clean Water, Healthy Living!",
       }}
     >
       <ArgonBox component="form" role="form">
@@ -55,23 +55,29 @@ function Illustration() {
           <ArgonInput type="email" placeholder="Email" size="large" />
         </ArgonBox>
         <ArgonBox mb={2}>
-          <ArgonInput type="password" placeholder="Password" size="large" />
+          <ArgonInput
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            size="large"
+          />
         </ArgonBox>
         <ArgonBox display="flex" alignItems="center">
-          <Switch checked={rememberMe} onChange={handleSetRememberMe} />
+          <Switch checked={showPassword} onChange={handleSetRememberMe} />
           <ArgonTypography
             variant="button"
             fontWeight="regular"
             onClick={handleSetRememberMe}
             sx={{ cursor: "pointer", userSelect: "none" }}
           >
-            &nbsp;&nbsp;Remember me
+            &nbsp;&nbsp;Show Password
           </ArgonTypography>
         </ArgonBox>
         <ArgonBox mt={4} mb={1}>
-          <ArgonButton color="info" size="large" fullWidth>
-            Sign In
-          </ArgonButton>
+          <Link to="/dashboard">
+            <ArgonButton color="info" size="large" fullWidth>
+              Sign In
+            </ArgonButton>
+          </Link>
         </ArgonBox>
         <ArgonBox mt={3} textAlign="center">
           <ArgonTypography variant="button" color="text" fontWeight="regular">

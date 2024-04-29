@@ -201,7 +201,7 @@ function Configurator() {
             </ArgonButton>
           </ArgonBox>
           <ArgonBox mb={2}>
-            <ArgonButton
+            {/* <ArgonButton
               component={Link}
               href="https://www.creative-tim.com/product/argon-dashboard-material-ui"
               target="_blank"
@@ -210,7 +210,7 @@ function Configurator() {
               fullWidth
             >
               Free Download
-            </ArgonButton>
+            </ArgonButton> */}
           </ArgonBox>
           <ArgonButton
             component={Link}
