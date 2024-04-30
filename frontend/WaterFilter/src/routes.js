@@ -42,6 +42,7 @@ import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
+import SalesAgent from "layouts/dashboard/sales-agent";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
@@ -54,6 +55,14 @@ const routes = [
     route: "/dashboard",
     icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
     component: <Dashboard />,
+  },
+  {
+    type: "route",
+    name: "Sales Agent Dashboard",
+    key: "sales-agent-dashboard",
+    route: "/dashboard/sales-agent",
+    icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
+    component: <SalesAgent />,
   },
   {
     type: "route",
