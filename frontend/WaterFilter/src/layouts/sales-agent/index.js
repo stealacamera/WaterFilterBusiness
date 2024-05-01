@@ -30,6 +30,7 @@ import DetailedStatisticsCard from "examples/Cards/StatisticsCards/DetailedStati
 import SalesTable from "examples/Tables/SalesTable";
 import CategoriesList from "examples/Lists/CategoriesList";
 import GradientLineChart from "examples/Charts/LineCharts/GradientLineChart";
+import VerticalBarChart from "examples/Charts/BarCharts/VerticalBarChart";
 
 // Argon Dashboard 2 MUI base styles
 import typography from "assets/theme/base/typography";
@@ -39,6 +40,7 @@ import Slider from "layouts/dashboard/components/Slider";
 
 // Data
 import gradientLineChartData from "layouts/dashboard/data/gradientLineChartData";
+import verticalBarChartData from "layouts/dashboard/data/verticalBarChartData";
 import salesTableData from "layouts/dashboard/data/salesTableData";
 import categoriesListData from "layouts/dashboard/data/categoriesListData";
 
@@ -70,7 +72,7 @@ function Default() {
               title="References"
               count={"1. Omar"}
               icon={{ color: "success", component: <i className="ni ni-paper-diploma" /> }}
-              percentage={{ color: "error", count: "-2%", text: "since last quarter" }}
+              percentage={{ color: "error", count: "", text: "reference" }}
             />
           </Grid>
           {/* <Grid item xs={12} md={6} lg={3}>
@@ -83,7 +85,29 @@ function Default() {
           </Grid> */}
         </Grid>
         <Grid container spacing={3} mb={3}>
-          <Grid item xs={12} lg={7}>
+          <Grid item xs={12} lg={6}>
+            <VerticalBarChart
+              title="Sales Overview"
+              description={
+                <ArgonBox display="flex" alignItems="center">
+                  <ArgonBox fontSize={size.lg} color="error" mb={0.3} mr={0.5} lineHeight={0}>
+                    <Icon sx={{ fontWeight: "bold" }}>arrow_downward</Icon>
+                  </ArgonBox>
+                  <ArgonTypography variant="button" color="text" fontWeight="medium">
+                    4% more{" "}
+                    <ArgonTypography variant="button" color="text" fontWeight="regular">
+                      in 2022
+                    </ArgonTypography>
+                  </ArgonTypography>
+                </ArgonBox>
+              }
+              chart={verticalBarChartData}
+            />
+          </Grid>
+          {/* <Grid item xs={12} lg={5}>
+            <Slider />
+          </Grid> */}
+          <Grid item xs={12} lg={6}>
             <GradientLineChart
               title="Sales Overview"
               description={
@@ -101,9 +125,6 @@ function Default() {
               }
               chart={gradientLineChartData}
             />
-          </Grid>
-          <Grid item xs={12} lg={5}>
-            <Slider />
           </Grid>
         </Grid>
         <Grid container spacing={3}>

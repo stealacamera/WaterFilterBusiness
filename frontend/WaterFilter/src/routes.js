@@ -43,26 +43,37 @@ import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import SalesAgent from "layouts/dashboard/sales-agent";
+import Schedule from "layouts/schedule";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
 
 const routes = [
+  // {
+  //   type: "route",
+  //   name: "Dashboard",
+  //   key: "dashboard",
+  //   route: "/dashboard",
+  //   icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
+  //   component: <Dashboard />,
+  // },
   {
     type: "route",
     name: "Dashboard",
     key: "dashboard",
     route: "/dashboard",
     icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
-    component: <Dashboard />,
+    component: <SalesAgent />,
   },
   {
     type: "route",
-    name: "Sales Agent Dashboard",
-    key: "sales-agent-dashboard",
-    route: "/dashboard/sales-agent",
-    icon: <ArgonBox component="i" color="primary" fontSize="14px" className="ni ni-tv-2" />,
-    component: <SalesAgent />,
+    name: "Schedule",
+    key: "schedule",
+    route: "/schedule",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
+    ),
+    component: <Schedule />,
   },
   {
     type: "route",
