@@ -42,7 +42,7 @@ import RTL from "layouts/rtl";
 import Profile from "layouts/profile";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
-import SalesAgent from "layouts/dashboard/sales-agent";
+import SalesAgent from "layouts/sales-agent";
 import Schedule from "layouts/schedule";
 
 // Argon Dashboard 2 MUI components
