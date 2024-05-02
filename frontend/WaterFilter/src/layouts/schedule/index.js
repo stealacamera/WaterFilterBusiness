@@ -25,11 +25,12 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import Table from "examples/Tables/Table";
-import Calendar from "examples/Calendar";
+import Calendar from "./components/Calendar";
 
 // Data
 import authorsTableData from "layouts/tables/data/authorsTableData";
 import projectsTableData from "layouts/tables/data/projectsTableData";
+import { Box } from "@mui/material";
 
 function Tables() {
   const { columns, rows } = authorsTableData;
@@ -38,8 +39,9 @@ function Tables() {
   return (
     <DashboardLayout>
       <DashboardNavbar />
-
-      <Calendar />
+      <Box sx={{ height: "90vh" }}>
+        <Calendar />
+      </Box>
       <Footer />
     </DashboardLayout>
   );
