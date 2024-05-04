@@ -24,8 +24,6 @@ namespace WaterFilterBusiness.DAL.EntityConfigurations.Inventory.InventoryReques
                    .HasForeignKey(e => e.TechnicianId)
                    .IsRequired()
                    .OnDelete(DeleteBehavior.Restrict);
-
-
         }
     }
 }

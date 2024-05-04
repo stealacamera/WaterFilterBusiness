@@ -1,6 +1,9 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Inventory.Inventories
 {
@@ -19,13 +22,18 @@ namespace WaterFilterBusiness.API.Controllers.Inventory.Inventories
                                               .GetAllAsync(page, pageSize, orderByQuantity);
 
             foreach (var item in items.Values)
-                item.Item = (await _servicesManager.InventoryItemsService.GetByIdAsync(item.Item.Id)).Value;
+            {
+                var baseItem = await _servicesManager.InventoryItemsService.GetByIdAsync(item.Item.Id);
+                item.Item = baseItem.Value;
+            }
 
             return Ok(items);
         }
-
+                
         [HttpPatch("tool/{toolId:int}/stock-up")]
-        public async Task<IActionResult> IncreaseQuantity(int toolId, int increaseBy)
+        public async Task<IActionResult> IncreaseQuantity(
+            int toolId, 
+            [FromBody, Range(1, int.MaxValue)] int increaseBy)
         {
             var result = await _servicesManager.WrapInTransactionAsync(async () =>
             {
@@ -44,16 +52,22 @@ namespace WaterFilterBusiness.API.Controllers.Inventory.Inventories
                 return updateResult.Value;
             });
 
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors);
+            return result.IsSuccess 
+                   ? Ok(result.Value) 
+                   : BadRequest(result.GetErrorsDictionary());
         }
 
         [HttpPatch("tool/{toolId:int}/reduce-stock")]
-        public async Task<IActionResult> DecreaseQuantity(int toolId, int decreaseBy)
+        public async Task<IActionResult> DecreaseQuantity(
+            int toolId, 
+            [FromBody, Range(1, int.MaxValue)] int decreaseBy)
         {
             var result = await _servicesManager.BigInventoryItemsService
                                                .DecreaseQuantityAsync(toolId, decreaseBy);
 
-            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors);
+            return result.IsSuccess 
+                   ? Ok(result.Value) 
+                   : BadRequest(result.GetErrorsDictionary());
         }
     }
 }

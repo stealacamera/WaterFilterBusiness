@@ -1,47 +1,47 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Utilities;
 
-namespace WaterFilterBusiness.API.Controllers.Inventory;
-
-[Route("api/[controller]")]
-[ApiController]
-public class InventoryItemsController : Controller
+namespace WaterFilterBusiness.API.Controllers.Inventory
 {
-    public InventoryItemsController(IServicesManager servicesManager) : base(servicesManager)
+    public class InventoryItemsController : Controller
     {
-    }
+        public InventoryItemsController(IServicesManager servicesManager) : base(servicesManager)
+        {
+        }
 
-    [HttpPost]
-    public async Task<IActionResult> Create(InventoryItem_AddRequestModel item)
-    {
-        if (!ModelState.IsValid)
-            return BadRequest(ModelState);
+        [HttpGet]
+        public async Task<IActionResult> GetAll(int page, int pageSize)
+        {
+            var items = await _servicesManager.InventoryItemsService
+                                              .GetAllAsync(page, pageSize);
+            
+            return Ok(items);
+        }
 
-        var model = await _servicesManager.InventoryItemsService.CreateAsync(item);
-        return Created(string.Empty, model);
-    }
+        [HttpPost]
+        public async Task<IActionResult> Create(InventoryItem_AddRequestModel item)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
 
-    [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete(int id)
-    {
-        var result = await _servicesManager.InventoryItemsService.RemoveAsync(id);
-        return result.IsSuccess ? NoContent() : BadRequest(result.Errors);
-    }
+            var model = await _servicesManager.InventoryItemsService.CreateAsync(item);
+            return Created(string.Empty, model);
+        }
 
-    [HttpPatch("{id:int}")]
-    public async Task<IActionResult> Update(int id, InventoryItem_PatchRequestModel updatedItem)
-    {
-        var result = await _servicesManager.InventoryItemsService.UpdateAsync(id, updatedItem);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Errors);
-    }
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var result = await _servicesManager.InventoryItemsService.RemoveAsync(id);
+            return result.IsSuccess ? NoContent() : BadRequest(result.GetErrorsDictionary());
+        }
 
-    [HttpGet]
-    public async Task<IActionResult> GetAll(int page, int pageSize)
-    {
-        var items = await _servicesManager.InventoryItemsService
-                                          .GetAllAsync(page, pageSize, excludeDeleted: true);
-
-        return Ok(items);
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Update(int id, InventoryItem_PatchRequestModel updatedItem)
+        {
+            var result = await _servicesManager.InventoryItemsService.UpdateAsync(id, updatedItem);
+            return result.IsSuccess ? Ok(result.Value) : BadRequest(result.GetErrorsDictionary());
+        }
     }
 }

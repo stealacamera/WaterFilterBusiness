@@ -5,6 +5,7 @@ using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Inventory.Requests;
 
@@ -21,22 +22,26 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        //TODO get id from authentication
-        var result = await _servicesManager.TechnicianInventoryRequestsService
-                                           .CreateAsync(1, request);
-
-        if (result.IsFailed)
-            return BadRequest(result.Errors);
-        else
+        var result = await _servicesManager.WrapInTransactionAsync<InventoryRequest>(async () =>
         {
-            var model = result.Value;
+            var baseRequestCreateresult = await _servicesManager.BaseInventoryRequestsService
+                                                                .CreateAsync(request);
 
-            model.Tool = (await _servicesManager.InventoryItemsService
-                                                .GetByIdAsync(model.Tool.Id))
-                                                .Value;
+            if (baseRequestCreateresult.IsFailed)
+                return Result.Fail(baseRequestCreateresult.Errors);
 
-            return Created(string.Empty, result.Value);
-        }
+            //TODO get id from authentication
+            var createResult = await _servicesManager.TechnicianInventoryRequestsService
+                                                     .CreateAsync(3011, baseRequestCreateresult.Value);
+
+            return createResult.IsFailed
+                   ? Result.Fail(createResult.Errors)
+                   : createResult.Value;
+        });
+
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Created(string.Empty, result.Value);
     }
 
     public override async Task<IActionResult> GetAll(int page, int pageSize)
@@ -75,11 +80,17 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
 
             if (inventoryResult.IsFailed)
                 return Result.Fail(inventoryResult.Errors);
+            
+            var higherUpInventoryResult = await _servicesManager.SmallInventoryItemsService
+                                                                .DecreaseQuantityAsync(request.Tool.Id, request.Quantity);
+
+            if (higherUpInventoryResult.IsFailed)
+                return Result.Fail(higherUpInventoryResult.Errors);
 
             var movementResult = await _servicesManager.InventoryMovementsService
                                                        .CreateAsync(new InventoryMovement_AddReqestModel
                                                        {
-                                                           GiverId = 1, //TODO get cheifs op from authorization
+                                                           GiverId = 2018, //TODO get cheifs op from authorization
                                                            Quantity = request.Quantity,
                                                            ReceiverId = request.Technician.Id,
                                                            ToolId = request.Tool.Id
@@ -91,7 +102,9 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
             return request;
         });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 
     public override async Task<IActionResult> AcceptRequest(int id)
@@ -102,7 +115,9 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
                                                Status = InventoryRequestStatus.InProgress
                                            });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 
     public override async Task<IActionResult> CancelRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
@@ -117,6 +132,8 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
                                                Status = InventoryRequestStatus.Cancelled
                                            });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 }

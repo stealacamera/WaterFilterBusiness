@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class CallOutcome : PlainStrongEntity
-{
-}
+internal class CallOutcome : PlainStrongEntity { }

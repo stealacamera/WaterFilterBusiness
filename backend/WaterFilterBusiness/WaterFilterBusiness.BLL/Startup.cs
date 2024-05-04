@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using WaterFilterBusiness.BLL.Services;
 using WaterFilterBusiness.BLL.Services.Identity;
+using WaterFilterBusiness.BLL.Services.Singleton;
 
 namespace WaterFilterBusiness.BLL;
 
@@ -10,6 +11,8 @@ public static class Startup
     {
         services.AddMemoryCache();
         services.AddScoped<IPermissionsService, PermissionsService>();
+        
+        services.AddSingleton<ILoggerService, LoggerService>();
 
         services.AddScoped<IUtilityService, UtilityService>();
         services.AddScoped<IServicesManager, ServicesManager>();

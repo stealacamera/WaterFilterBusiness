@@ -28,7 +28,7 @@ internal class PermissionsService : Service, IPermissionsService
     public async Task<Result<HashSet<Permission>>> GetAllForUserAsync(int userId)
     {
         if (!await _utilityService.DoesUserExistAsync(userId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(userId));
 
         var permissions = GetPermissionsFromCache();
 

@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs.Calls;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Calls;
 
@@ -15,7 +17,8 @@ public class CustomerCallsController : Controller
 
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        int page, int pageSize,
+        [Required, Range(1, int.MaxValue)] int page,
+        [Required, Range(1, int.MaxValue)] int pageSize,
         DateOnly? from = null, DateOnly? to = null,
         [FromQuery] CallOutcome? filterByOutcome = null)
     {
@@ -23,26 +26,29 @@ public class CustomerCallsController : Controller
                                           .GetAllAsync(page, pageSize, from, to, filterByOutcome);
 
         foreach (var call in calls.Values)
-        {
-            var phoneAgent = (await _servicesManager.UsersService
-                                                    .GetByIdAsync(call.PhoneAgent.Id))
-                                                    .Value;
-
-            call.PhoneAgent.Surname = phoneAgent.Surname;
-            call.PhoneAgent.Username = phoneAgent.Username;
-            call.PhoneAgent.Name = phoneAgent.Name;
-        }
+            await PopulateCall(call);
 
         return Ok(calls);
     }
 
     [HttpGet("customers/{customerId:int}")]
-    public async Task<IActionResult> GetHistoryForCustomer(int customerId, int pageSize, int page = 1)
+    public async Task<IActionResult> GetHistoryForCustomer(
+        int customerId,
+        [Required, Range(1, int.MaxValue)] int pageSize,
+        [Required, Range(1, int.MaxValue)] int page)
     {
         var result = await _servicesManager.CustomerCallsService
                                            .GetCallHistoryForCustomerAsync(customerId, page, pageSize);
 
-        return result.IsFailed ? BadRequest(result) : Ok(result.Value);
+        if (result.IsFailed)
+            return BadRequest(result.GetErrorsDictionary());
+
+        var calls = result.Value;
+
+        foreach (var call in calls.Values)
+            await PopulateCall(call);
+
+        return Ok(calls);
     }
 
     [HttpPost]
@@ -51,6 +57,21 @@ public class CustomerCallsController : Controller
         var result = await _servicesManager.CustomerCallsService
                                            .CreateAsync(customerCall);
 
-        return result.IsFailed ? BadRequest(result) : Created(string.Empty, result.Value);
+        if (result.IsFailed)
+            return BadRequest(result.GetErrorsDictionary());
+
+        await PopulateCall(result.Value);
+        return Created(string.Empty, result.Value);
+    }
+
+    private async Task PopulateCall(CustomerCall call)
+    {
+        var phoneAgent = (await _servicesManager.UsersService
+                                                .GetByIdAsync(call.PhoneAgent.Id))
+                                                .Value;
+
+        call.PhoneAgent.Surname = phoneAgent.Surname;
+        call.PhoneAgent.Username = phoneAgent.Username;
+        call.PhoneAgent.Name = phoneAgent.Name;
     }
 }

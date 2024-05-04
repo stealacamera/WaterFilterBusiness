@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Inventory.Inventories;
 
@@ -18,20 +20,28 @@ public class TechnicianInventoryItemsController : Controller
                                           .GetAllAsync(technicianId, page, pageSize);
 
         if (result.IsFailed)
-            return BadRequest(result.Errors);
+            return BadRequest(result.GetErrorsDictionary());
 
         foreach (var item in result.Value.Values)
-            item.Item = (await _servicesManager.InventoryItemsService.GetByIdAsync(item.Item.Id)).Value;
+        {
+            var baseItem = await _servicesManager.InventoryItemsService.GetByIdAsync(item.Item.Id);
+            item.Item = baseItem.Value;
+        }
 
-        return Ok(result.Value.Values);
+        return Ok(result.Value);
     }
 
     [HttpPatch("technician/{technicianId:int}/tool/{toolId:int}/reduce-stock")]
-    public async Task<IActionResult> DecreaseQuantity(int technicianId, int toolId, [FromBody] int decreaseBy)
+    public async Task<IActionResult> DecreaseQuantity(
+        int technicianId, 
+        int toolId, 
+        [FromBody, Range(1, int.MaxValue)] int decreaseBy)
     {
         var result = await _servicesManager.TechnicianInventoryItemsService
                                            .DecreaseQuantityAsync(technicianId, toolId, decreaseBy);
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed 
+               ? BadRequest(result.GetErrorsDictionary()) 
+               : Ok(result.Value);
     }
 }

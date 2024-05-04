@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using FluentResults;
+﻿using FluentResults;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
@@ -12,12 +11,12 @@ namespace WaterFilterBusiness.BLL.Services.Inventory.Requests;
 
 public interface ISmallInventoryRequestsService
 {
-    Task<Result<SmallInventoryRequest>> CreateAsync(int requesterId, InventoryRequest_AddRequestModel request);
+    Task<Result<SmallInventoryRequest>> CreateAsync(int requesterId, int baseRequestId);
     Task<Result<SmallInventoryRequest>> UpdateAsync(int requestId, InventoryRequest_PatchRequestModel update);
     Task<OffsetPaginatedList<SmallInventoryRequest>> GetAllAsync(int page, int pageSize);
 }
 
-internal class SmallInventoryRequestsService : BaseInventoryRequestsService, ISmallInventoryRequestsService
+internal class SmallInventoryRequestsService : Service, ISmallInventoryRequestsService
 {
     public SmallInventoryRequestsService(IWorkUnit workUnit, IUtilityService utilityService) : base(workUnit, utilityService)
     {
@@ -42,7 +41,7 @@ internal class SmallInventoryRequestsService : BaseInventoryRequestsService, ISm
         var dbModel = await _workUnit.SmallInventoryRequestsRepository.GetByIdAsync(requestId);
 
         if (dbModel == null)
-            return InventoryRequestErrors.NotFound;
+            return InventoryRequestErrors.NotFound(nameof(requestId));
 
         var baseRequestModel = await _workUnit.InventoryRequestsRepository.GetByIdAsync(requestId);
         var updateValidation = await IsUpdateValid(baseRequestModel, update);
@@ -53,7 +52,7 @@ internal class SmallInventoryRequestsService : BaseInventoryRequestsService, ISm
         baseRequestModel.StatusId = update.Status.Value;
         baseRequestModel.ConclusionNote = update.ConclusionNote;
 
-        if (update.Status == InventoryRequestStatus.Cancelled 
+        if (update.Status == InventoryRequestStatus.Cancelled
             || update.Status == InventoryRequestStatus.Completed)
             baseRequestModel.ConcludedAt = DateTime.Now;
 
@@ -65,8 +64,9 @@ internal class SmallInventoryRequestsService : BaseInventoryRequestsService, ISm
         DAL.Entities.Inventory.InventoryRequest entity,
         InventoryRequest_PatchRequestModel update)
     {
-        if (!IsStatusChangeValid(entity, update.Status))
+        if (!_utilityService.IsRequestStatusChangeValid(entity.StatusId, update.Status))
             return InventoryRequestErrors.CannotChangeStatus(
+                nameof(update.Status),
                 InventoryRequestStatus.FromValue(entity.StatusId).Name,
                 update.Status.Name);
 
@@ -74,45 +74,33 @@ internal class SmallInventoryRequestsService : BaseInventoryRequestsService, ISm
         int bigInventoryStock = await _utilityService.GetBigInventoryItemQuantityAsync(entity.ToolId);
 
         if (update.Status == InventoryRequestStatus.Completed && bigInventoryStock < entity.Quantity)
-            return InventoryItemErrors.NotEnoughStock;
+            return InventoryItemErrors.NotEnoughStock(nameof(entity.Quantity));
 
         return Result.Ok();
     }
 
-    public async Task<Result<SmallInventoryRequest>> CreateAsync(int requesterId, InventoryRequest_AddRequestModel request)
+    public async Task<Result<SmallInventoryRequest>> CreateAsync(int requesterId, int baseRequestId)
     {
         if (!await _utilityService.DoesUserExistAsync(requesterId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(requesterId));
 
-        if(!await _utilityService.IsUserInRoleAsync(requesterId, Role.OperationsChief))
-            return GeneralErrors.Unauthorized;
+        if (!await _utilityService.IsUserInRoleAsync(requesterId, Role.OperationsChief))
+            return GeneralErrors.Unauthorized(nameof(requesterId));
+        
+        var baseRequestEntity = await _workUnit.InventoryRequestsRepository.GetByIdAsync(baseRequestId);
 
-        using var transaction = await _workUnit.BeginTransactionAsync();
+        if (baseRequestEntity == null || await _utilityService.DoesBaseInventoryRequestBelongToRequest(baseRequestId))
+            throw new InvalidOperationException();
 
-        try
-        {
-            var createRequestResult = await CreateAsync(request);
-
-            if (createRequestResult.IsFailed)
-                return Result.Fail(createRequestResult.Errors);
-
-            await _workUnit.SaveChangesAsync();
-            await _workUnit.SmallInventoryRequestsRepository
+        await _workUnit.SmallInventoryRequestsRepository
                        .AddAsync(new DAL.Entities.Inventory.SmallInventoryRequest
                        {
-                           InventoryRequestId = createRequestResult.Value.Id
+                           InventoryRequestId = baseRequestId,
+                           RequesterId = requesterId
                        });
 
-            await _workUnit.SaveChangesAsync();
-            await transaction.CommitAsync();
-
-            return ConvertEntityToModel(requesterId, createRequestResult.Value);
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+        await _workUnit.SaveChangesAsync();
+        return ConvertEntityToModel(requesterId, baseRequestEntity);
     }
 
     private async Task<SmallInventoryRequest> ConvertEntityToModel(DAL.Entities.Inventory.SmallInventoryRequest entity)

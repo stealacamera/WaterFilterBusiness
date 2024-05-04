@@ -37,7 +37,9 @@ internal class ClientDebtsRepository : SimpleRepository<ClientDebt, int>, IClien
             query = query.Where(e => e.Sale.Meeting.CustomerId == filterByClient.Value);
 
         if (filterByCompletionStatus.HasValue)
-            query = query.Where(e => e.IsCompleted == filterByCompletionStatus.Value);
+            query = query.Where(e => filterByCompletionStatus.Value
+                                     ? e.CompletedAt != null
+                                     : e.CompletedAt == null);
 
         return await CursorPaginatedEnumerable<ClientDebt, int>.CreateFromStrongEntityAsync(query, paginationCursor, pageSize);
     }

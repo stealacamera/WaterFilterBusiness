@@ -9,13 +9,13 @@ public record InventoryPurchase_AddRequestModel
 
     [Required]
     [Range(1, int.MaxValue)]
-    public int Quantity;
+    public int Quantity { get; set; }
 }
 
 public record InventoryPurchase
 {
     public InventoryItem Tool { get; set; }
     public decimal Price { get; set; }
-    public int Quantity;
+    public int Quantity { get; set; }
     public DateTime OccurredAt { get; set; }
 }

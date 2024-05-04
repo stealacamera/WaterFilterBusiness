@@ -1,7 +1,11 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Any;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Text;
 using WaterFilterBusiness.API.Common;
 using WaterFilterBusiness.API.Common.Authentication;
 using WaterFilterBusiness.BLL;
@@ -15,19 +19,22 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.RegisterDALServices(builder.Configuration);
 builder.Services.RegisterBLLServices();
+
+builder.Services.AddScoped<IJwtProvider, JwtProvider>();
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
 builder.Services.AddControllers()
-                .AddJsonOptions(options => {
+                .AddJsonOptions(options =>
+                {
                     options.AllowInputFormatterExceptionMessages = false;
-    
+
                     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
                     options.JsonSerializerOptions.Converters.Add(new TimeOnlyJsonConverter());
 
                     options.JsonSerializerOptions.Converters.Add(new RoleJsonConverter());
                     options.JsonSerializerOptions.Converters.Add(new WeekdayJsonConverter());
                     options.JsonSerializerOptions.Converters.Add(new PaymentTypeJsonConverter());
-                    
+
                     options.JsonSerializerOptions.Converters.Add(new CallOutcomeJsonConverter());
                     options.JsonSerializerOptions.Converters.Add(new MeetingOutcomeJsonConverter());
                 });
@@ -35,6 +42,30 @@ builder.Services.AddControllers()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
     {
+        // JWT authentication
+        options.AddSecurityDefinition(
+            JwtBearerDefaults.AuthenticationScheme,
+            new OpenApiSecurityScheme
+            {
+                Name = "Authorization",
+                Type = SecuritySchemeType.Http,
+                In = ParameterLocation.Header,
+                Scheme = JwtBearerDefaults.AuthenticationScheme,
+                BearerFormat = "JWT",
+                Description = "JWT authentication. Example: Bearer [token]",
+            });
+
+        options.AddSecurityRequirement(new OpenApiSecurityRequirement {
+            {
+                new OpenApiSecurityScheme {
+                    Reference = new OpenApiReference {
+                        Type = ReferenceType.SecurityScheme,
+                        Id = JwtBearerDefaults.AuthenticationScheme }},
+                new string[] { "Bearer " }
+            }
+        });
+
+        // Type mapping
         options.MapType<DateOnly>(() =>
             new OpenApiSchema
             {
@@ -60,11 +91,30 @@ builder.Services.AddSwaggerGen(options =>
         options.MapType<MeetingOutcome>(() => new OpenApiSchema { Type = "string", Example = new OpenApiString(MeetingOutcome.Successful.Name) });
     });
 
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer();
-
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
-builder.Services.ConfigureOptions<JwtBearerOptionsSetup>();
+JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+builder.Services.AddAuthentication(e =>
+                {
+                    e.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+                    e.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    e.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = builder.Configuration["Jwt:Audience"],
+                        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                        RequireExpirationTime = true,
+                        IssuerSigningKey =
+                            new SymmetricSecurityKey(
+                                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]!)),
+                        ValidateIssuerSigningKey = true
+                    };
+                });
 
 builder.Services.AddAuthorization();
 builder.Services.AddSingleton<IAuthorizationHandler, PermissionAuthorizationHandler>();
@@ -82,10 +132,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseMiddleware<ExceptionHandlingMiddleware>();
-
-app.UseAuthorization();
 app.UseAuthentication();
+app.UseAuthorization();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

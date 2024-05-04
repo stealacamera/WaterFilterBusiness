@@ -19,6 +19,8 @@ public class PermissionAuthorizationHandler
         AuthorizationHandlerContext context,
         PermissionRequirement requirement)
     {
+        var temp = context.User.Claims.ToArray();
+
         string? userId = context.User
                                 .Claims
                                 .FirstOrDefault(e => e.Type == JwtRegisteredClaimNames.Sub)?.Value;

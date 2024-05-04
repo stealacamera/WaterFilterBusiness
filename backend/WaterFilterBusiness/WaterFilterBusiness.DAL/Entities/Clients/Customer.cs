@@ -2,17 +2,17 @@
 
 public class Customer : StrongEntity
 {
-    public string FullName { get; set; }
-    public string PhoneNumber { get; set; }
-
+    public string FullName { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
+    
     public string? Address { get; set; }
-    public string City { get; set; }
-
-    public string Profession { get; set; }
+    public string City { get; set; } = null!;
+    
+    public string Profession { get; set; } = null!;
     public bool? IsQualified { get; set; }
 
-    internal ICollection<CustomerCall> CallHistory { get; set; }
-    internal ScheduledCall ScheduledCall { get; set; }
+    internal IList<CustomerCall> CallHistory { get; set; } = new List<CustomerCall>();
+    internal IList<ScheduledCall> ScheduledCalls { get; set; } = new List<ScheduledCall>();
     public DateTime? RedListedAt { get; set; }
 }
 

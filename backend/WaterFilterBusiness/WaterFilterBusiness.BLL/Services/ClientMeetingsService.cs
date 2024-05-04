@@ -4,6 +4,7 @@ using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.ErrorHandling.Errors;
+using WaterFilterBusiness.Common.Utilities;
 using WaterFilterBusiness.DAL;
 using WaterFilterBusiness.DAL.DAOs;
 
@@ -12,27 +13,41 @@ namespace WaterFilterBusiness.BLL.Services;
 public interface IClientMeetingsService
 {
     Task<Result<ClientMeeting>> CreateAsync(ClientMeeting_AddRequestModel clientMeeting);
-    Task<Result<ClientMeeting>> UpdateAsync(ClientMeeting_UpdateRequestModel meeting);
+    Task<Result<ClientMeeting>> UpdateAsync(int id, ClientMeeting_UpdateRequestModel meeting);
 
-    Task<CursorPaginatedList<ClientMeeting, int>> GetAllAsync(
-        int paginationCursor,
+    Task<OffsetPaginatedList<ClientMeeting>> GetAllAsync(
+        int page,
         int pageSize,
         DateOnly? from = null,
         DateOnly? to = null,
-        bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool? filterExpressMeetings = false);
-    
-    Task<CursorPaginatedList<ClientMeeting, int>> GetAllByDayForWorkerAsync(
+        int? filterByOutcome = null,
+        bool? filterExpressMeetings = true);
+
+
+    Task<Result<CursorPaginatedList<ClientMeeting, int>>> GetAllByDayForWorkerAsync(
         int workerId,
         DateOnly date, 
-        int paginationCursor, int pageSize, 
-        bool? filterExpressMeetings = false);
+        int paginationCursor, 
+        int pageSize,
+        bool? filterByCompleted = null,
+        bool? filterExpressMeetings = true);
     
-    Task<CursorPaginatedList<ClientMeeting, int>> GetAllByWeekForWorkerAsync(
+    Task<Result<CursorPaginatedList<ClientMeeting, int>>> GetAllByWeekForWorkerAsync(
         int workerId,
         DateOnly date, 
-        int paginationCursor, int pageSize, 
-        bool? filterExpressMeetings = false);
+        int paginationCursor, 
+        int pageSize,
+        bool? filterByCompleted = null,
+        bool? filterExpressMeetings = true);
+
+    Task<Result<Dictionary<int, Dictionary<int, int>>>> GetYearlyTotalMonthlyMeetingsSetupForPhoneAgentAsync(
+        int phoneAgentId,
+        DateOnly? from = null,
+        DateOnly? to = null);
+
+    Task<Result<Dictionary<DateOnly, int>>> GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(
+        int phoneAgentId,
+        int nrWeeks);
 }
 
 internal class ClientMeetingsService : Service, IClientMeetingsService
@@ -41,15 +56,53 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
     {
     }
 
+    public async Task<Result<Dictionary<DateOnly, int>>> GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(int phoneAgentId, int nrWeeks)
+    {
+        if (!await _utilityService.IsUserInRoleAsync(phoneAgentId, Role.PhoneOperator))
+            return new Error(nameof(phoneAgentId), new Error("Only phone agents can be used"));
+
+        var meetings = await _workUnit.ClientMeetingsRepository
+                                      .GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(phoneAgentId, nrWeeks);
+
+        var groupedMeetings = meetings.GroupBy(meeting => meeting.ScheduledAt.StartOfWeek())
+                                      .ToDictionary(
+                                        weekKey => DateOnly.FromDateTime(weekKey.Key),
+                                        weekMeetings => weekMeetings.Count());
+
+        return groupedMeetings;
+    }
+
+    public async Task<Result<Dictionary<int, Dictionary<int, int>>>> GetYearlyTotalMonthlyMeetingsSetupForPhoneAgentAsync(
+        int phoneAgentId, 
+        DateOnly? from = null, 
+        DateOnly? to = null)
+    {
+        if (!await _utilityService.IsUserInRoleAsync(phoneAgentId, Role.PhoneOperator))
+            return new Error(nameof(phoneAgentId), new Error("Only phone agents can be used"));
+
+        var meetings = await _workUnit.ClientMeetingsRepository
+                                      .GetYearlyTotalMonthlyMeetingsSetupForPhoneAgentAsync(phoneAgentId, from, to);
+
+        var groupedMeetings = meetings.GroupBy(meeting => meeting.ScheduledAt.Year)
+                                      .ToDictionary(
+                                            yearKey => yearKey.Key,
+                                            yearlyMeetings => yearlyMeetings.GroupBy(meeting => meeting.ScheduledAt.Month)
+                                                                            .ToDictionary(
+                                                                                monthKey => monthKey.Key,
+                                                                                monthlyMeetings => monthlyMeetings.Count()));
+
+        return groupedMeetings;
+    }
+
     public async Task<Result<ClientMeeting>> CreateAsync(ClientMeeting_AddRequestModel clientMeeting)
     {
         if (!await _utilityService.DoesCustomerExistAsync(clientMeeting.CustomerId))
-            return CustomerErrors.NotFound;
+            return CustomerErrors.NotFound(nameof(clientMeeting.CustomerId));
         else if (!await _utilityService.DoesUserExistAsync(clientMeeting.SalesAgentId))
-            return GeneralErrors.NotFoundError("Sales agent");
+            return GeneralErrors.EntityNotFound(nameof(clientMeeting.SalesAgentId), "Sales agent");
         else if (clientMeeting.PhoneOperatorId.HasValue &&
                  !await _utilityService.DoesUserExistAsync(clientMeeting.PhoneOperatorId.Value))
-            return GeneralErrors.NotFoundError("Phone agent");
+            return GeneralErrors.EntityNotFound(nameof(clientMeeting.PhoneOperatorId), "Phone agent");
 
         var validationResult = await IsNewMeetingValidAsync(clientMeeting);
 
@@ -74,29 +127,26 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
     private async Task<Result> IsNewMeetingValidAsync(ClientMeeting_AddRequestModel meeting)
     {
         if (await _workUnit.ClientMeetingsRepository
-                           .DoesCustomerHaveSuccessfulMeetingsAsync(meeting.CustomerId))
-            return ClientMeetingErrors.CustomerIsBuyer;
-
-        if (await _workUnit.ClientMeetingsRepository
-                           .IsCustomerAlreadyScheduledAsync(meeting.CustomerId, meeting.ScheduledAt))
-            return ClientMeetingErrors.CustomerIsAlreadyScheduled;
+                           .IsCustomerAlreadyScheduledAsync(meeting.CustomerId))
+            return ClientMeetingErrors.CustomerIsAlreadyScheduled(nameof(meeting.CustomerId));
 
         if (await _utilityService.IsTimespanWithinSalesAgentScheduleAsync(meeting.SalesAgentId, meeting.ScheduledAt))
-            return ClientMeetingErrors.MeetingOutsideSalesAgentSchedule;
+            return ClientMeetingErrors.MeetingOutsideSalesAgentSchedule(nameof(meeting.SalesAgentId));
 
         if (await _workUnit.ClientMeetingsRepository
                            .DoesSalesAgentHaveMeetingsInTimespan(meeting.SalesAgentId, meeting.ScheduledAt))
-            return ClientMeetingErrors.SalesAgentBusy_CannotAssignMeeting;
+            return ClientMeetingErrors.SalesAgentBusy_CannotAssignMeeting(nameof(meeting.SalesAgentId));
 
         return Result.Ok();
     }
 
-    public async Task<CursorPaginatedList<ClientMeeting, int>> GetAllByDayForWorkerAsync(
+    public async Task<Result<CursorPaginatedList<ClientMeeting, int>>> GetAllByDayForWorkerAsync(
         int workerId,
         DateOnly date,
         int paginationCursor,
         int pageSize,
-        bool? filterExpressMeetings = false)
+        bool? filterByCompleted = null,
+        bool? filterExpressMeetings = true)
     {
         CursorPaginatedEnumerable<DAL.Entities.Clients.ClientMeeting, int> result;
 
@@ -106,6 +156,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         phoneOperatorId: workerId,
+                                        filterByCompleted: filterByCompleted,
                                         filterExpressMeetings: filterExpressMeetings);
         else if (await _utilityService.IsUserInRoleAsync(workerId, Role.SalesAgent))
             result = await _workUnit.ClientMeetingsRepository
@@ -113,9 +164,10 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         salesAgentId: workerId,
+                                        filterByCompleted: filterByCompleted,
                                         filterExpressMeetings: filterExpressMeetings);
         else
-            throw new InvalidOperationException("Only sales agents and phone operators can view meetings");
+            return ClientMeetingErrors.InvalidWorker(nameof(workerId));
 
         return new CursorPaginatedList<ClientMeeting, int>
         {
@@ -124,12 +176,13 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    public async Task<CursorPaginatedList<ClientMeeting, int>> GetAllByWeekForWorkerAsync(
+    public async Task<Result<CursorPaginatedList<ClientMeeting, int>>> GetAllByWeekForWorkerAsync(
         int workerId, 
         DateOnly date, 
         int paginationCursor, 
-        int pageSize, 
-        bool? filterExpressMeetings = false)
+        int pageSize,
+        bool? filterByCompleted = null,
+        bool? filterExpressMeetings = true)
     {
         CursorPaginatedEnumerable<DAL.Entities.Clients.ClientMeeting, int> result;
 
@@ -139,6 +192,7 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         phoneOperatorId: workerId,
+                                        filterByCompleted: filterByCompleted,
                                         filterExpressMeetings: filterExpressMeetings);
         else if (await _utilityService.IsUserInRoleAsync(workerId, Role.SalesAgent))
             result = await _workUnit.ClientMeetingsRepository
@@ -146,9 +200,10 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
                                         date,
                                         paginationCursor, pageSize,
                                         salesAgentId: workerId,
+                                        filterByCompleted: filterByCompleted,
                                         filterExpressMeetings: filterExpressMeetings);
         else
-            throw new InvalidOperationException("Only sales agents and phone operators can view meetings");
+            return ClientMeetingErrors.InvalidWorker(nameof(workerId));
 
         return new CursorPaginatedList<ClientMeeting, int>
         {
@@ -157,12 +212,12 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
-    public async Task<Result<ClientMeeting>> UpdateAsync(ClientMeeting_UpdateRequestModel updatedMeeting)
+    public async Task<Result<ClientMeeting>> UpdateAsync(int id, ClientMeeting_UpdateRequestModel updatedMeeting)
     {
-        var dbModel = await _workUnit.ClientMeetingsRepository.GetByIdAsync(updatedMeeting.Id);
+        var dbModel = await _workUnit.ClientMeetingsRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return GeneralErrors.NotFoundError("Client meeting");
+            return GeneralErrors.EntityNotFound("Client meeting");
 
         var validationResult = IsMeetingUpdateValid(dbModel, updatedMeeting);
 
@@ -178,24 +233,22 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         return ConvertEntityToModel(dbModel);
     }
 
-    public async Task<CursorPaginatedList<ClientMeeting, int>> GetAllAsync(
-        int paginationCursor,
+    public async Task<OffsetPaginatedList<ClientMeeting>> GetAllAsync(
+        int page,
         int pageSize,
         DateOnly? from = null,
         DateOnly? to = null,
-        bool onlyCompleted = false, bool onlyUpcoming = false,
-        bool? filterExpressMeetings = false)
+        int? filterByOutcome = null,
+        bool? filterExpressMeetings = true)
     {
         var result = await _workUnit.ClientMeetingsRepository
-                                    .GetAllAsync(
-                                        paginationCursor, pageSize, 
-                                        from, to, 
-                                        onlyCompleted, onlyUpcoming, 
-                                        filterExpressMeetings);
+                                    .GetAllAsync(page, pageSize, from, to, filterByOutcome, filterExpressMeetings);
 
-        return new CursorPaginatedList<ClientMeeting, int> 
-        { 
-            Cursor = result.Cursor,
+        return new OffsetPaginatedList<ClientMeeting>
+        {
+            Page = page,
+            PageSize = pageSize,
+            TotalCount = result.TotalCount,
             Values = result.Values.Select(ConvertEntityToModel).ToList()
         };
     }
@@ -218,14 +271,14 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
     private Result IsMeetingUpdateValid(DAL.Entities.Clients.ClientMeeting meeting, ClientMeeting_UpdateRequestModel updatedMeeting)
     {
         if (meeting.MeetingOutcomeId != null)
-            return ClientMeetingErrors.CannotUpdate_OutcomeAlreadySet;
+            return ClientMeetingErrors.CannotUpdate_OutcomeAlreadySet(nameof(updatedMeeting.Outcome));
 
         // Restrict possible outcomes for express meetings
         if (meeting.PhoneOperatorId == null)
         {
             if (updatedMeeting.Outcome.Equals(MeetingOutcome.ClientCancelled) ||
                updatedMeeting.Outcome.Equals(MeetingOutcome.AgentCancelled))
-                return ClientMeetingErrors.CannotUpdate_ExpressMeetingOutcome;
+                return ClientMeetingErrors.CannotUpdate_ExpressMeetingOutcome(nameof(updatedMeeting.Outcome));
         }
 
         return Result.Ok();

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WaterFilterBusiness.DAL;
 
@@ -11,9 +12,11 @@ using WaterFilterBusiness.DAL;
 namespace WaterFilterBusiness.DAL.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240502140858_AddedCompletionFieldToScheduledCall")]
+    partial class AddedCompletionFieldToScheduledCall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -354,7 +357,8 @@ namespace WaterFilterBusiness.DAL.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerId")
+                        .IsUnique();
 
                     b.HasIndex("PhoneAgentId");
 
@@ -1576,8 +1580,8 @@ namespace WaterFilterBusiness.DAL.Migrations
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ScheduledCall", b =>
                 {
                     b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.Customer", null)
-                        .WithMany("ScheduledCalls")
-                        .HasForeignKey("CustomerId")
+                        .WithOne("ScheduledCall")
+                        .HasForeignKey("WaterFilterBusiness.DAL.Entities.Clients.ScheduledCall", "CustomerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1812,7 +1816,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                 {
                     b.Navigation("CallHistory");
 
-                    b.Navigation("ScheduledCalls");
+                    b.Navigation("ScheduledCall");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.User", b =>

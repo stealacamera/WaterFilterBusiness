@@ -16,18 +16,18 @@ internal class BigInventoryItemsService : Service, IBigInventoryItemsService
     {
     }
 
-    public async Task<Result<InventoryTypeItem>> DecreaseQuantityAsync(int tooldId, int decreaseBy)
+    public async Task<Result<InventoryTypeItem>> DecreaseQuantityAsync(int toolId, int decreaseBy)
     {
-        if (!await _utilityService.DoesInventoryItemExistAsync(tooldId))
-            return InventoryItemErrors.NotFound;
+        if (!await _utilityService.DoesInventoryItemExistAsync(toolId))
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
-        var dbModel = await _workUnit.BigInventoryItemsRepository.GetByIdAsync(tooldId);
+        var dbModel = await _workUnit.BigInventoryItemsRepository.GetByIdAsync(toolId);
 
         if (dbModel == null)
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
         if (dbModel.Quantity - Math.Abs(decreaseBy) < 0)
-            return InventoryItemErrors.NotEnoughStock;
+            return InventoryItemErrors.NotEnoughStock(nameof(dbModel.Quantity));
 
         dbModel.Quantity -= Math.Abs(decreaseBy);
         await _workUnit.SaveChangesAsync();
@@ -55,7 +55,7 @@ internal class BigInventoryItemsService : Service, IBigInventoryItemsService
     public async Task<Result<InventoryTypeItem>> UpsertAsync(int toolId, int quantity)
     {
         if (!await _utilityService.DoesInventoryItemExistAsync(toolId))
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
         var dbModel = await _workUnit.BigInventoryItemsRepository
                                      .GetByIdAsync(toolId);

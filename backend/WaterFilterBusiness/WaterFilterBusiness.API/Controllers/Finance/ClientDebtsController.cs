@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
 {
@@ -30,7 +31,9 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         public async Task<IActionResult> MarkComplete(int id)
         {
             var updateResult = await _servicesManager.ClientDebtsService.CompletePaymentAsync(id);
-            return updateResult.IsSuccess ? Ok(updateResult.Value) : BadRequest(updateResult.Errors);
+            return updateResult.IsSuccess 
+                   ? Ok(updateResult.Value) 
+                   : BadRequest(updateResult.GetErrorsDictionary());
         }
     }
 }

@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class MeetingOutcome : PlainStrongEntity
-{
-}
+internal class MeetingOutcome : PlainStrongEntity { }

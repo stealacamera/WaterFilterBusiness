@@ -1,5 +1,8 @@
 ﻿using FluentResults;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using System.Data;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.ErrorHandling.Errors;
@@ -10,11 +13,13 @@ namespace WaterFilterBusiness.BLL.Services.Customers;
 public interface ICustomersService
 {
     Task<Result<Customer>> GetByIdAsync(int id);
-    Task<Customer> CreateAsync(Customer customer);
-    Task<IList<Customer>> CreateRangeAsync(IList<Customer> customers);
-    Task<Result<Customer>> UpdateAsync(int id, CustomerUpdateRequestModel customer);
-    Task<OffsetPaginatedList<Customer>> GetAllAsync(int page, int pageSize, bool? filterClients = true, bool? filterRedListed = true);
-    Task<OffsetPaginatedList<Customer>> GetAllRedListedAsync(int page, int pageSize);
+    Task<Result<IList<Customer>>> CreateRangeAsync(Customer_AddRequestModel[] customers);
+    Task<Result<Customer>> UpdateAsync(int id, Customer_UpdateRequestModel customer);
+    Task<OffsetPaginatedList<Customer>> GetAllAsync(
+        int page,
+        int pageSize,
+        bool? filterWithCalls = true,
+        bool? filterByRedListed = true);
 }
 
 internal class CustomersService : Service, ICustomersService
@@ -25,31 +30,12 @@ internal class CustomersService : Service, ICustomersService
     {
     }
 
-    public async Task<Customer> CreateAsync(Customer customer)
-    {
-        var dbModel = await _workUnit.CustomersRepository
-                                     .AddAsync(new DAL.Entities.Clients.Customer
-                                     {
-                                         FullName = customer.FullName,
-                                         Address = customer.Address,
-                                         City = customer.City,
-                                         PhoneNumber = customer.PhoneNumber,
-                                         Profession = customer.Profession,
-                                         IsQualified = customer.IsQualified
-                                     });
-
-        await _workUnit.SaveChangesAsync();
-
-        customer.Id = dbModel.Id;
-        return customer;
-    }
-
-    public async Task<Result<Customer>> UpdateAsync(int id, CustomerUpdateRequestModel customer)
+    public async Task<Result<Customer>> UpdateAsync(int id, Customer_UpdateRequestModel customer)
     {
         var dbModel = await _workUnit.CustomersRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return CustomerErrors.NotFound;
+            return CustomerErrors.NotFound(nameof(id));
 
         if (IsUpdateEmpty(customer))
             return CustomerErrors.EmptyUpdate;
@@ -58,15 +44,31 @@ internal class CustomersService : Service, ICustomersService
             return GeneralErrors.UnchangedUpdate;
 
         if (customer.RedListedAt.HasValue && await _utilityService.DoesCustomerHaveAScheduledCallAsync(id))
-            return CustomerErrors.CannotRedlist_ExistingScheduledCalls;
+            return CustomerErrors.CannotRedlist_ExistingScheduledCalls(nameof(id));
 
-        dbModel = UpdateEntity(customer, dbModel);
-        await _workUnit.SaveChangesAsync();
+        try
+        {
+            dbModel = UpdateEntity(customer, dbModel);
+            await _workUnit.SaveChangesAsync();
 
-        return ConvertEntityToModel(dbModel);
+            return ConvertEntityToModel(dbModel);
+        }
+        catch (Exception ex)
+        {
+            if(ex is DbUpdateException dbUpdateEx)
+            {
+                if(dbUpdateEx.InnerException != null && dbUpdateEx.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Number == 2627 || sqlEx.Number == 2601)
+                        return CustomerErrors.UniqueConstraintFailed;
+                }
+            }
+
+            throw;
+        }
     }
 
-    private DAL.Entities.Clients.Customer UpdateEntity(CustomerUpdateRequestModel update, DAL.Entities.Clients.Customer entity)
+    private DAL.Entities.Clients.Customer UpdateEntity(Customer_UpdateRequestModel update, DAL.Entities.Clients.Customer entity)
     {
         if (!update.FullName.IsNullOrEmpty())
             entity.FullName = update.FullName;
@@ -95,7 +97,7 @@ internal class CustomersService : Service, ICustomersService
         return entity;
     }
 
-    private bool IsUpdateChanged(CustomerUpdateRequestModel updatedCustomer, DAL.Entities.Clients.Customer originalCustomer)
+    private bool IsUpdateChanged(Customer_UpdateRequestModel updatedCustomer, DAL.Entities.Clients.Customer originalCustomer)
     {
         return HasAttributeChanged(updatedCustomer.RedListedAt, originalCustomer.RedListedAt) ||
                HasAttributeChanged(updatedCustomer.PhoneNumber, originalCustomer.PhoneNumber) ||
@@ -109,11 +111,11 @@ internal class CustomersService : Service, ICustomersService
     public async Task<OffsetPaginatedList<Customer>> GetAllAsync(
         int page,
         int pageSize,
-        bool? filterClients = true,
-        bool? filterRedListed = true)
+        bool? filterWithCalls = true,
+        bool? filterByRedListed = true)
     {
         var customers = await _workUnit.CustomersRepository
-                                       .GetAllAsync(page, pageSize, filterClients, filterRedListed);
+                                       .GetAllAsync(page, pageSize, filterWithCalls, filterByRedListed);
 
         return new OffsetPaginatedList<Customer>
         {
@@ -128,55 +130,54 @@ internal class CustomersService : Service, ICustomersService
     {
         var dbModel = await _workUnit.CustomersRepository.GetByIdAsync(id);
 
-        if (dbModel == null)
-            return CustomerErrors.NotFound;
-
-        return new Customer
-        {
-            Id = dbModel.Id,
-            FullName = dbModel.FullName,
-            Address = dbModel.Address,
-            City = dbModel.City,
-            PhoneNumber = dbModel.PhoneNumber,
-            Profession = dbModel.Profession,
-            IsQualified = dbModel.IsQualified,
-            RedListedAt = dbModel.RedListedAt
-        };
+        return dbModel == null
+               ? CustomerErrors.NotFound(nameof(id))
+               : ConvertEntityToModel(dbModel);
     }
 
-    public async Task<IList<Customer>> CreateRangeAsync(IList<Customer> customers)
+    public async Task<Result<IList<Customer>>> CreateRangeAsync(Customer_AddRequestModel[] customers)
     {
         var dbModels = customers.Select(e => new DAL.Entities.Clients.Customer
+                                    {
+                                        Address = e.Address,
+                                        City = e.City,
+                                        FullName = e.FullName,
+                                        IsQualified = e.IsQualified,
+                                        PhoneNumber = e.PhoneNumber,
+                                        Profession = e.Profession,
+                                    })
+                                .ToArray();
+
+        try
         {
-            Address = e.Address,
-            City = e.City,
-            FullName = e.FullName,
-            IsQualified = e.IsQualified,
-            PhoneNumber = e.PhoneNumber,
-            Profession = e.Profession
-        })
-        .ToList();
+            await _workUnit.CustomersRepository.AddRangeAsync(dbModels);
+            await _workUnit.SaveChangesAsync();
 
-        await _workUnit.CustomersRepository.AddRangeAsync(dbModels.ToArray());
-        await _workUnit.SaveChangesAsync();
-
-        for (int i = 0; i < customers.Count; i++)
-            customers[i].Id = dbModels[i].Id;
-
-        return customers;
-    }
-
-    public async Task<OffsetPaginatedList<Customer>> GetAllRedListedAsync(int page, int pageSize)
-    {
-        var result = await _workUnit.CustomersRepository.GetAllRedListedAsync(page, pageSize);
-
-        return new OffsetPaginatedList<Customer>
+            return dbModels.Select(e => new Customer
+            {
+                Id = e.Id,
+                Address = e.Address,
+                City = e.City,
+                FullName = e.FullName,
+                IsQualified = e.IsQualified,
+                PhoneNumber = e.PhoneNumber,
+                Profession = e.Profession
+            })
+                           .ToList();
+        }
+        catch (Exception ex)
         {
-            Page = page,
-            PageSize = pageSize,
-            TotalCount = result.TotalCount,
-            Values = result.Values.Select(ConvertEntityToModel).ToList()
-        };
+            if (ex is DbUpdateException dbUpdateEx)
+            {
+                if (dbUpdateEx.InnerException != null && dbUpdateEx.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Number == 2627 || sqlEx.Number == 2601)
+                        return CustomerErrors.UniqueConstraintFailed;
+                }
+            }
+
+            throw;
+        }
     }
 
     private Customer ConvertEntityToModel(DAL.Entities.Clients.Customer entity)
@@ -185,12 +186,12 @@ internal class CustomersService : Service, ICustomersService
         {
             Id = entity.Id,
             FullName = entity.FullName,
-            Address = entity.Address,
-            City = entity.City,
             PhoneNumber = entity.PhoneNumber,
             Profession = entity.Profession,
-            IsQualified = entity.IsQualified,
-            RedListedAt = entity.RedListedAt
+            Address = entity.Address,
+            City = entity.City,
+            RedListedAt = entity.RedListedAt,
+            IsQualified = entity.IsQualified
         };
     }
 }

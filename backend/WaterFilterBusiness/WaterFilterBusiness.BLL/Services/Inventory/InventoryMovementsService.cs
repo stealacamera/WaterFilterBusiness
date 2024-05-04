@@ -1,4 +1,5 @@
 ﻿using FluentResults;
+using System.Reflection.Metadata.Ecma335;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
@@ -23,12 +24,12 @@ internal class InventoryMovementsService : Service, IInventoryMovementsService
     public async Task<Result<InventoryMovement>> CreateAsync(InventoryMovement_AddReqestModel movement)
     {
         if (!await _utilityService.DoesInventoryItemExistAsync(movement.ToolId))
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(movement.ToolId));
 
         if (!await _utilityService.DoesUserExistAsync(movement.ReceiverId))
-            return new Error("Receiver not found");
+            return new Error(nameof(movement.ReceiverId), new Error("Receiver not found"));
         else if (!await _utilityService.DoesUserExistAsync(movement.GiverId))
-            return new Error("Giver not found");
+            return new Error(nameof(movement.GiverId), new Error("Giver not found"));
 
         InventoryType? giverInventory = await GetInventoryTypeFromUser(movement.GiverId),
                       receiverInventory = await GetInventoryTypeFromUser(movement.ReceiverId);
@@ -63,15 +64,15 @@ internal class InventoryMovementsService : Service, IInventoryMovementsService
         if (giverInventory == null || receiverInventory == null)
             return new Error("Only technicians, operation chiefs, and inventory managers can receive or give an item");
         else if (receiverInventory == InventoryType.BigInventory)
-            return InventoryMovementErrors.InvalidReceiver;
+            return InventoryMovementErrors.InvalidReceiver(nameof(receiverInventory));
         else if (giverInventory == InventoryType.TechnicianInventory)
-            return InventoryMovementErrors.InvalidGiver;
+            return InventoryMovementErrors.InvalidGiver(nameof(giverInventory));
 
         // Check validity of exchange        
         if (giverInventory == InventoryType.SmallInventory && receiverInventory != InventoryType.TechnicianInventory)
-            return InventoryMovementErrors.InvalidReceiver;
+            return InventoryMovementErrors.InvalidReceiver(nameof(receiverInventory));
         else if (giverInventory == InventoryType.BigInventory && receiverInventory != InventoryType.SmallInventory)
-            return InventoryMovementErrors.InvalidReceiver;
+            return InventoryMovementErrors.InvalidReceiver(nameof(receiverInventory));
 
         return Result.Ok();
     }

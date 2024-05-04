@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs.Finance;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
 {
@@ -41,7 +42,7 @@ namespace WaterFilterBusiness.API.Controllers.Finance
 
             return result.IsSuccess
                    ? Created(nameof(Create), result.Value)
-                   : BadRequest(result.Errors);
+                   : BadRequest(result.GetErrorsDictionary());
         }
 
         [HttpGet]
@@ -51,7 +52,7 @@ namespace WaterFilterBusiness.API.Controllers.Finance
             return Ok(sales);
         }
 
-        [HttpPatch("{meetingId:int}")]
+        [HttpPatch("{meetingId:int}/verify")]
         public async Task<IActionResult> Verify(int meetingId, [FromBody, MaxLength(210)] string? verificationNote)
         {
             var verifyResult = await _servicesManager.SalesService
@@ -59,7 +60,7 @@ namespace WaterFilterBusiness.API.Controllers.Finance
 
             return verifyResult.IsSuccess
                    ? Ok(verifyResult.Value)
-                   : BadRequest(verifyResult.Errors);
+                   : BadRequest(verifyResult.GetErrorsDictionary());
         }
     }
 }

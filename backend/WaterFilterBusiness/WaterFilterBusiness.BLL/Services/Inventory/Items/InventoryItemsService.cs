@@ -53,7 +53,9 @@ internal class InventoryItemsService : Service, IInventoryItemsService
     public async Task<Result<InventoryItem>> GetByIdAsync(int id)
     {
         var dbModel = await _workUnit.InventoryItemsRepository.GetByIdAsync(id);
-        return dbModel == null ? InventoryItemErrors.NotFound : ConvertEntityToModel(dbModel);
+        return dbModel == null 
+               ? InventoryItemErrors.NotFound(nameof(id)) 
+               : ConvertEntityToModel(dbModel);
     }
 
     public async Task<Result> RemoveAsync(int id)
@@ -61,7 +63,7 @@ internal class InventoryItemsService : Service, IInventoryItemsService
         var dbModel = await _workUnit.InventoryItemsRepository.GetByIdAsync(id);
 
         if (dbModel == null || dbModel.DeletedAt != null)
-            return GeneralErrors.NotFoundError("Inventory item");
+            return GeneralErrors.EntityNotFound(nameof(id), "Inventory item");
 
         dbModel.DeletedAt = DateTime.Now;
         await _workUnit.SaveChangesAsync();
@@ -74,7 +76,7 @@ internal class InventoryItemsService : Service, IInventoryItemsService
         var dbModel = await _workUnit.InventoryItemsRepository.GetByIdAsync(id);
 
         if (dbModel == null || dbModel.DeletedAt != null)
-            return GeneralErrors.NotFoundError("Inventory item");
+            return GeneralErrors.EntityNotFound(nameof(id), "Inventory item");
 
         if (!item.Name.IsNullOrEmpty())
             dbModel.Name = item.Name.Trim();

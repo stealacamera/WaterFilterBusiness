@@ -20,7 +20,7 @@ class CallOutcomeConverter : TypeConverter
         {
             CallOutcome outcome;
 
-            if (CallOutcome.TryFromName((string)value, out outcome))
+            if (CallOutcome.TryFromName((string)value, ignoreCase: true, out outcome))
                 return outcome;
         }
 

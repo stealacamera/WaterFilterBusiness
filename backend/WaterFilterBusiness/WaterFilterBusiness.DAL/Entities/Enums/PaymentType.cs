@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class PaymentType : PlainStrongEntity
-{
-}
+internal class PaymentType : PlainStrongEntity { }

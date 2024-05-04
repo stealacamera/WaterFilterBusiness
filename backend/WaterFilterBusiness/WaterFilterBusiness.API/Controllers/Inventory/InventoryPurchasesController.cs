@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
-using WaterFilterBusiness.Common.DTOs;
 
 namespace WaterFilterBusiness.API.Controllers.Inventory
 {
@@ -19,35 +18,11 @@ namespace WaterFilterBusiness.API.Controllers.Inventory
                                                   .GetAllAsync(page, pageSize);
 
             foreach (var purchase in purchases.Values)
-                await CompleteModelForeignEntities(purchase);
+                purchase.Tool = (await _servicesManager.InventoryItemsService
+                                                 .GetByIdAsync(purchase.Tool.Id))
+                                                 .Value;
 
             return Ok(purchases);
-        }
-
-        [HttpPost()]
-        public async Task<IActionResult> Create(InventoryPurchase_AddRequestModel purchase)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var createResult = await _servicesManager.InventoryPurchasesService
-                                                     .CreateAsync(purchase.ToolId, purchase.Quantity);
-
-            if (createResult.IsFailed)
-                return BadRequest(createResult.Errors);
-            else
-            {
-                await CompleteModelForeignEntities(createResult.Value);
-                return Created(string.Empty, createResult.Value);
-            }
-        }
-
-        private async Task CompleteModelForeignEntities(InventoryPurchase purchase)
-        {
-            var tool = await _servicesManager.InventoryItemsService
-                                             .GetByIdAsync(purchase.Tool.Id);
-
-            purchase.Tool = tool.Value;
         }
     }
 }
