@@ -135,7 +135,7 @@ function Table({ columns, rows }) {
 
   return useMemo(
     () => (
-      <TableContainer>
+      <TableContainer sx={{ maxHeight: "500px", overflowY: "auto", scrollbarWidth: "none" }}>
         <MuiTable>
           <ArgonBox component="thead">
             <TableRow>{renderColumns}</TableRow>

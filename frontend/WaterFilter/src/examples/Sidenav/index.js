@@ -118,7 +118,12 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
   });
 
   return (
-    <SidenavRoot {...rest} variant="permanent" ownerState={{ darkSidenav, miniSidenav, layout }}>
+    <SidenavRoot
+      {...rest}
+      variant="permanent"
+      ownerState={{ darkSidenav, miniSidenav, layout }}
+      style={{ overflowY: "auto", scrollbarWidth: "none", msOverflowStyle: "none" }}
+    >
       <ArgonBox pt={3} pb={1} px={4} textAlign="center">
         <ArgonBox
           display={{ xs: "block", xl: "none" }}
@@ -155,9 +160,9 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
       <Divider light={darkSidenav} />
       <List>{renderRoutes}</List>
 
-      <ArgonBox pt={1} mt="auto" mb={2} mx={2}>
+      {/* <ArgonBox pt={1} mt="auto" mb={2} mx={2}>
         <SidenavFooter />
-      </ArgonBox>
+      </ArgonBox> */}
     </SidenavRoot>
   );
 }

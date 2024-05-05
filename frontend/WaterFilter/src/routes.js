@@ -44,6 +44,7 @@ import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import SalesAgent from "layouts/sales-agent";
 import Schedule from "layouts/schedule";
+import Meetings from "layouts/meetings";
 
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
@@ -67,13 +68,23 @@ const routes = [
   },
   {
     type: "route",
-    name: "Schedule",
+    name: "Schedule Management",
     key: "schedule",
     route: "/schedule",
     icon: (
       <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
     ),
     component: <Schedule />,
+  },
+  {
+    type: "route",
+    name: "Meetings Overview",
+    key: "meetings",
+    route: "/meetings",
+    icon: (
+      <ArgonBox component="i" color="warning" fontSize="14px" className="ni ni-calendar-grid-58" />
+    ),
+    component: <Meetings />,
   },
   {
     type: "route",

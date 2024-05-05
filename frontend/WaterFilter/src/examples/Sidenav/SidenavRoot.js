@@ -1,18 +1,3 @@
-/**
-=========================================================
-* Argon Dashboard 2 MUI - v3.0.1
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/argon-dashboard-material-ui
-* Copyright 2023 Creative Tim (https://www.creative-tim.com)
-
-Coded by www.creative-tim.com
-
- =========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-*/
-
 // @mui material components
 import Drawer from "@mui/material/Drawer";
 import { styled } from "@mui/material/styles";
@@ -72,7 +57,9 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       marginBottom: darkSidenav ? 0 : "inherit",
       left: "0",
       width: pxToRem(96),
-      overflowX: "hidden",
+      overflowX: "auto",
+      scrollbarWidth: "none",
+
       transform: "translateX(0)",
       transition: transitions.create(["width", "background-color"], {
         easing: transitions.easing.sharp,
@@ -86,6 +73,8 @@ export default styled(Drawer)(({ theme, ownerState }) => {
       boxShadow: xxl,
       border: "none",
       backgroundColor: bgColor,
+      overflowY: "auto", // Hide the vertical scrollbar
+      scrollbarWidth: "none",
 
       ...(miniSidenav ? drawerCloseStyles() : drawerOpenStyles()),
     },

@@ -32,7 +32,10 @@ function SidenavFooter() {
   const { miniSidenav, darkSidenav } = controller;
 
   return (
-    <ArgonBox opacity={miniSidenav ? 0 : 1} sx={{ transition: "opacity 200ms linear" }}>
+    <ArgonBox
+      opacity={miniSidenav ? 0 : 1}
+      sx={{ transition: "opacity 200ms linear", scrollbarWidth: "none" }}
+    >
       <ArgonBox position="relative" textAlign="center">
         <ArgonBox component="img" src={icon} alt="sidebar_illustration" width="60%" />
         <ArgonBox
