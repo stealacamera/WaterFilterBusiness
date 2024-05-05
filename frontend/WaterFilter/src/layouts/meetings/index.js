@@ -19,6 +19,7 @@ import Card from "@mui/material/Card";
 // Argon Dashboard 2 MUI components
 import ArgonBox from "components/ArgonBox";
 import ArgonTypography from "components/ArgonTypography";
+import ArgonButton from "components/ArgonButton";
 
 // Argon Dashboard 2 MUI examples
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
@@ -28,11 +29,12 @@ import Table from "examples/Tables/Table";
 
 // Data
 import authorsTableData from "layouts/meetings/data/authorsTableData";
-import projectsTableData from "layouts/meetings/data/projectsTableData";
+import { Box } from "@mui/material";
+
+import FilterAltIcon from "@mui/icons-material/FilterAlt";
 
 function Meetings() {
   const { columns, rows } = authorsTableData;
-  const { columns: prCols, rows: prRows } = projectsTableData;
 
   return (
     <DashboardLayout>
@@ -42,6 +44,15 @@ function Meetings() {
           <Card>
             <ArgonBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
               <ArgonTypography variant="h6">Meetings Overview</ArgonTypography>
+              <Box display={"flex"} gap={2}>
+                <ArgonButton variant="contained" color="info">
+                  <FilterAltIcon sx={{ mr: 1, ml: -1 }} />
+                  Filter
+                </ArgonButton>
+                <ArgonButton variant="contained" color="info">
+                  Add Instant Meeting
+                </ArgonButton>
+              </Box>
             </ArgonBox>
             <ArgonBox
               sx={{
@@ -57,23 +68,6 @@ function Meetings() {
             </ArgonBox>
           </Card>
         </ArgonBox>
-        {/* <Card>
-          <ArgonBox display="flex" justifyContent="space-between" alignItems="center" p={3}>
-            <ArgonTypography variant="h6">Projects table</ArgonTypography>
-          </ArgonBox>
-          <ArgonBox
-            sx={{
-              "& .MuiTableRow-root:not(:last-child)": {
-                "& td": {
-                  borderBottom: ({ borders: { borderWidth, borderColor } }) =>
-                    `${borderWidth[1]} solid ${borderColor}`,
-                },
-              },
-            }}
-          >
-            <Table columns={prCols} rows={prRows} />
-          </ArgonBox>
-        </Card> */}
       </ArgonBox>
       <Footer />
     </DashboardLayout>
