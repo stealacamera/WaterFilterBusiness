@@ -37,7 +37,7 @@ const Loadable = (Component) => (props) => {
 
 export default function Router() {
   useEffect(() => {
-    console.log(PATH_DASHBOARD.general.app);
+    console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
   return useRoutes([
     {
@@ -76,7 +76,7 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'app', element: <GeneralApp /> },
+        { path: 'dashboard', element: <GeneralApp /> },
         { path: 'ecommerce', element: <GeneralEcommerce /> },
         { path: 'analytics', element: <GeneralAnalytics /> },
         { path: 'banking', element: <GeneralBanking /> },

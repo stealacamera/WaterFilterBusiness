@@ -30,8 +30,8 @@ export default function AppTopAuthors() {
 
   return (
     <Card>
-      <CardHeader title="Top Authors" />
-      <Stack spacing={3} sx={{ p: 3 }}>
+      <CardHeader title="References" />
+      <Stack spacing={3} sx={{ p: 3, height: '115px', overflowY: 'auto', scrollbarWidth: 'none' }}>
         {displayAuthor.map((author, index) => (
           <AuthorItem key={author.id} author={author} index={index} />
         ))}
@@ -56,8 +56,10 @@ function AuthorItem({ author, index }) {
     <Stack direction="row" alignItems="center" spacing={2}>
       <Avatar alt={author.name} src={author.avatar} />
       <Box sx={{ flexGrow: 1 }}>
-        <Typography variant="subtitle2">{author.name}</Typography>
-        <Typography
+        <Typography variant="subtitle2">
+          {index + 1}. {author.name}
+        </Typography>
+        {/* <Typography
           variant="caption"
           sx={{
             mt: 0.5,
@@ -68,7 +70,7 @@ function AuthorItem({ author, index }) {
         >
           <Iconify icon={'eva:heart-fill'} sx={{ width: 16, height: 16, mr: 0.5 }} />
           {fShortenNumber(author.favourite)}
-        </Typography>
+        </Typography> */}
       </Box>
 
       <IconWrapperStyle

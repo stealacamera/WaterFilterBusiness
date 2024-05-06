@@ -82,7 +82,7 @@ export default function Register() {
           )}
         </HeaderStyle>
 
-        {mdUp && (
+        {/* {mdUp && (
           <SectionStyle>
             <Typography variant="h3" sx={{ px: 5, mt: 10, mb: 5 }}>
               Manage the job more effectively with Minimal
@@ -94,7 +94,7 @@ export default function Register() {
               src="https://minimal-assets-api.vercel.app/assets/illustrations/illustration_register.png"
             />
           </SectionStyle>
-        )}
+        )} */}
 
         <Container>
           <ContentStyle>
@@ -105,7 +105,7 @@ export default function Register() {
                 </Typography>
                 <Typography sx={{ color: 'text.secondary' }}>Free forever. No credit card needed.</Typography>
               </Box>
-              <Tooltip title={capitalCase(method)}>
+              {/* <Tooltip title={capitalCase(method)}>
                 <>
                   <Image
                     disabledEffect
@@ -113,7 +113,7 @@ export default function Register() {
                     sx={{ width: 32, height: 32 }}
                   />
                 </>
-              </Tooltip>
+              </Tooltip> */}
             </Box>
 
             <RegisterForm />

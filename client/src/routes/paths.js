@@ -35,7 +35,7 @@ export const PATH_PAGE = {
 export const PATH_DASHBOARD = {
   root: ROOTS_DASHBOARD,
   general: {
-    app: '/app',
+    dashboard: '/dashboard',
     ecommerce: '/ecommerce',
     analytics: '/analytics',
     banking: '/banking',

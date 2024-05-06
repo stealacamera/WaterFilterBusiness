@@ -23,29 +23,18 @@ export default function AnalyticsConversionRates() {
       },
     },
     plotOptions: {
-      bar: { horizontal: true, barHeight: '28%', borderRadius: 2 },
+      bar: { horizontal: false, barHeight: '28%', borderRadius: 2 },
     },
     xaxis: {
-      categories: [
-        'Italy',
-        'Japan',
-        'China',
-        'Canada',
-        'France',
-        'Germany',
-        'South Korea',
-        'Netherlands',
-        'United States',
-        'United Kingdom',
-      ],
+      categories: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
     },
   });
 
   return (
     <Card>
-      <CardHeader title="Conversion Rates" subheader="(+43%) than last year" />
+      <CardHeader title="Meetings No." subheader="(+0.2%) than last year" />
       <Box sx={{ mx: 3 }} dir="ltr">
-        <ReactApexChart type="bar" series={CHART_DATA} options={chartOptions} height={364} />
+        <ReactApexChart type="bar" series={CHART_DATA} options={chartOptions} height={412} />
       </Box>
     </Card>
   );
