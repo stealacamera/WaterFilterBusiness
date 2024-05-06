@@ -32,7 +32,7 @@ public interface IServicesManager
     #region Clients
     ICustomersService CustomersService { get; }
     ICustomerChangesService CustomerChangesService { get; }
-    IClientMeetingsService ClientMeetings { get; }
+    IClientMeetingsService ClientMeetingsService { get; }
     #endregion
 
     #region Inventory services
@@ -173,7 +173,7 @@ public sealed class ServicesManager : IServicesManager
     }
     
     private IClientMeetingsService _clientMeetings;
-    public IClientMeetingsService ClientMeetings
+    public IClientMeetingsService ClientMeetingsService
     {
         get
         {

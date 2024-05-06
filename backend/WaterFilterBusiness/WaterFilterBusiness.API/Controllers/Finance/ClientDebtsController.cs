@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
+using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
@@ -12,10 +15,11 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         {
         }
 
+        [HasPermission(Permission.ReadClientDebts)]
         [HttpGet]
         public async Task<IActionResult> GetAll(
-            int paginationCursor, 
-            int pageSize, 
+            [Required, Range(0, int.MaxValue)] int paginationCursor, 
+            [Required, Range(1, int.MaxValue)] int pageSize, 
             int? filterByClient = null,
             bool? filterByCompletionStatus = null)
         {
@@ -27,6 +31,7 @@ namespace WaterFilterBusiness.API.Controllers.Finance
             return Ok(debts);
         }
 
+        [HasPermission(Permission.EditClientDebts)]
         [HttpPatch("{id:int}/complete")]
         public async Task<IActionResult> MarkComplete(int id)
         {

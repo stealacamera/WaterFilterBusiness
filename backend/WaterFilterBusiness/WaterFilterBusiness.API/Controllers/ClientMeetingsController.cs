@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers;
@@ -14,7 +16,7 @@ public class ClientMeetingsController : Controller
     {
     }
 
-    //[authorized only for MARK MG]
+    [HasPermission(Permission.ReadClientMeetings)]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [Required, Range(1, int.MaxValue)] int page,
@@ -24,7 +26,7 @@ public class ClientMeetingsController : Controller
         int? filterByOutcome = null, 
         bool? filterExpressMeetings = null)
     {
-        var meetings = await _servicesManager.ClientMeetings
+        var meetings = await _servicesManager.ClientMeetingsService
                                              .GetAllAsync(
                                                 page, pageSize, 
                                                 from, to, 
@@ -37,7 +39,7 @@ public class ClientMeetingsController : Controller
         return Ok(meetings);
     }
 
-    //[authorized only for PHA and SA]
+    [HasPermission(Permission.ReadClientMeetingsForWorker)]
     [HttpGet("worker/{userId:int}/date/{date}")]
     public async Task<IActionResult> GetAllByDayForWorker(
         int userId,
@@ -47,7 +49,7 @@ public class ClientMeetingsController : Controller
         bool? filterByCompleted = null,
         bool? filterExpressMeetings = null)
     {
-        var meetings = await _servicesManager.ClientMeetings
+        var meetings = await _servicesManager.ClientMeetingsService
                                             .GetAllByDayForWorkerAsync(
                                                 userId,
                                                 date,
@@ -64,7 +66,7 @@ public class ClientMeetingsController : Controller
         return Ok(meetings.Value);
     }
 
-    //[authorized only for PHA and SA]
+    [HasPermission(Permission.ReadClientMeetingsForWorker)]
     [HttpGet("worker/{userId:int}/week/{date}")]
     public async Task<IActionResult> GetAllByWeekForWorker(
         int userId, 
@@ -74,7 +76,7 @@ public class ClientMeetingsController : Controller
         bool? filterByCompleted = null,
         bool? filterExpressMeetings = null)
     {
-        var meetings = await _servicesManager.ClientMeetings
+        var meetings = await _servicesManager.ClientMeetingsService
                                             .GetAllByWeekForWorkerAsync(
                                                 userId,
                                                 date,
@@ -91,20 +93,28 @@ public class ClientMeetingsController : Controller
         return Ok(meetings.Value);
     }
 
+    [HasPermission(Permission.CreateClientMeetings)]
     [HttpPost]
     public async Task<IActionResult> Create(ClientMeeting_AddRequestModel meeting)
     {
-        var result = await _servicesManager.ClientMeetings.CreateAsync(meeting);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _servicesManager.ClientMeetingsService.CreateAsync(meeting);
         
         return result.IsFailed 
                ? BadRequest(result.GetErrorsDictionary()) 
                : Ok(result.Value);
     }
 
-    [HttpPatch("{id:int}")]
+    [HasPermission(Permission.ConcludeClientMeetings)]
+    [HttpPatch("{id:int}/conclude")]
     public async Task<IActionResult> Update(int id, ClientMeeting_UpdateRequestModel meeting)
     {
-        var result = await _servicesManager.ClientMeetings.UpdateAsync(id, meeting);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var result = await _servicesManager.ClientMeetingsService.UpdateAsync(id, meeting);
         
         return result.IsFailed 
                ? BadRequest(result.GetErrorsDictionary()) 

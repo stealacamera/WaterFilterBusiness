@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.Enums;
@@ -17,6 +18,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
     {
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> AcceptRequest(int id)
     {
         var result = await _servicesManager.SmallInventoryRequestsService
@@ -30,6 +32,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> CancelRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)
@@ -47,6 +50,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> CompleteRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)
@@ -80,7 +84,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
             var movementResult = await _servicesManager.InventoryMovementsService
                                                        .CreateAsync(new InventoryMovement_AddReqestModel
                                                        {
-                                                           GiverId = 2019, // TODO get from authentication
+                                                           GiverId = GetCurrentUserId(),
                                                            Quantity = request.Quantity,
                                                            ReceiverId = request.Requester.Id,
                                                            ToolId = request.Tool.Id
@@ -97,12 +101,12 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.CreateSmallInventoryRequests)]
     public override async Task<IActionResult> Create(InventoryRequest_AddRequestModel request)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
 
-        // TODO get user id
         var result = await _servicesManager.WrapInTransactionAsync<InventoryRequest>(async () =>
         {
             var baseRequestCreateresult = await _servicesManager.BaseInventoryRequestsService
@@ -112,7 +116,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                 return Result.Fail(baseRequestCreateresult.Errors);
 
             var createResult = await _servicesManager.SmallInventoryRequestsService
-                                                     .CreateAsync(2018, baseRequestCreateresult.Value);
+                                                     .CreateAsync(GetCurrentUserId(), baseRequestCreateresult.Value);
 
             return createResult.IsFailed 
                    ? Result.Fail(createResult.Errors) 
@@ -124,7 +128,10 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                : Created(string.Empty, result.Value);
     }
 
-    public override async Task<IActionResult> GetAll(int page, int pageSize)
+    [HasPermission(Permission.ReadSmallInventoryRequests)]
+    public override async Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page, 
+        [Required, Range(1, int.MaxValue)] int pageSize)
     {
         var requests = await _servicesManager.SmallInventoryRequestsService
                                            .GetAllAsync(page, pageSize);

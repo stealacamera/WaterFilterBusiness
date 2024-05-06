@@ -23,7 +23,6 @@ public interface IClientMeetingsService
         int? filterByOutcome = null,
         bool? filterExpressMeetings = true);
 
-
     Task<Result<CursorPaginatedList<ClientMeeting, int>>> GetAllByDayForWorkerAsync(
         int workerId,
         DateOnly date, 
@@ -48,12 +47,23 @@ public interface IClientMeetingsService
     Task<Result<Dictionary<DateOnly, int>>> GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(
         int phoneAgentId,
         int nrWeeks);
+
+    Task<Result<int>> GetTotalNrMeetingsBySalesAgentAsync(int salesAgentId, MeetingOutcome? filterByOutcome = null);
 }
 
 internal class ClientMeetingsService : Service, IClientMeetingsService
 {
     public ClientMeetingsService(IWorkUnit workUnit, IUtilityService utilityService) : base(workUnit, utilityService)
     {
+    }
+
+    public async Task<Result<int>> GetTotalNrMeetingsBySalesAgentAsync(int salesAgentId, MeetingOutcome? filterByOutcome = null)
+    {
+        if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
+            return new Error(nameof(salesAgentId), new Error("Only sales agent can be queried"));
+
+        return await _workUnit.ClientMeetingsRepository
+                              .GetTotalNrMeetingsBySalesAgentAsync(salesAgentId, filterByOutcome);
     }
 
     public async Task<Result<Dictionary<DateOnly, int>>> GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(int phoneAgentId, int nrWeeks)

@@ -22,6 +22,9 @@ public class IdentityController : Controller
     [HttpPost("login")]
     public async Task<IActionResult> Login(LoginCredentials credentials)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var userResult = await _servicesManager.UsersService
                                                .GetByCredentials(credentials);
 

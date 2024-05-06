@@ -16,7 +16,9 @@ public abstract class BaseInventoryRequestsController : Controller
     public abstract Task<IActionResult> Create(InventoryRequest_AddRequestModel request);
 
     [HttpGet]
-    public abstract Task<IActionResult> GetAll(int page, int pageSize);
+    public abstract Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page, 
+        [Required, Range(1, int.MaxValue)] int pageSize);
 
     [HttpPatch("{id:int}/complete")]
     public abstract Task<IActionResult> CompleteRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote);

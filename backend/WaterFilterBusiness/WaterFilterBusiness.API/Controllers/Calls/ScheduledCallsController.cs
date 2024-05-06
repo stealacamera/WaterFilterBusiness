@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs.Calls;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
@@ -16,6 +17,7 @@ public class ScheduledCallsController : Controller
     {
     }
 
+    [HasPermission(Permission.ReadScheduledCalls)]
     [HttpGet("phone-operator/{phoneOperatorId:int}")]
     public async Task<IActionResult> GetAllForPhoneOperator(
         int phoneOperatorId,
@@ -41,6 +43,7 @@ public class ScheduledCallsController : Controller
         return Ok(result.Value);
     }
 
+    [HasPermission(Permission.CreateScheduledCalls)]
     [HttpPost]
     public async Task<IActionResult> Create(ScheduledCall_AddRequestModel call)
     {
@@ -54,6 +57,7 @@ public class ScheduledCallsController : Controller
         return Created(string.Empty, result.Value);
     }
 
+    [HasPermission(Permission.EditScheduledCalls)]
     [HttpPatch("{id:int}/markComplete")]
     public async Task<IActionResult> MarkComplete(int id, CallOutcome outcome)
     {
@@ -90,7 +94,8 @@ public class ScheduledCallsController : Controller
                ? BadRequest(result.GetErrorsDictionary()) 
                : Ok(result.Value);
     }
-    
+
+    [HasPermission(Permission.DeleteScheduledCalls)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {

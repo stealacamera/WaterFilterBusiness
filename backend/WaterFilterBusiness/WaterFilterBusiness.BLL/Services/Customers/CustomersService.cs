@@ -12,6 +12,7 @@ namespace WaterFilterBusiness.BLL.Services.Customers;
 
 public interface ICustomersService
 {
+    Task RemoveFromRedlistedAsync();
     Task<Result<Customer>> GetByIdAsync(int id);
     Task<Result<IList<Customer>>> CreateRangeAsync(Customer_AddRequestModel[] customers);
     Task<Result<Customer>> UpdateAsync(int id, Customer_UpdateRequestModel customer);
@@ -180,6 +181,11 @@ internal class CustomersService : Service, ICustomersService
         }
     }
 
+    public async Task RemoveFromRedlistedAsync()
+    {
+        await _workUnit.CustomersRepository.RemoveFromRedlistedAsync();
+    }
+
     private Customer ConvertEntityToModel(DAL.Entities.Clients.Customer entity)
     {
         return new Customer
@@ -194,4 +200,5 @@ internal class CustomersService : Service, ICustomersService
             IsQualified = entity.IsQualified
         };
     }
+
 }

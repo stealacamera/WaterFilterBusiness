@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs.Calls;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
@@ -15,6 +16,7 @@ public class CustomerCallsController : Controller
     {
     }
 
+    [HasPermission(Permission.ReadCustomerCalls)]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [Required, Range(1, int.MaxValue)] int page,
@@ -31,7 +33,8 @@ public class CustomerCallsController : Controller
         return Ok(calls);
     }
 
-    [HttpGet("customers/{customerId:int}")]
+    [HasPermission(Permission.ReadCustomerCalls)]
+    [HttpGet("customers/{customerId:int}/history")]
     public async Task<IActionResult> GetHistoryForCustomer(
         int customerId,
         [Required, Range(1, int.MaxValue)] int pageSize,
@@ -51,9 +54,13 @@ public class CustomerCallsController : Controller
         return Ok(calls);
     }
 
+    [HasPermission(Permission.CreateCustomerCalls)]
     [HttpPost]
     public async Task<IActionResult> Create(CustomerCall_AddRequestModel customerCall)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var result = await _servicesManager.CustomerCallsService
                                            .CreateAsync(customerCall);
 

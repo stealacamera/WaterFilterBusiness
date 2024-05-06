@@ -8,6 +8,8 @@ namespace WaterFilterBusiness.DAL.Repository;
 
 public interface IClientMeetingsRepository : ISimpleRepository<ClientMeeting, int>
 {
+    Task<int> GetTotalNrMeetingsBySalesAgentAsync(int salesAgentId, MeetingOutcome? filterByOutcome = null);
+
     Task<OffsetPaginatedEnumerable<ClientMeeting>> GetAllAsync(
         int page,
         int pageSize,
@@ -201,5 +203,15 @@ internal class ClientMeetingsRepository : SimpleRepository<ClientMeeting, int>, 
                                      : e.PhoneOperatorId == null);
 
         return OffsetPaginatedEnumerable<ClientMeeting>.CreateAsync(query, page, pageSize);
+    }
+
+    public async Task<int> GetTotalNrMeetingsBySalesAgentAsync(int salesAgentId, MeetingOutcome? filterByOutcome = null)
+    {
+        IQueryable<ClientMeeting> query = _untrackedSet.Where(e => e.SalesAgentId == salesAgentId);
+
+        if (filterByOutcome != null)
+            query = query.Where(e => e.MeetingOutcomeId == filterByOutcome.Value);
+
+        return await query.CountAsync();
     }
 }

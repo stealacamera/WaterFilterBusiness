@@ -1,10 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
+using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers;
 
+[HasPermission(Permission.ReadStatistics)]
 [Route("api/[controller]")]
 [ApiController]
 public class StatisticsController : Controller
@@ -12,20 +15,6 @@ public class StatisticsController : Controller
     public StatisticsController(IServicesManager servicesManager) : base(servicesManager)
     {
     }
-
-    // TODO inv type json converterwe
-
-
-    // TODO schedule removing customers from redlisted
-
-    // TODO commission requests
-    // or has kristi done it?
-
-    //TODO SA = Meeting completing, success rates, cancellations(+ nice-to-have: nr slots in day filled by PHA?)
-    //    + filters(esp to find a specific meeting)
-
-    //Sales + debts = Filters for a given day, week, month
-
 
     [HttpGet("phoneAgent/{id:int}/calls/yearlyTotalMonthly")]
     public async Task<IActionResult> GetPhoneAgentTotalMonthlyCalls(int id, DateOnly? from, DateOnly? to)
@@ -50,7 +39,7 @@ public class StatisticsController : Controller
     [HttpGet("phoneAgent/{id:int}/meetings/yearlyTotalMonthly")]
     public async Task<IActionResult> GetPhoneAgentTotalMonthlyMeetingsSetup(int id, DateOnly? from, DateOnly? to)
     {
-        var result = await _servicesManager.ClientMeetings
+        var result = await _servicesManager.ClientMeetingsService
                                            .GetYearlyTotalMonthlyMeetingsSetupForPhoneAgentAsync(id, from, to);
 
         return result.IsFailed ? BadRequest(result.GetErrorsDictionary()) : Ok(result.Value);
@@ -61,9 +50,30 @@ public class StatisticsController : Controller
         int id, 
         [Required, Range(1, int.MaxValue)] int nrLatestWeeks)
     {
-        var result = await _servicesManager.ClientMeetings
+        var result = await _servicesManager.ClientMeetingsService
                                            .GetLastestXWeeklyMeetingsSetupForPhoneAgentAsync(id, nrLatestWeeks);
 
         return result.IsFailed ? BadRequest(result.GetErrorsDictionary()) : Ok(result.Value);
+    }
+
+    [HttpGet("salesAgent/{id:int}/meetings")]
+    public async Task<IActionResult> GetTotalNrMeetingsBySalesAgent(int id, MeetingOutcome? filterByOutcome = null)
+    {
+        var result = await _servicesManager.ClientMeetingsService
+                                           .GetTotalNrMeetingsBySalesAgentAsync(id, filterByOutcome);
+
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
+    }
+
+    [HttpGet("salesAgent/{id:int}/sales")]
+    public async Task<IActionResult> GetTotalNrSalesBySalesAgent(int id, DateOnly? filterByDate = null)
+    {
+        var result = await _servicesManager.SalesService.GetTotalSalesCreatedBySalesAgentAsync(id, filterByDate);
+
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 }

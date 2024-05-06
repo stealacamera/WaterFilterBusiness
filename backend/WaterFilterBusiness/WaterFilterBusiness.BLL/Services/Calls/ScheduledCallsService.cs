@@ -87,6 +87,8 @@ internal class ScheduledCallsService : Service, IScheduledCallsService
 
         if (dbModel == null)
             return GeneralErrors.EntityNotFound(nameof(id), "Scheduled call");
+        else if (dbModel.CompletedAt == null)
+            return new Error(nameof(id), new Error("Cannot delete uncompleted call"));
 
         _workUnit.ScheduledCallsRepository.Remove(dbModel);
         await _workUnit.SaveChangesAsync();

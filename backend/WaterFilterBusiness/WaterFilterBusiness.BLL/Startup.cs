@@ -9,11 +9,11 @@ public static class Startup
 {
     public static void RegisterBLLServices(this IServiceCollection services)
     {
+        services.AddSingleton<ILoggerService, LoggerService>();
+        
         services.AddMemoryCache();
         services.AddScoped<IPermissionsService, PermissionsService>();
         
-        services.AddSingleton<ILoggerService, LoggerService>();
-
         services.AddScoped<IUtilityService, UtilityService>();
         services.AddScoped<IServicesManager, ServicesManager>();
 

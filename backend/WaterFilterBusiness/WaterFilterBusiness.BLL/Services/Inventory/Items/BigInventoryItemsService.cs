@@ -8,6 +8,7 @@ namespace WaterFilterBusiness.BLL.Services.Inventory.Items;
 
 public interface IBigInventoryItemsService : IBaseInventoryItemsService
 {
+    Task<IList<InventoryTypeItem>> GetAllLowStockAsync(int minStock);
 }
 
 internal class BigInventoryItemsService : Service, IBigInventoryItemsService
@@ -50,6 +51,14 @@ internal class BigInventoryItemsService : Service, IBigInventoryItemsService
             TotalCount = result.TotalCount,
             Values = result.Values.Select(ConvertEntityToModel).ToList()
         };
+    }
+
+    public async Task<IList<InventoryTypeItem>> GetAllLowStockAsync(int minStock)
+    {
+        var items = await _workUnit.BigInventoryItemsRepository
+                                   .GetAllLowStockAsync(minStock);
+
+        return items.Select(ConvertEntityToModel).ToList();
     }
 
     public async Task<Result<InventoryTypeItem>> UpsertAsync(int toolId, int quantity)

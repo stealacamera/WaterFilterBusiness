@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers;
@@ -15,6 +17,7 @@ public class CustomersController : Controller
     {
     }
 
+    [HasPermission(Permission.ReadCustomers)]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [Required, Range(1, int.MaxValue)] int pageSize,
@@ -28,6 +31,7 @@ public class CustomersController : Controller
         return Ok(results);
     }
 
+    [HasPermission(Permission.ReadCustomerDetails)]
     [HttpGet("{id:int}")]
     public async Task<IActionResult> Details(int id)
     {
@@ -38,6 +42,7 @@ public class CustomersController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ReadCustomerChangeHistories)]
     [HttpGet("{id:int}/change-history")]
     public async Task<IActionResult> GetChangeHistory(int id)
     {
@@ -48,6 +53,7 @@ public class CustomersController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.UpdateCustomers)]
     [HttpPatch("{id:int}")]
     public async Task<IActionResult> Update(int id, Customer_UpdateRequestModel customerUpdate)
     {
@@ -80,6 +86,7 @@ public class CustomersController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.CreateCustomers)]
     [HttpPost]
     public async Task<IActionResult> Create(Customer_AddRequestModel[] customers)
     {

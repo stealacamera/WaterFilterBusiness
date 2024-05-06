@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.ErrorHandling.Exceptions;
@@ -17,6 +18,7 @@ public class SalesAgentSchedulesController : Controller
     {
     }
 
+    [HasPermission(Permission.ReadSalesAgentSchedules)]
     [HttpGet("salesAgents/{salesAgentId:int}")]
     public async Task<IActionResult> GetAllForAgent(int salesAgentId)
     {
@@ -28,11 +30,12 @@ public class SalesAgentSchedulesController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ReadSalesAgentSchedules)]
     [HttpGet]
     public async Task<IActionResult> QueryByTime(TimeOnly? time, Weekday? weekday = null)
     {
         if (time == null && weekday == null)
-            throw new InvalidArgumentsException();
+            return BadRequest("At least one filter should be applied");
 
         var result = await _servicesManager.SalesAgentSchedulesService
                                            .GetAllByTimeAsync(weekday, time);
@@ -42,15 +45,20 @@ public class SalesAgentSchedulesController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.CreateSalesAgentSchedules)]
     [HttpPost("salesAgents/{salesAgentId:int}")]
     public async Task<IActionResult> Create(int salesAgentId, SalesAgentSchedule_AddRequestModel schedule)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var result = await _servicesManager.SalesAgentSchedulesService.CreateAsync(salesAgentId, schedule);
         return result.IsFailed 
                ? BadRequest(result.GetErrorsDictionary()) 
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.DeleteSalesAgentSchedules)]
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -69,9 +77,13 @@ public class SalesAgentSchedulesController : Controller
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.UpdateSalesAgentSchedules)]
     [HttpPut("{id:int}")]
     public async Task<IActionResult> Update(int id, SalesAgentSchedule_UpdateRequestModel newSchedule)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var result = await _servicesManager.WrapInTransactionAsync<SalesAgentScheduleUpdate>(async () =>
         {
             var currentScheduleResult = await _servicesManager.SalesAgentSchedulesService

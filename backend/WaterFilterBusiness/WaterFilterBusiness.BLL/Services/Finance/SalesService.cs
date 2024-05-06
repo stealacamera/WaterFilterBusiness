@@ -14,6 +14,7 @@ public interface ISalesService
     Task<Result<Sale>> CreateAsync(Sale_AddRequestModel model);
     Task<Result<Sale>> VerifyAsync(int meetingId, string? verificationNote);
     Task<OffsetPaginatedList<Sale>> GetAllByAsync(int page, int pageSize);
+    Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null);
 }
 
 internal class SalesService : Service, ISalesService
@@ -63,6 +64,14 @@ internal class SalesService : Service, ISalesService
             TotalCount = sales.TotalCount,
             Values = sales.Values.Select(ConvertEntityToModel).ToList()
         };
+    }
+
+    public async Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null)
+    {
+        if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
+            return new Error(nameof(salesAgentId), new Error("Only sales agents can be queried"));
+
+        return await _workUnit.SalesRepository.GetTotalSalesCreatedBySalesAgentAsync(salesAgentId, filterByDate);
     }
 
     public async Task<Result<Sale>> VerifyAsync(int meetingId, string? verificationNote)

@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.Attributes;
@@ -9,13 +8,13 @@ using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers;
 
+[HasPermission(Permission.ManageUsers)]
 [Route("api/[controller]")]
 [ApiController]
 public class UsersController : Controller
 {
     public UsersController(IServicesManager servicesManager) : base(servicesManager) { }
 
-    [HasPermission(Permission.ReadUsers)]
     [HttpGet]
     public async Task<IActionResult> GetAll(
         [Required, Range(1, int.MaxValue)] int page,
@@ -28,6 +27,9 @@ public class UsersController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(User_AddRequestModel model)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var transactionResult = await _servicesManager.WrapInTransactionAsync(async () =>
         {
             var result = await _servicesManager.UsersService.AddAsync(model);

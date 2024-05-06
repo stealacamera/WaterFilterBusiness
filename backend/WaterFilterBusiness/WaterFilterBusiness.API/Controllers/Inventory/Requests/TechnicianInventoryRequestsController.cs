@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.Enums;
@@ -17,6 +18,7 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
     {
     }
 
+    [HasPermission(Permission.CreateTechinicianInventoryRequests)]
     public override async Task<IActionResult> Create(InventoryRequest_AddRequestModel request)
     {
         if (!ModelState.IsValid)
@@ -30,9 +32,8 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
             if (baseRequestCreateresult.IsFailed)
                 return Result.Fail(baseRequestCreateresult.Errors);
 
-            //TODO get id from authentication
             var createResult = await _servicesManager.TechnicianInventoryRequestsService
-                                                     .CreateAsync(3011, baseRequestCreateresult.Value);
+                                                     .CreateAsync(GetCurrentUserId(), baseRequestCreateresult.Value);
 
             return createResult.IsFailed
                    ? Result.Fail(createResult.Errors)
@@ -44,7 +45,10 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
                : Created(string.Empty, result.Value);
     }
 
-    public override async Task<IActionResult> GetAll(int page, int pageSize)
+    [HasPermission(Permission.ReadTechinicianInventoryRequests)]
+    public override async Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page, 
+        [Required, Range(1, int.MaxValue)] int pageSize)
     {
         var requests = await _servicesManager.TechnicianInventoryRequestsService
                                              .GetAllAsync(page, pageSize);
@@ -57,6 +61,7 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
         return Ok(requests);
     }
 
+    [HasPermission(Permission.ResolveTechnicianInventoryRequests)]
     public override async Task<IActionResult> CompleteRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)
@@ -90,7 +95,7 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
             var movementResult = await _servicesManager.InventoryMovementsService
                                                        .CreateAsync(new InventoryMovement_AddReqestModel
                                                        {
-                                                           GiverId = 2018, //TODO get cheifs op from authorization
+                                                           GiverId = GetCurrentUserId(),
                                                            Quantity = request.Quantity,
                                                            ReceiverId = request.Technician.Id,
                                                            ToolId = request.Tool.Id
@@ -107,6 +112,7 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveTechnicianInventoryRequests)]
     public override async Task<IActionResult> AcceptRequest(int id)
     {
         var result = await _servicesManager.TechnicianInventoryRequestsService
@@ -120,6 +126,7 @@ public class TechnicianInventoryRequestsController : BaseInventoryRequestsContro
                : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveTechnicianInventoryRequests)]
     public override async Task<IActionResult> CancelRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)

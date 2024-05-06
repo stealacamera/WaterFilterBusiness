@@ -1,4 +1,5 @@
-﻿using WaterFilterBusiness.DAL.DAOs;
+﻿using Microsoft.EntityFrameworkCore;
+using WaterFilterBusiness.DAL.DAOs;
 using WaterFilterBusiness.DAL.Entities.Clients;
 
 namespace WaterFilterBusiness.DAL.Repository.Customers;
@@ -6,6 +7,7 @@ namespace WaterFilterBusiness.DAL.Repository.Customers;
 public interface ICustomersRepository : ISimpleRepository<Customer, int>
 {
     Task AddRangeAsync(Customer[] customers);
+    Task RemoveFromRedlistedAsync();
     Task<OffsetPaginatedEnumerable<Customer>> GetAllAsync(
         int page, 
         int pageSize,
@@ -22,6 +24,15 @@ internal class CustomersRepository : SimpleRepository<Customer, int>, ICustomers
     public async Task AddRangeAsync(Customer[] customers)
     {
         await _set.AddRangeAsync(customers);
+    }
+
+    public async Task RemoveFromRedlistedAsync()
+    {
+        var lastMonthDate = DateTime.Now.AddMonths(-1);
+        IQueryable<Customer> query = _untrackedSet.Where(e => e.RedListedAt <= lastMonthDate);
+
+        await query.ExecuteUpdateAsync(
+                    e => e.SetProperty(e => e.RedListedAt, (DateTime?) null));
     }
 
     public async Task<OffsetPaginatedEnumerable<Customer>> GetAllAsync(
