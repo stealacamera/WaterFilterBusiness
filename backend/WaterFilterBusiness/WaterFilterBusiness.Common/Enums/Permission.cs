@@ -2,35 +2,57 @@
 
 public enum Permission
 {
-    ReadUsers = 1,
-    CreateUser = 2,
-    DeleteUser = 3,
+    ManageUsers = 1,
 
-    ReadInventoryItems = 4,
-    CreateInventoryItem = 5,
-    DeleteInventoryItem = 6,
-    UpdateInventoryItem = 7,
+    ManageInventoryItems = 2,
+    ReadInventoryMovements = 3,
+    ReadInventoryPurchases = 4,
 
-    ReadInventoryPurchases = 8,
-    CreateInventoryPurchase = 9,
+    ManageBigInventory = 5,
+    ReadSmallInventory = 6,
+    ReadTechnicianInventory = 7,
 
-    ReadInventoryRequests = 10,
-    CreateInventoryRequest = 11,
-    UpdateInventoryRequest = 12,
-    DeleteInventoryRequest = 13,
+    CreateSmallInventoryRequests = 8,
+    ReadSmallInventoryRequests = 9,
+    ResolveSmallInventoryRequests = 10,
 
-    ReadCustomers = 14,
-    CreateCustomer = 15,
-    UpdateCustomer = 16,
+    CreateTechinicianInventoryRequests = 11,
+    ReadTechinicianInventoryRequests = 12,
+    ResolveTechnicianInventoryRequests = 13,
+    
+    DecreaseTechnicianStock = 14,
 
-    ReadCustomerMeetings = 17,
-    CreateCustomerMeeting = 18,
-    UpdateCustomerMeeting = 19,
+    ReadSalesAgentSchedules = 15,
+    ReadSalesAgentScheduleChangeHistories = 16,
+    CreateSalesAgentSchedules = 17,
+    UpdateSalesAgentSchedules = 18,
+    DeleteSalesAgentSchedules = 19,
 
-    ReadSales = 20,
-    CreateSale = 21,
-    UpdateSale = 22,
+    ReadCustomers = 20,
+    ReadCustomerDetails = 21,
+    ReadCustomerChangeHistories = 22,
+    CreateCustomers = 23,
+    UpdateCustomers = 24,
 
-    AccessPerformanceMetricsStatistics = 23,
-    AccessOperationalMetricsStatistics = 24
+    ReadCustomerCalls = 25,
+    CreateCustomerCalls = 26,
+
+    ReadScheduledCalls = 27,
+    CreateScheduledCalls = 28,
+    EditScheduledCalls = 29,
+    DeleteScheduledCalls = 30,
+
+    ReadClientMeetings = 31,
+    ReadClientMeetingsForWorker = 32,
+    CreateClientMeetings = 33,
+    ConcludeClientMeetings = 34,
+
+    ReadClientDebts = 35,
+    EditClientDebts = 36,
+
+    ReadSales = 37,
+    CreateSales = 38,
+    VerifySales = 39,
+
+    ReadStatistics = 40,
 }

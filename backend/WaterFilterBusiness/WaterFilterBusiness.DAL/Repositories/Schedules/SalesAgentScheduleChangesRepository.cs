@@ -6,7 +6,11 @@ namespace WaterFilterBusiness.DAL.Repository.Schedules;
 
 public interface ISalesAgentScheduleChangesRepository : ISimpleRepository<SalesAgentScheduleChange, int>
 {
-    Task<CursorPaginatedEnumerable<SalesAgentScheduleChange, int>> GetAllForSalesAgentAsync(int salesAgentId, int paginationCursor, int pageSize);
+    Task<CursorPaginatedEnumerable<SalesAgentScheduleChange, int>> GetAllForSalesAgentAsync(
+        int salesAgentId, 
+        int paginationCursor, 
+        int pageSize);
+    
     Task RemoveAllForScheduleAsync(int scheduleId);
 }
 
@@ -16,12 +20,18 @@ internal class SalesAgentScheduleChangesRepository : SimpleRepository<SalesAgent
     {
     }
 
-    public async Task<CursorPaginatedEnumerable<SalesAgentScheduleChange, int>> GetAllForSalesAgentAsync(int salesAgentId, int paginationCursor, int pageSize)
+    public async Task<CursorPaginatedEnumerable<SalesAgentScheduleChange, int>> GetAllForSalesAgentAsync(
+        int salesAgentId, 
+        int paginationCursor, 
+        int pageSize)
     {
         IQueryable<SalesAgentScheduleChange> query = _untrackedSet.OrderByDescending(e => e.ChangedAt);
         query = query.Where(e => e.Schedule.SalesAgentId == salesAgentId);
 
-        return await CursorPaginatedEnumerable<SalesAgentScheduleChange, int>.CreateFromStrongEntityAsync(query, paginationCursor, pageSize);
+        return await CursorPaginatedEnumerable<SalesAgentScheduleChange, int>.CreateFromStrongEntityAsync(
+            query, 
+            paginationCursor, 
+            pageSize);
     }
 
     public async Task RemoveAllForScheduleAsync(int scheduleId)

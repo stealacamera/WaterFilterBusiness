@@ -2,9 +2,11 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.Inventory;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Inventory.Requests;
 
@@ -16,6 +18,7 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
     {
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> AcceptRequest(int id)
     {
         var result = await _servicesManager.SmallInventoryRequestsService
@@ -24,9 +27,12 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                                                Status = InventoryRequestStatus.InProgress
                                            });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> CancelRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)
@@ -39,9 +45,12 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
                                                Status = InventoryRequestStatus.Cancelled
                                            });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 
+    [HasPermission(Permission.ResolveSmallInventoryRequests)]
     public override async Task<IActionResult> CompleteRequest(int id, [FromBody, MaxLength(210)] string? conclusionNote)
     {
         if (!ModelState.IsValid)
@@ -66,10 +75,16 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
             if (inventoryResult.IsFailed)
                 return Result.Fail(inventoryResult.Errors);
 
+            var higherUpInventoryResult = await _servicesManager.BigInventoryItemsService
+                                                                .DecreaseQuantityAsync(request.Tool.Id, request.Quantity);
+
+            if (higherUpInventoryResult.IsFailed)
+                return Result.Fail(higherUpInventoryResult.Errors);
+
             var movementResult = await _servicesManager.InventoryMovementsService
                                                        .CreateAsync(new InventoryMovement_AddReqestModel
                                                        {
-                                                           GiverId = 1, // TODO get from authentication
+                                                           GiverId = GetCurrentUserId(),
                                                            Quantity = request.Quantity,
                                                            ReceiverId = request.Requester.Id,
                                                            ToolId = request.Tool.Id
@@ -81,25 +96,51 @@ public class SmallInventoryRequestsController : BaseInventoryRequestsController
             return request;
         });
 
-        return result.IsFailed ? BadRequest(result.Errors) : Ok(result.Value);
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Ok(result.Value);
     }
 
+    [HasPermission(Permission.CreateSmallInventoryRequests)]
     public override async Task<IActionResult> Create(InventoryRequest_AddRequestModel request)
     {
-        // TODO get user id
-        var result = await _servicesManager.SmallInventoryRequestsService
-                                           .CreateAsync(1, request);
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
 
-        return result.IsFailed ? BadRequest(result.Errors) : Created(string.Empty, result.Value);
+        var result = await _servicesManager.WrapInTransactionAsync<InventoryRequest>(async () =>
+        {
+            var baseRequestCreateresult = await _servicesManager.BaseInventoryRequestsService
+                                                                .CreateAsync(request);
+
+            if (baseRequestCreateresult.IsFailed)
+                return Result.Fail(baseRequestCreateresult.Errors);
+
+            var createResult = await _servicesManager.SmallInventoryRequestsService
+                                                     .CreateAsync(GetCurrentUserId(), baseRequestCreateresult.Value);
+
+            return createResult.IsFailed 
+                   ? Result.Fail(createResult.Errors) 
+                   : createResult.Value;
+        });
+
+        return result.IsFailed
+               ? BadRequest(result.GetErrorsDictionary())
+               : Created(string.Empty, result.Value);
     }
 
-    public override async Task<IActionResult> GetAll(int page, int pageSize)
+    [HasPermission(Permission.ReadSmallInventoryRequests)]
+    public override async Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page, 
+        [Required, Range(1, int.MaxValue)] int pageSize)
     {
         var requests = await _servicesManager.SmallInventoryRequestsService
                                            .GetAllAsync(page, pageSize);
 
         foreach (var request in requests.Values)
-            request.Tool = (await _servicesManager.InventoryItemsService.GetByIdAsync(request.Tool.Id)).Value;
+        {
+            var baseItem = await _servicesManager.InventoryItemsService.GetByIdAsync(request.Tool.Id);
+            request.Tool = baseItem.Value;
+        }
 
         return Ok(requests);
     }

@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class InventoryRequestStatus : PlainStrongEntity
-{
-}
+internal class InventoryRequestStatus : PlainStrongEntity { }

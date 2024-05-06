@@ -22,7 +22,7 @@ internal class CustomerChangesService : Service, ICustomerChangesService
     public async Task<Result<CustomerChange>> CreateAsync(Customer currentCustomer, Customer updatedCustomer)
     {
         if (!await _utilityService.DoesCustomerExistAsync(currentCustomer.Id))
-            return CustomerErrors.NotFound;
+            return CustomerErrors.NotFound(nameof(currentCustomer.Id));
 
         if (IsUpdateEmpty(updatedCustomer))
             return GeneralErrors.EmptyUpdate("customer");
@@ -50,7 +50,7 @@ internal class CustomerChangesService : Service, ICustomerChangesService
     public async Task<Result<IList<CustomerChange>>> GetAllForCustomer(int customerId)
     {
         if (!await _utilityService.DoesCustomerExistAsync(customerId))
-            return CustomerErrors.NotFound;
+            return CustomerErrors.NotFound(nameof(customerId));
 
         return (await _workUnit.CustomerChangesRepository
                                .GetAllForCustomer(customerId))

@@ -32,7 +32,7 @@ public interface IServicesManager
     #region Clients
     ICustomersService CustomersService { get; }
     ICustomerChangesService CustomerChangesService { get; }
-    IClientMeetingsService ClientMeetings { get; }
+    IClientMeetingsService ClientMeetingsService { get; }
     #endregion
 
     #region Inventory services
@@ -46,8 +46,9 @@ public interface IServicesManager
     IBigInventoryItemsService BigInventoryItemsService { get; }
     #endregion
     #region Requests
-    ITechnicianInventoryRequestsService TechnicianInventoryRequestsService { get; }
+    IBaseInventoryRequestsService BaseInventoryRequestsService { get; }
     ISmallInventoryRequestsService SmallInventoryRequestsService { get; }
+    ITechnicianInventoryRequestsService TechnicianInventoryRequestsService { get; }
     #endregion
     #endregion
     #endregion
@@ -172,7 +173,7 @@ public sealed class ServicesManager : IServicesManager
     }
     
     private IClientMeetingsService _clientMeetings;
-    public IClientMeetingsService ClientMeetings
+    public IClientMeetingsService ClientMeetingsService
     {
         get
         {
@@ -265,6 +266,16 @@ public sealed class ServicesManager : IServicesManager
     #endregion
 
     #region Requests
+    private IBaseInventoryRequestsService _baseInventoryRequestsService;
+    public IBaseInventoryRequestsService BaseInventoryRequestsService
+    {
+        get
+        {
+            _baseInventoryRequestsService ??= new BaseInventoryRequestsService(_workUnit, _utilityService);
+            return _baseInventoryRequestsService;
+        }
+    }
+
     private ITechnicianInventoryRequestsService _technicianInventoryRequestsService;
     public ITechnicianInventoryRequestsService TechnicianInventoryRequestsService
     {

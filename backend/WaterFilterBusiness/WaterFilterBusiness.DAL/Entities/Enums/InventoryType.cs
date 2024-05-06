@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class InventoryType : PlainStrongEntity
-{
-}
+internal class InventoryType : PlainStrongEntity { }

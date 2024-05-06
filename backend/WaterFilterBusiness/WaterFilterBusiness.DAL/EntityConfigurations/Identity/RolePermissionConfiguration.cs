@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.Common.Enums;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations.Identity;
 
@@ -23,34 +24,80 @@ internal class RolePermissionConfiguration : IEntityTypeConfiguration<Entities.R
                .OnDelete(DeleteBehavior.Cascade);
 
         // Seeding
-        builder.HasData(Create(Role.Admin, Permission.ReadUsers));
-        builder.HasData(Create(Role.Admin, Permission.CreateUser));
-        builder.HasData(Create(Role.Admin, Permission.DeleteUser));
+        #region Phone operator permissions
+        builder.HasData(Create(Role.PhoneOperator, Permission.CreateCustomerCalls));
+        builder.HasData(Create(Role.PhoneOperator, Permission.ReadScheduledCalls));
+        builder.HasData(Create(Role.PhoneOperator, Permission.EditScheduledCalls));
+        builder.HasData(Create(Role.PhoneOperator, Permission.ReadClientMeetingsForWorker));
+        builder.HasData(Create(Role.PhoneOperator, Permission.CreateClientMeetings));
+        builder.HasData(Create(Role.PhoneOperator, Permission.ReadCustomerDetails));
+        builder.HasData(Create(Role.PhoneOperator, Permission.UpdateCustomers));
+        builder.HasData(Create(Role.PhoneOperator, Permission.ReadSalesAgentSchedules));
+        #endregion
 
-        builder.HasData(Create(Role.InventoryManager, Permission.ReadInventoryItems));
-        builder.HasData(Create(Role.InventoryManager, Permission.CreateInventoryItem));
-        builder.HasData(Create(Role.InventoryManager, Permission.DeleteInventoryItem));
-        builder.HasData(Create(Role.InventoryManager, Permission.UpdateInventoryItem));
-        builder.HasData(Create(Role.InventoryManager, Permission.CreateInventoryPurchase));
-        builder.HasData(Create(Role.InventoryManager, Permission.UpdateInventoryRequest));
+        #region Marketing chief permissions
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadCustomerCalls));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadScheduledCalls));
+        builder.HasData(Create(Role.MarketingChief, Permission.CreateScheduledCalls));
+        builder.HasData(Create(Role.MarketingChief, Permission.DeleteScheduledCalls));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadClientDebts));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadSales));
+        builder.HasData(Create(Role.MarketingChief, Permission.VerifySales));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadInventoryPurchases));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadClientMeetings));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadCustomers));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadCustomerDetails));
+        builder.HasData(Create(Role.MarketingChief, Permission.UpdateCustomers));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadCustomerChangeHistories));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadSalesAgentSchedules));
+        builder.HasData(Create(Role.MarketingChief, Permission.UpdateSalesAgentSchedules));
+        builder.HasData(Create(Role.MarketingChief, Permission.DeleteSalesAgentSchedules));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadSalesAgentScheduleChangeHistories));
+        builder.HasData(Create(Role.MarketingChief, Permission.ReadStatistics));
+        #endregion
 
-        builder.HasData(Create(Role.OperationsChief, Permission.ReadInventoryItems));
-        builder.HasData(Create(Role.OperationsChief, Permission.CreateInventoryRequest));
-        builder.HasData(Create(Role.OperationsChief, Permission.ReadSales));
-        builder.HasData(Create(Role.OperationsChief, Permission.UpdateSale));
+        #region Technician permissions
+        builder.HasData(Create(Role.Technician, Permission.ReadTechnicianInventory));
+        builder.HasData(Create(Role.Technician, Permission.ReadClientDebts));
+        builder.HasData(Create(Role.Technician, Permission.EditClientDebts));
+        builder.HasData(Create(Role.Technician, Permission.CreateTechinicianInventoryRequests));
+        builder.HasData(Create(Role.Technician, Permission.ReadTechinicianInventoryRequests));
+        builder.HasData(Create(Role.Technician, Permission.DecreaseTechnicianStock));
+        #endregion
 
-        builder.HasData(Create(Role.Technician, Permission.ReadInventoryItems));
-        builder.HasData(Create(Role.Technician, Permission.CreateInventoryRequest));
+        #region Sales agent permissions
+        builder.HasData(Create(Role.SalesAgent, Permission.CreateSales));
+        builder.HasData(Create(Role.SalesAgent, Permission.ReadClientMeetingsForWorker));
+        builder.HasData(Create(Role.SalesAgent, Permission.ConcludeClientMeetings));
+        builder.HasData(Create(Role.SalesAgent, Permission.ReadCustomerDetails));
+        builder.HasData(Create(Role.SalesAgent, Permission.CreateCustomers));
+        builder.HasData(Create(Role.SalesAgent, Permission.ReadSalesAgentSchedules));
+        builder.HasData(Create(Role.SalesAgent, Permission.CreateSalesAgentSchedules));
+        builder.HasData(Create(Role.SalesAgent, Permission.ReadSalesAgentScheduleChangeHistories));
+        #endregion
 
-        builder.HasData(Create(Role.SalesAgent, Permission.CreateCustomer));
-        builder.HasData(Create(Role.SalesAgent, Permission.ReadCustomerMeetings));
-        builder.HasData(Create(Role.SalesAgent, Permission.UpdateCustomerMeeting));
-        builder.HasData(Create(Role.SalesAgent, Permission.CreateSale));
+        #region Inventory manager permissions
+        builder.HasData(Create(Role.InventoryManager, Permission.ManageBigInventory));
+        builder.HasData(Create(Role.InventoryManager, Permission.ReadSmallInventory));
+        builder.HasData(Create(Role.InventoryManager, Permission.ReadTechnicianInventory));
+        builder.HasData(Create(Role.InventoryManager, Permission.ReadSmallInventoryRequests));
+        builder.HasData(Create(Role.InventoryManager, Permission.ResolveSmallInventoryRequests));
+        #endregion
 
-        builder.HasData(Create(Role.PhoneOperator, Permission.ReadCustomers));
-        builder.HasData(Create(Role.PhoneOperator, Permission.UpdateCustomer));
-        builder.HasData(Create(Role.PhoneOperator, Permission.CreateCustomerMeeting));
-        builder.HasData(Create(Role.PhoneOperator, Permission.UpdateCustomerMeeting));
+        #region Operations chief permissions
+        builder.HasData(Create(Role.OperationsChief, Permission.ReadSmallInventory));
+        builder.HasData(Create(Role.OperationsChief, Permission.CreateSmallInventoryRequests));
+        builder.HasData(Create(Role.OperationsChief, Permission.ReadSmallInventoryRequests));
+        builder.HasData(Create(Role.OperationsChief, Permission.ReadTechinicianInventoryRequests));
+        builder.HasData(Create(Role.OperationsChief, Permission.ResolveTechnicianInventoryRequests));
+        builder.HasData(Create(Role.OperationsChief, Permission.ReadInventoryPurchases));
+        #endregion
+
+        #region Admin permissions
+        builder.HasData(Create(Role.Admin, Permission.ManageUsers));
+        builder.HasData(Create(Role.Admin, Permission.ReadCustomerChangeHistories));
+        builder.HasData(Create(Role.Admin, Permission.ReadSalesAgentScheduleChangeHistories));
+        #endregion
     }
 
     private static Entities.RolePermission Create(Role role, Permission permission)

@@ -1,4 +1,6 @@
 ﻿using FluentResults;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
@@ -28,7 +30,7 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
     public async Task<Result<SalesAgentSchedule>> CreateAsync(int salesAgentId, SalesAgentSchedule_AddRequestModel schedule)
     {
         if (!await _utilityService.DoesUserExistAsync(salesAgentId))
-            return SalesAgentScheduleErrors.SalesAgentNotFound;
+            return SalesAgentScheduleErrors.SalesAgentNotFound(nameof(salesAgentId));
 
         var dbModel = new DAL.Entities.SalesAgentSchedule
         {
@@ -39,46 +41,44 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
         };
 
         if (await _workUnit.SalesAgentSchedulesRepository.IsScheduleTakenForSalesAgentAsync(dbModel))
-            return SalesAgentScheduleErrors.TimespanTaken(schedule.DayOfWeek.Name);
+            return SalesAgentScheduleErrors.TimespanTaken(nameof(schedule.DayOfWeek), schedule.DayOfWeek.Name);
 
-        dbModel = await _workUnit.SalesAgentSchedulesRepository.AddAsync(dbModel);
-        await _workUnit.SaveChangesAsync();
-
-        return new SalesAgentSchedule
+        try
         {
-            Id = dbModel.Id,
-            BeginHour = dbModel.BeginHour,
-            EndHour = dbModel.EndHour,
-            DayOfWeek = schedule.DayOfWeek
-        };
+            dbModel = await _workUnit.SalesAgentSchedulesRepository.AddAsync(dbModel);
+            await _workUnit.SaveChangesAsync();
+
+            return ConvertEntityToModel(dbModel);
+        }
+        catch (Exception ex)
+        {
+            if (ex is DbUpdateException dbUpdateEx)
+            {
+                if (dbUpdateEx.InnerException != null && dbUpdateEx.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Number == 2627 && sqlEx.Number == 2601)
+                        return SalesAgentScheduleErrors.UniqueConstraintFailed;
+                }
+            }
+
+            throw;
+        }
     }
 
     public async Task<Result<IList<SalesAgentWeekSchedules>>> GetAllForSalesAgentAsync(int salesAgentId)
     {
         if (!await _utilityService.DoesUserExistAsync(salesAgentId))
-            return SalesAgentScheduleErrors.SalesAgentNotFound;
+            return SalesAgentScheduleErrors.SalesAgentNotFound(nameof(salesAgentId));
 
         var dbSchedules = await _workUnit.SalesAgentSchedulesRepository
                                          .GetAllForSalesAgentAsync(salesAgentId);
 
         return dbSchedules.GroupBy(e => e.DayOfWeekId)
-                          .Select(group =>
-                          {
-                              var weekDay = Weekday.FromValue(group.Key);
-
-                              return new SalesAgentWeekSchedules
+                          .Select(group => new SalesAgentWeekSchedules
                               {
-                                  DayOfWeek = weekDay,
-                                  Schedules = group.Select(e => new SalesAgentSchedule
-                                  {
-                                      Id = e.Id,
-                                      BeginHour = e.BeginHour,
-                                      EndHour = e.EndHour,
-                                      DayOfWeek = weekDay
-                                  })
-                                                   .ToList()
-                              };
-                          })
+                                  DayOfWeek = Weekday.FromValue(group.Key),
+                                  Schedules = group.Select(ConvertEntityToModel).ToList()
+                              })
                           .ToList();
     }
 
@@ -88,15 +88,9 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
                                      .GetByIdAsync(id);
 
         if (dbModel == null)
-            return SalesAgentScheduleErrors.NotFound;
+            return SalesAgentScheduleErrors.NotFound(nameof(id));
 
-        return new SalesAgentSchedule
-        {
-            Id = dbModel.Id,
-            BeginHour = dbModel.BeginHour,
-            EndHour = dbModel.EndHour,
-            DayOfWeek = Weekday.FromValue(dbModel.DayOfWeekId)
-        };
+        return ConvertEntityToModel(dbModel);
     }
 
     public async Task<Result> RemoveAsync(int id)
@@ -104,7 +98,7 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
         var dbModel = await _workUnit.SalesAgentSchedulesRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return SalesAgentScheduleErrors.NotFound;
+            return SalesAgentScheduleErrors.NotFound(nameof(id));
 
         _workUnit.SalesAgentSchedulesRepository.Remove(dbModel);
         await _workUnit.SaveChangesAsync();
@@ -120,7 +114,7 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
         var dbModel = await _workUnit.SalesAgentSchedulesRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return SalesAgentScheduleErrors.NotFound;
+            return SalesAgentScheduleErrors.NotFound(nameof(id));
 
         if (IsChangedScheduleTheSameAsExisting(schedule, dbModel))
             return GeneralErrors.UnchangedUpdate;
@@ -135,17 +129,26 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
             dbModel.DayOfWeekId = schedule.DayOfWeek.Value;
 
         if (await _workUnit.SalesAgentSchedulesRepository.IsScheduleTakenForSalesAgentAsync(dbModel))
-            return SalesAgentScheduleErrors.TimespanTaken(schedule.DayOfWeek.Name);
+            return SalesAgentScheduleErrors.TimespanTaken(nameof(schedule.DayOfWeek), schedule.DayOfWeek.Name);
 
-        await _workUnit.SaveChangesAsync();
-
-        return new SalesAgentSchedule
+        try
         {
-            Id = dbModel.Id,
-            BeginHour = dbModel.BeginHour,
-            EndHour = dbModel.EndHour,
-            DayOfWeek = schedule.DayOfWeek
-        };
+            await _workUnit.SaveChangesAsync();
+            return ConvertEntityToModel(dbModel);
+        }
+        catch (Exception ex)
+        {
+            if (ex is DbUpdateException dbUpdateEx)
+            {
+                if (dbUpdateEx.InnerException != null && dbUpdateEx.InnerException is SqlException sqlEx)
+                {
+                    if (sqlEx.Number == 2627 && sqlEx.Number == 2601)
+                        return SalesAgentScheduleErrors.UniqueConstraintFailed;
+                }
+            }
+
+            throw;
+        }
     }
 
     private bool IsChangedScheduleTheSameAsExisting(SalesAgentSchedule_UpdateRequestModel updatedSchedule, DAL.Entities.SalesAgentSchedule originalSchedule)
@@ -167,14 +170,19 @@ internal class SalesAgentSchedulesService : Service, ISalesAgentSchedulesService
             return new Error("At least one parameter required");
 
         return (await _workUnit.SalesAgentSchedulesRepository
-                               .GetAllByTimeAsync(dayOfWeek, time))
-                               .Select(e => new SalesAgentSchedule
-                               {
-                                   BeginHour = e.BeginHour,
-                                   DayOfWeek = dayOfWeek,
-                                   EndHour = e.EndHour,
-                                   Id = e.Id
-                               })
+                               .GetAllFreeSchedulesByTimeAsync(dayOfWeek, time))
+                               .Select(ConvertEntityToModel)
                                .ToList();
+    }
+
+    private SalesAgentSchedule ConvertEntityToModel(DAL.Entities.SalesAgentSchedule entity)
+    {
+        return new SalesAgentSchedule
+        {
+            BeginHour = entity.BeginHour,
+            EndHour = entity.EndHour,
+            Id = entity.Id,
+            DayOfWeek = Weekday.FromValue(entity.DayOfWeekId)
+        };
     }
 }

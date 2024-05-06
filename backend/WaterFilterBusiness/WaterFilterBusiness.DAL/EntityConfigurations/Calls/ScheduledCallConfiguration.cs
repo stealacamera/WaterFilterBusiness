@@ -17,8 +17,8 @@ internal class ScheduledCallConfiguration : IEntityTypeConfiguration<ScheduledCa
                .IsRequired();
 
         builder.HasOne<Customer>()
-               .WithOne(e => e.ScheduledCall)
-               .HasForeignKey<ScheduledCall>(e => e.CustomerId)
+               .WithMany(e => e.ScheduledCalls)
+               .HasForeignKey(e => e.CustomerId)
                .OnDelete(DeleteBehavior.Cascade)
                .IsRequired();
 

@@ -24,21 +24,21 @@ internal class TechnicianInventoryItemsService : Service, ITechnicianInventoryIt
     {
     }
 
-    public async Task<Result<InventoryTypeItem>> DecreaseQuantityAsync(int technicianId, int tooldId, int decreaseBy)
+    public async Task<Result<InventoryTypeItem>> DecreaseQuantityAsync(int technicianId, int toolId, int decreaseBy)
     {
         if (!await _utilityService.DoesUserExistAsync(technicianId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(technicianId));
 
-        if (!await _utilityService.DoesInventoryItemExistAsync(tooldId))
-            return InventoryItemErrors.NotFound;
+        if (!await _utilityService.DoesInventoryItemExistAsync(toolId))
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
-        var dbModel = await _workUnit.TechnicianInventoryItemsRepository.GetByIdsAsync(technicianId, tooldId);
+        var dbModel = await _workUnit.TechnicianInventoryItemsRepository.GetByIdsAsync(technicianId, toolId);
 
         if (dbModel == null)
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
         if (dbModel.Quantity - Math.Abs(decreaseBy) < 0)
-            return InventoryItemErrors.NotEnoughStock;
+            return InventoryItemErrors.NotEnoughStock(nameof(dbModel.Quantity));
 
         dbModel.Quantity -= Math.Abs(decreaseBy);
         await _workUnit.SaveChangesAsync();
@@ -52,7 +52,7 @@ internal class TechnicianInventoryItemsService : Service, ITechnicianInventoryIt
         bool? orderByQuantity = null)
     {
         if (!await _utilityService.DoesUserExistAsync(technicianId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(technicianId));
 
         var result = await _workUnit.TechnicianInventoryItemsRepository
                                     .GetAllAsync(technicianId, page, pageSize, orderByQuantity);
@@ -69,10 +69,10 @@ internal class TechnicianInventoryItemsService : Service, ITechnicianInventoryIt
     public async Task<Result<InventoryTypeItem>> UpsertAsync(int technicianId, int toolId, int quantity)
     {
         if (!await _utilityService.DoesUserExistAsync(technicianId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(technicianId));
 
         if (!await _utilityService.DoesInventoryItemExistAsync(toolId))
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(toolId));
 
         var dbModel = await _workUnit.TechnicianInventoryItemsRepository.GetByIdsAsync(technicianId, toolId);
 

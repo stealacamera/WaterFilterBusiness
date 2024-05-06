@@ -6,7 +6,7 @@ namespace WaterFilterBusiness.DAL.Repository.Schedules;
 
 public interface ISalesAgentSchedulesRepository : ISimpleRepository<SalesAgentSchedule, int>
 {
-    Task<IEnumerable<SalesAgentSchedule>> GetAllByTimeAsync(Weekday? dayOfWeek, TimeOnly? time);
+    Task<IEnumerable<SalesAgentSchedule>> GetAllFreeSchedulesByTimeAsync(Weekday? dayOfWeek, TimeOnly? time);
     Task<bool> IsScheduleTakenForSalesAgentAsync(SalesAgentSchedule schedule);
     Task<IEnumerable<SalesAgentSchedule>> GetAllForSalesAgentAsync(int salesAgentId);
     void Remove(SalesAgentSchedule schedule);
@@ -25,17 +25,17 @@ internal class SalesAgentSchedulesRepository : SimpleRepository<SalesAgentSchedu
         return await query.ToListAsync();
     }
 
-    public async Task<IEnumerable<SalesAgentSchedule>> GetAllByTimeAsync(Weekday? dayOfWeek, TimeOnly? time)
+    public async Task<IEnumerable<SalesAgentSchedule>> GetAllFreeSchedulesByTimeAsync(Weekday? dayOfWeek, TimeOnly? time)
     {
         IQueryable<SalesAgentSchedule> query = _untrackedSet;
 
-        // Get the schedules that fit the given time
-        if (dayOfWeek != null)
-            query = query.Where(e => e.BeginHour >= time && e.EndHour <= time);
-
         // Get all in the given date
-        if (time.HasValue)
+        if (dayOfWeek != null)
             query = query.Where(e => e.DayOfWeekId == dayOfWeek.Value);
+
+        // Get the schedules that fit the given time
+        if (time.HasValue)
+            query = query.Where(e => e.BeginHour >= time && e.EndHour <= time);
 
         // Get all the sales agents that are free in this given period
         query = query.Where(e => e.SalesAgent

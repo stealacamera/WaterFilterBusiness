@@ -16,54 +16,41 @@ public interface ITechnicianInventoryRequestsService
         int pageSize,
         InventoryRequestStatus? filterByStatus = null);
 
-    Task<Result<TechnicianInventoryRequest>> CreateAsync(int technicianId, InventoryRequest_AddRequestModel request);
+    Task<Result<TechnicianInventoryRequest>> CreateAsync(int technicianId, int baseRequestId);
     Task<Result<TechnicianInventoryRequest>> UpdateAsync(int requestId, InventoryRequest_PatchRequestModel request);
 }
 
-internal class TechnicianInventoryRequestsService : BaseInventoryRequestsService, ITechnicianInventoryRequestsService
+internal class TechnicianInventoryRequestsService : Service, ITechnicianInventoryRequestsService
 {
     public TechnicianInventoryRequestsService(
         IWorkUnit workUnit,
-        IUtilityService utilityService) : base(workUnit, utilityService)
+        IUtilityService utilityService) 
+        : base(workUnit, utilityService)
     {
     }
 
-    public async Task<Result<TechnicianInventoryRequest>> CreateAsync(int technicianId, InventoryRequest_AddRequestModel request)
+    public async Task<Result<TechnicianInventoryRequest>> CreateAsync(int technicianId, int baseRequestId)
     {
         if (!await _utilityService.DoesUserExistAsync(technicianId))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(technicianId));
 
         if (!await _utilityService.IsUserInRoleAsync(technicianId, Role.Technician))
-            return GeneralErrors.Unauthorized;
+            return GeneralErrors.Unauthorized(nameof(technicianId));
 
-        // Transaction
-        using var transaction = await _workUnit.BeginTransactionAsync();
+        var baseRequestEntity = await _workUnit.InventoryRequestsRepository.GetByIdAsync(baseRequestId);
 
-        try
-        {
-            var createRequestResult = await base.CreateAsync(request);
+        if (baseRequestEntity == null || await _utilityService.DoesBaseInventoryRequestBelongToRequest(baseRequestId))
+            throw new InvalidOperationException();
 
-            if (createRequestResult.IsFailed)
-                return Result.Fail(createRequestResult.Errors);
-
-            await _workUnit.SaveChangesAsync();
-            await _workUnit.TechnicianInventoryRequestsRepository
+        await _workUnit.TechnicianInventoryRequestsRepository
                        .AddAsync(new DAL.Entities.Inventory.TechnicianInventoryRequest
                        {
-                           InventoryRequestId = createRequestResult.Value.Id,
+                           InventoryRequestId = baseRequestId,
                            TechnicianId = technicianId
                        });
 
             await _workUnit.SaveChangesAsync();
-            await transaction.CommitAsync();
-
-            return ConvertEntityToModel(technicianId, createRequestResult.Value);
-        }
-        catch
-        {
-            await transaction.RollbackAsync();
-            throw;
-        }
+            return ConvertEntityToModel(technicianId, baseRequestEntity);
     }
 
     public async Task<OffsetPaginatedList<TechnicianInventoryRequest>> GetAllAsync(
@@ -91,7 +78,7 @@ internal class TechnicianInventoryRequestsService : BaseInventoryRequestsService
         var dbRequest = await _workUnit.TechnicianInventoryRequestsRepository.GetByIdAsync(requestId);
 
         if (dbRequest == null)
-            return InventoryRequestErrors.NotFound;
+            return InventoryRequestErrors.NotFound(nameof(requestId));
 
         var dbBaseRequest = await _workUnit.InventoryRequestsRepository.GetByIdAsync(requestId);
         var updateValidation = await IsUpdateValid(dbBaseRequest, request);
@@ -114,8 +101,9 @@ internal class TechnicianInventoryRequestsService : BaseInventoryRequestsService
         DAL.Entities.Inventory.InventoryRequest entity, 
         InventoryRequest_PatchRequestModel update)
     {
-        if (!IsStatusChangeValid(entity, update.Status))
+        if (!_utilityService.IsRequestStatusChangeValid(entity.StatusId, update.Status))
             return InventoryRequestErrors.CannotChangeStatus(
+                nameof(update.Status),
                 InventoryRequestStatus.FromValue(entity.StatusId).Name, 
                 update.Status.Name);
 
@@ -123,7 +111,7 @@ internal class TechnicianInventoryRequestsService : BaseInventoryRequestsService
         int smallInventoryStock = await _utilityService.GetSmallInventoryItemQuantityAsync(entity.ToolId);
 
         if (update.Status == InventoryRequestStatus.Completed && smallInventoryStock < entity.Quantity)
-            return InventoryItemErrors.NotEnoughStock;
+            return InventoryItemErrors.NotEnoughStock(nameof(entity.Quantity));
 
         return Result.Ok();
     }

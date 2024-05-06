@@ -1,66 +1,55 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.Results;
+using WaterFilterBusiness.Common.Utilities;
 
-namespace WaterFilterBusiness.API.Controllers
+namespace WaterFilterBusiness.API.Controllers;
+
+[HasPermission(Permission.ManageUsers)]
+[Route("api/[controller]")]
+[ApiController]
+public class UsersController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : Controller
+    public UsersController(IServicesManager servicesManager) : base(servicesManager) { }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page,
+        [Required, Range(1, int.MaxValue)] int pageSize)
     {
-        public UsersController(IServicesManager servicesManager) : base(servicesManager)
+        var users = await _servicesManager.UsersService.GetAllAsync(page, pageSize);
+        return Ok(users);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Create(User_AddRequestModel model)
+    {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
+        var transactionResult = await _servicesManager.WrapInTransactionAsync(async () =>
         {
-        }
+            var result = await _servicesManager.UsersService.AddAsync(model);
 
-        //[HasPermission(Permission.ReadUsers)]
-        [HttpGet]
-        public async Task<IActionResult> GetAll(int pageSize, int page = 1)
-        {
-            var result = await _servicesManager.UsersService.GetAllAsync(page, pageSize);
-            return Ok(result);
-        }
+            if (result.IsFailed)
+                return result;
 
-        [HttpPost]
-        public async Task<IActionResult> Create(User_AddRequestModel model)
-        {
-            var transactionResult = await _servicesManager.WrapInTransactionAsync(async () =>
-            {
-                var result = await _servicesManager.UsersService.AddAsync(model);
+            var newUser = result.Value;
+            return await _servicesManager.UsersService.AddUserToRole(newUser.Id, model.Role);
+        });
 
-                if (result.IsFailed)
-                    return result;
+        return transactionResult.IsSuccess
+               ? Created(string.Empty, transactionResult.Value)
+               : BadRequest(transactionResult.GetErrorsDictionary());
+    }
 
-                var newUser = result.Value;
-                return await _servicesManager.UsersService.AddUserToRole(newUser.Id, model.Role);
-            });
-
-            if (transactionResult.IsSuccess)
-                return Created(string.Empty, transactionResult.Value);
-            else
-            {
-                if (transactionResult is IdentityErrorsResult)
-                {
-                    var errors = ((IdentityErrorsResult)transactionResult).BaseErrors
-                                                                          .ToDictionary(
-                                                                                e => e.Key,
-                                                                                e => e.Value.ToArray());
-
-                    return BadRequest(new ValidationProblemDetails(errors));
-                }
-
-                return BadRequest(transactionResult);
-            }
-        }
-
-        [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var result = await _servicesManager.UsersService.RemoveAsync(id);
-
-            return result.IsSuccess ? NoContent() : NotFound();
-        }
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var result = await _servicesManager.UsersService.RemoveAsync(id);
+        return result.IsSuccess ? NoContent() : NotFound();
     }
 }

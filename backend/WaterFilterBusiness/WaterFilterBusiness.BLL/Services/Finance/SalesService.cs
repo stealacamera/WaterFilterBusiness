@@ -14,6 +14,7 @@ public interface ISalesService
     Task<Result<Sale>> CreateAsync(Sale_AddRequestModel model);
     Task<Result<Sale>> VerifyAsync(int meetingId, string? verificationNote);
     Task<OffsetPaginatedList<Sale>> GetAllByAsync(int page, int pageSize);
+    Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null);
 }
 
 internal class SalesService : Service, ISalesService
@@ -25,14 +26,18 @@ internal class SalesService : Service, ISalesService
     public async Task<Result<Sale>> CreateAsync(Sale_AddRequestModel model)
     {
         if (!await _utilityService.DoesMeetingExistAsync(model.MeetingId))
-            return ClientMeetingErrors.NotFound;
+            return ClientMeetingErrors.NotFound(nameof(model.MeetingId));
+        else if(await _utilityService.GetMeetingOutcomeAsync(model.MeetingId) != MeetingOutcome.Successful)
+            return SalesErrors.CannotCreate_UnsuccessfulMeeting(nameof(model.MeetingId));
+        else if (await _workUnit.SalesRepository.GetByIdAsync(model.MeetingId) != null)
+            return SalesErrors.AlreadyCreatedForMeeting(nameof(model.MeetingId));
 
         if (model.UpfrontPaymentAmount > model.TotalAmount || model.UpfrontPaymentAmount <= 0)
-            return SalesErrors.InvalidUpfrontAmountValue;
+            return SalesErrors.InvalidUpfrontAmountValue(nameof(model.UpfrontPaymentAmount));
         else if (model.UpfrontPaymentAmount == model.TotalAmount && model.PaymentType != PaymentType.FullUpfront)
-            return SalesErrors.InvalidPaymentType;
+            return SalesErrors.InvalidPaymentType(nameof(model.PaymentType));
         else if (model.UpfrontPaymentAmount < model.TotalAmount && model.PaymentType != PaymentType.MonthlyInstallments)
-            return SalesErrors.InvalidPaymentType;
+            return SalesErrors.InvalidPaymentType(nameof(model.PaymentType));
 
         var dbModel = await _workUnit.SalesRepository
                                      .AddAsync(new DAL.Entities.Sale
@@ -61,12 +66,20 @@ internal class SalesService : Service, ISalesService
         };
     }
 
+    public async Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null)
+    {
+        if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
+            return new Error(nameof(salesAgentId), new Error("Only sales agents can be queried"));
+
+        return await _workUnit.SalesRepository.GetTotalSalesCreatedBySalesAgentAsync(salesAgentId, filterByDate);
+    }
+
     public async Task<Result<Sale>> VerifyAsync(int meetingId, string? verificationNote)
     {
         var sale = await _workUnit.SalesRepository.GetByIdAsync(meetingId);
 
         if (sale == null)
-            return SalesErrors.NotFound;
+            return SalesErrors.NotFound(nameof(meetingId));
 
         if (sale.VerifiedAt == null)
         {

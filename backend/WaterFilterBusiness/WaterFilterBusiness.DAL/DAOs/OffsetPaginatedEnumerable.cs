@@ -15,6 +15,11 @@ public sealed class OffsetPaginatedEnumerable<T>
 
     public static async Task<OffsetPaginatedEnumerable<T>> CreateAsync(IQueryable<T> query, int page, int pageSize)
     {
+        if (page <= 0)
+            throw new ArgumentOutOfRangeException(nameof(page));
+        else if(pageSize <= 0)
+            throw new ArgumentOutOfRangeException(nameof(pageSize));
+
         int totalCount = await query.CountAsync();
         
         var values = await query.Skip((page - 1) * pageSize)

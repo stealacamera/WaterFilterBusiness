@@ -12,7 +12,7 @@ public class InventoryPurchase : StrongEntity
         set
         {
             if (value <= 0)
-                throw new Exception("Quantity cannot be a nonpositive integer");
+                throw new ArgumentOutOfRangeException(nameof(Quantity));
 
             _quantity = value;
         }

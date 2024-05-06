@@ -5,9 +5,11 @@ public class InventoryRequest : StrongEntity
     public int ToolId { get; set; }
     public int StatusId { get; set; }
     public int Quantity { get; set; }
+    
     public DateTime CreatedAt { get; set; }
-    public DateTime ConcludedAt { get; set; }
     public string? RequestNote { get; set; }
+
+    public DateTime ConcludedAt { get; set; }
     public string? ConclusionNote { get; set; }
 }
 
