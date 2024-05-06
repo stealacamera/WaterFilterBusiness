@@ -7,11 +7,11 @@ export const _bookings = [...Array(5)].map((_, index) => ({
   id: _mock.id(index),
   name: _mock.name.fullName(index),
   avatar: _mock.image.avatar(index),
-  checkIn: _mock.time(index),
-  checkOut: _mock.time(index),
-  phoneNumber: _mock.phoneNumber(index),
-  status: randomInArray(['pending', 'un_paid', 'paid']),
-  roomType: randomInArray(['double', 'king', 'single']),
+  checkIn: _mock.phoneNumber(index),
+  checkOut: randomInArray(['12:00', '15:30', '21:00']),
+  phoneNumber: 'Bulevardi "Zog I Nr.\n 64/1/5 Tiranë, 1001',
+  status: randomInArray(['successful', 'unsuccessful', 'agent cancellation', 'client cancellation']),
+  // roomType: randomInArray(['double', 'king', 'single']),
 }));
 
 export const _bookingsOverview = [...Array(3)].map((_, index) => ({
@@ -36,7 +36,7 @@ export const _bookingNew = [...Array(5)].map((_, index) => ({
   avatar: _mock.image.avatar(index),
   bookdAt: _mock.time(index),
   roomNumber: 'A-21',
-  roomType: randomInArray(['double', 'king', 'single']),
+  // roomType: randomInArray(['double', 'king', 'single']),
   person: '3-5',
   cover: `https://minimal-assets-api.vercel.app/assets/images/rooms/room-${index + 1}.jpg`,
 }));

@@ -39,7 +39,7 @@ export const PATH_DASHBOARD = {
     ecommerce: '/ecommerce',
     analytics: '/analytics',
     banking: '/banking',
-    booking: '/booking',
+    meeting: '/meeting',
   },
   mail: {
     root: '/mail',
@@ -50,7 +50,7 @@ export const PATH_DASHBOARD = {
     new: '/chat/new',
     view: (name) => `/chat/${name}`,
   },
-  calendar: '/calendar',
+  schedule: '/schedule',
   kanban: '/kanban',
   user: {
     root: '/user',

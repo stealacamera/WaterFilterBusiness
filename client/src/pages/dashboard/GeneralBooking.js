@@ -28,7 +28,7 @@ export default function GeneralBooking() {
     <Page title="General: Banking">
       <Container maxWidth={themeStretch ? false : 'xl'}>
         <Grid container spacing={3}>
-          <Grid item xs={12} md={4}>
+          {/* <Grid item xs={12} md={4}>
             <BookingWidgetSummary title="Total Booking" total={714000} icon={<BookingIllustration />} />
           </Grid>
 
@@ -70,7 +70,7 @@ export default function GeneralBooking() {
 
           <Grid item xs={12}>
             <BookingNewestBooking />
-          </Grid>
+          </Grid> */}
 
           <Grid item xs={12}>
             <BookingDetails />

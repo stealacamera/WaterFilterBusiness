@@ -39,18 +39,18 @@ export default function BookingDetails() {
   return (
     <>
       <Card>
-        <CardHeader title="Booking Details" sx={{ mb: 3 }} />
+        <CardHeader title="Meeting Overview" sx={{ mb: 3 }} />
         <Scrollbar>
           <TableContainer sx={{ minWidth: 720 }}>
             <Table>
-              <TableHead>
+              <TableHead sx={{ minWidth: 7 }}>
                 <TableRow>
-                  <TableCell sx={{ minWidth: 240 }}>Booker</TableCell>
-                  <TableCell sx={{ minWidth: 160 }}>Check In</TableCell>
-                  <TableCell sx={{ minWidth: 160 }}>Check Out</TableCell>
-                  <TableCell sx={{ minWidth: 120 }}>Status</TableCell>
+                  <TableCell sx={{ minWidth: 240 }}>Name</TableCell>
                   <TableCell sx={{ minWidth: 200 }}>Phone</TableCell>
-                  <TableCell sx={{ minWidth: 120 }}>Room Type</TableCell>
+                  <TableCell sx={{ minWidth: 140 }}>Time</TableCell>
+                  <TableCell sx={{ minWidth: 140 }}>Status</TableCell>
+                  <TableCell sx={{ minWidth: 200 }}>Address</TableCell>
+                  <TableCell sx={{ maxWidth: 0 }}> </TableCell>
                   <TableCell />
                 </TableRow>
               </TableHead>
@@ -64,14 +64,17 @@ export default function BookingDetails() {
                       </Stack>
                     </TableCell>
 
-                    <TableCell>{format(new Date(row.checkIn), 'dd MMM yyyy')}</TableCell>
-                    <TableCell>{format(new Date(row.checkOut), 'dd MMM yyyy')}</TableCell>
+                    <TableCell>{row.checkIn}</TableCell>
+                    <TableCell>{row.checkOut}</TableCell>
 
                     <TableCell>
                       <Label
                         variant={isLight ? 'ghost' : 'filled'}
                         color={
-                          (row.status === 'paid' && 'success') || (row.status === 'pending' && 'warning') || 'error'
+                          (row.status === 'successful' && 'success') ||
+                          (row.status === 'client cancellation' && 'warning') ||
+                          (row.status === 'unsuccessful' && 'error') ||
+                          (row.status === 'agent cancellation' && 'info')
                         }
                       >
                         {sentenceCase(row.status)}

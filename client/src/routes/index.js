@@ -77,10 +77,10 @@ export default function Router() {
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         { path: 'dashboard', element: <GeneralApp /> },
-        { path: 'ecommerce', element: <GeneralEcommerce /> },
-        { path: 'analytics', element: <GeneralAnalytics /> },
-        { path: 'banking', element: <GeneralBanking /> },
-        { path: 'booking', element: <GeneralBooking /> },
+        // { path: 'ecommerce', element: <GeneralEcommerce /> },
+        // { path: 'analytics', element: <GeneralAnalytics /> },
+        // { path: 'banking', element: <GeneralBanking /> },
+        { path: 'meeting', element: <GeneralBooking /> },
 
         {
           path: 'e-commerce',
@@ -143,7 +143,7 @@ export default function Router() {
             { path: ':conversationKey', element: <Chat /> },
           ],
         },
-        { path: 'calendar', element: <Calendar /> },
+        { path: 'schedule', element: <Calendar /> },
         { path: 'kanban', element: <Kanban /> },
       ],
     },
