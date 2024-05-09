@@ -40,6 +40,7 @@ export const PATH_DASHBOARD = {
     analytics: '/analytics',
     banking: '/banking',
     meeting: '/meeting',
+    newMeeting: '/meeting/new',
   },
   mail: {
     root: '/mail',

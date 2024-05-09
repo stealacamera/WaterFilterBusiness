@@ -77,10 +77,11 @@ export default function Router() {
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         { path: 'dashboard', element: <GeneralApp /> },
-        // { path: 'ecommerce', element: <GeneralEcommerce /> },
-        // { path: 'analytics', element: <GeneralAnalytics /> },
-        // { path: 'banking', element: <GeneralBanking /> },
-        { path: 'meeting', element: <GeneralBooking /> },
+        { path: 'ecommerce', element: <GeneralEcommerce /> },
+        { path: 'analytics', element: <GeneralAnalytics /> },
+        { path: 'banking', element: <GeneralBanking /> },
+        { path: 'meeting', element: <MeetingOverview /> },
+        { path: 'meeting/new', element: <MeetingCreate /> },
 
         {
           path: 'e-commerce',
@@ -189,7 +190,8 @@ const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')))
 const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));
 const GeneralAnalytics = Loadable(lazy(() => import('../pages/dashboard/GeneralAnalytics')));
 const GeneralBanking = Loadable(lazy(() => import('../pages/dashboard/GeneralBanking')));
-const GeneralBooking = Loadable(lazy(() => import('../pages/dashboard/GeneralBooking')));
+const MeetingOverview = Loadable(lazy(() => import('../pages/dashboard/Meeting')));
+const MeetingCreate = Loadable(lazy(() => import('../pages/dashboard/MeetingCreate')));
 
 // ECOMMERCE
 const EcommerceShop = Loadable(lazy(() => import('../pages/dashboard/EcommerceShop')));

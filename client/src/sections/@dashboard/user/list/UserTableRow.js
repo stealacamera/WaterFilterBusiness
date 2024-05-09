@@ -21,7 +21,8 @@ UserTableRow.propTypes = {
 export default function UserTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, avatarUrl, company, role, isVerified, status } = row;
+  const { name, avatarUrl, phoneNumber, time, address, status } = row;
+  // const { name, avatarUrl, company, role, isVerified, status } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -46,13 +47,17 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
         </Typography>
       </TableCell>
 
-      <TableCell align="left">{company}</TableCell>
+      <TableCell align="left">{phoneNumber}</TableCell>
 
       <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
-        {role}
+        {time}
       </TableCell>
 
-      <TableCell align="center">
+      <TableCell align="left" sx={{ textTransform: 'capitalize' }}>
+        {address}
+      </TableCell>
+
+      {/* <TableCell align="center">
         <Iconify
           icon={isVerified ? 'eva:checkmark-circle-fill' : 'eva:clock-outline'}
           sx={{
@@ -62,12 +67,19 @@ export default function UserTableRow({ row, selected, onEditRow, onSelectRow, on
             ...(!isVerified && { color: 'warning.main' }),
           }}
         />
-      </TableCell>
+      </TableCell> */}
+
+      {/* 'successful', 'unsuccessful', 'agent cancellation', 'customer cancellation' */}
 
       <TableCell align="left">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
-          color={(status === 'banned' && 'error') || 'success'}
+          color={
+            (status === 'unsuccessful' && 'error') ||
+            (status === 'successful' && 'success') ||
+            (status === 'agent cancellation' && 'info') ||
+            (status === 'customer cancellation' && 'warning')
+          }
           sx={{ textTransform: 'capitalize' }}
         >
           {status}
