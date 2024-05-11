@@ -7,15 +7,19 @@ namespace WaterFilterBusiness.BLL;
 
 public interface ICommissionRequestService
 {
-    Task<Result<Commission>> GetByIdAsync(int id);
-    Task<CursorPaginatedList<Commission, int>> GetAllAsync(int paginationCursor, int pageSize,DateTime CompletedAt);
+    Task<Result<CommissionRequest>> GetByIdAsync(int id);
+    Task<CursorPaginatedList<CommissionRequest, int>> GetAllAsync(int paginationCursor, int pageSize,DateTime CompletedAt);
+    Task<CursorPaginatedList<CommissionRequest, int>>> Update(int commissionID);
+    public async Task<CursorPaginatedEnumerable<CommissionRequest, int>> GetAllEarkyRequestsAsync(
+      int paginationCursor,
+      int pageSize);
 }
-public class CommissionService : Service, ICommissionService
+public class CommissionSRequestervice : Service, ICommissionService
     {
-        public CommissionService(iWorkUnit workUnit) : base(workUnit)
+        public CommissionRequestService(iWorkUnit workUnit) : base(workUnit)
         {
         }
-    Task<Result<Commission>> GetByIdAsync(int id)
+    Task<Result<CommissionRequest>> GetByIdAsync(int id)
     {
         var dbModel = await _workUnit.CommissionRequestRepository.GetByIdAsync(id);
         return new CommisionRequest
@@ -26,18 +30,40 @@ public class CommissionService : Service, ICommissionService
             CompletedAt = dbModel.CompletedAt
         };
     }
-    Task<CursorPaginatedList<Commission, int>> GetAllAsync(int paginationCursor, int pageSize, DateTime CompletedAt)
+    Task<CursorPaginatedList<CommissionRequest, int>> GetAllFromOneWorkerAsync(int paginationCursor, int pageSize, int id)
     {
 
         var result = await _workUnit.CommissionRequestRepository
                                 .GetAllAsync(
                                     paginationCursor, pageSize,
-                                    CompletedAt);
+                                    id);
 
-        return new CursorPaginatedList<ClientMeeting, int>
+        return new CursorPaginatedList<CommissionRequest, int>
         {
             Cursor = result.Cursor,
             Values = result.Values.Select(ConvertEntityToModel).ToList()
         };
     }
+    Task<CursorPaginatedList<Commission, int>>> Update(int commissionID)
+    {
+        var val = await _workUnit.CommissionRequestRepository.GetByID(commissionID);
+        val.ReleasedAt = DateTime.Now;
+        await _workUnit.SaveChangesAsync();
+    }
+    public async Task<CursorPaginatedEnumerable<Commission, int>> GetAllEarkyRequestsAsync(
+     int paginationCursor,
+     int pageSize)
+    {
+        var result = await _workUnit.CommissionRequestRepository
+                                .GetAllEarkyRequestsAsync(
+                                    paginationCursor, pageSize,
+                                    );
+
+        return new CursorPaginatedList<CommissionRequest, int>
+        {
+            Cursor = result.Cursor,
+            Values = result.Values.Select(ConvertEntityToModel).ToList()
+        };
+    }
+
 }

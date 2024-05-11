@@ -16,6 +16,8 @@ public interface ICommissionService
     Task<Commission> PhoneAgentMonthlyCommissionAsync(int id, int sales_number, CommissionType commissionType);
     Task<Result<Commission>> GetByIdAsync(int id);
     Task<CursorPaginatedList<Commission, int>> GetAllAsync(int paginationCursor, int pageSize);
+    Task<CursorPaginatedList<Commission, int>> GetAllync(int paginationCursor, int pageSize);
+    Task<CursorPaginatedList<Commission, int>>> Update(int CommissionId);
 }
 public class CommissionService : Service, ICommissionService
 {
@@ -172,4 +174,22 @@ public class CommissionService : Service, ICommissionService
             Values = result.Values.Select(ConvertEntityToModel).ToList()
         };
     }
+    Task<CursorPaginatedList<Commission, int>> GetAllFromOneWorkerAsync(int paginationCursor, int pageSize, int workerID)
+    {
+        var result = await _workUnit.CommissionRepository
+                                    .GetAllFromOneWorkerAsync(
+                                        paginationCursor, pageSize, workerID);
+        return new CursorPaginatedList<ClientMeeting, int>
+        {
+            Cursor = result.Cursor,
+            Values = result.Values.Select(ConvertEntityToModel).ToList()
+        };
+    }
+    Task<CursorPaginatedList<Commission, int>>> Update(int commissionID)
+    {
+        var val = await _workUnit.CommissionRepository.GetByID(commissionID);
+        val.ReleasedAt = DateTime.Now;
+        await _workUnit.SaveChangesAsync();
+    }
+
 }

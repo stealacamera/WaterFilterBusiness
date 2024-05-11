@@ -18,12 +18,7 @@ namespace WaterFilterBusiness.API.Controllers
         public async Task<IActionResult> GetAll(
             int pageSize,
             int page = 1,
-            bool excludeWithCalls = true,
-            bool excludeRedListed = true,
-            bool includeOnlyRedListed = false)
         {
-            if (excludeRedListed && includeOnlyRedListed)
-                return BadRequest("Red listed customers cannot be excluded and included simultaneously");
 
             OffsetPaginatedList<Customer> results;
 
