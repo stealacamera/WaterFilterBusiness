@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentResults;
+using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
 
 namespace WaterFilterBusiness.API.Controllers
@@ -9,6 +10,14 @@ namespace WaterFilterBusiness.API.Controllers
     {
         protected readonly IServicesManager _servicesManager;
 
-        public Controller(IServicesManager servicesManager) => _servicesManager = servicesManager;
+        public Controller(IServicesManager servicesManager) 
+            => _servicesManager = servicesManager;
+
+        protected IActionResult GetResult<T>(Result<T> result, IActionResult onSuccess)
+        {
+            return result.IsFailed
+                   ? BadRequest(result)
+                   : onSuccess;
+        }
     }
 }

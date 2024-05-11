@@ -7,13 +7,15 @@ public class Commission : StrongEntity
     public string Reason { get; set; }
     public int WorkerId { get; set; }
 
-    public DateTime ApprovedAt { get; set; }
-    public DateTime ReleasedAt { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+    public DateTime? ReleasedAt { get; set; }
 }
 
 public class CommissionRequest : BaseEntity<int>
 {
     public int CommissionId { get; set; }
+    internal Commission Commission { get; set; } = null!;
+
     public DateTime CreatedAt { get; set; }
-    public DateTime CompletedAt { get; set; }
+    public DateTime? CompletedAt { get; set; }
 }

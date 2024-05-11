@@ -12,7 +12,7 @@ internal class CommissionRequestConfiguration : IEntityTypeConfiguration<Commiss
 
         builder.HasKey(x => x.CommissionId);
 
-        builder.HasOne<Commission>()
+        builder.HasOne(e => e.Commission)
                .WithOne()
                .HasForeignKey<CommissionRequest>(e => e.CommissionId)
                .IsRequired()
