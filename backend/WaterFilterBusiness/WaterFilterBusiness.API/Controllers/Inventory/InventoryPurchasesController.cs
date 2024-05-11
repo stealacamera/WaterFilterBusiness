@@ -1,53 +1,33 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
-using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Attributes;
+using WaterFilterBusiness.Common.Enums;
 
-namespace WaterFilterBusiness.API.Controllers.Inventory
+namespace WaterFilterBusiness.API.Controllers.Inventory;
+
+[Route("api/[controller]")]
+[ApiController]
+public class InventoryPurchasesController : Controller
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class InventoryPurchasesController : Controller
+    public InventoryPurchasesController(IServicesManager servicesManager) : base(servicesManager)
     {
-        public InventoryPurchasesController(IServicesManager servicesManager) : base(servicesManager)
-        {
-        }
+    }
 
-        [HttpGet()]
-        public async Task<IActionResult> GetAll(int page, int pageSize)
-        {
-            var purchases = await _servicesManager.InventoryPurchasesService
-                                                  .GetAllAsync(page, pageSize);
+    [HasPermission(Permission.ReadInventoryPurchases)]
+    [HttpGet]
+    public async Task<IActionResult> GetAll(
+        [Required, Range(1, int.MaxValue)] int page, 
+        [Required, Range(1, int.MaxValue)] int pageSize)
+    {
+        var purchases = await _servicesManager.InventoryPurchasesService
+                                              .GetAllAsync(page, pageSize);
 
-            foreach (var purchase in purchases.Values)
-                await CompleteModelForeignEntities(purchase);
+        foreach (var purchase in purchases.Values)
+            purchase.Tool = (await _servicesManager.InventoryItemsService
+                                             .GetByIdAsync(purchase.Tool.Id))
+                                             .Value;
 
-            return Ok(purchases);
-        }
-
-        [HttpPost()]
-        public async Task<IActionResult> Create(InventoryPurchase_AddRequestModel purchase)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            var createResult = await _servicesManager.InventoryPurchasesService
-                                                     .CreateAsync(purchase.ToolId, purchase.Quantity);
-
-            if (createResult.IsFailed)
-                return BadRequest(createResult.Errors);
-            else
-            {
-                await CompleteModelForeignEntities(createResult.Value);
-                return Created(string.Empty, createResult.Value);
-            }
-        }
-
-        private async Task CompleteModelForeignEntities(InventoryPurchase purchase)
-        {
-            var tool = await _servicesManager.InventoryItemsService
-                                             .GetByIdAsync(purchase.Tool.Id);
-
-            purchase.Tool = tool.Value;
-        }
+        return Ok(purchases);
     }
 }

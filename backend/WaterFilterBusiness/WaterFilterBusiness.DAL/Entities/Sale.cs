@@ -9,6 +9,7 @@ public class Sale : BaseEntity<int>, IValidatableObject
     internal ClientMeeting Meeting { get; set; }
 
     public int PaymentTypeId { get; set; }
+
     public decimal UpfrontPaymentAmount { get; set; }
     public decimal TotalAmount { get; set; }
 

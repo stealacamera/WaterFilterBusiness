@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WaterFilterBusiness.Common.Enums;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace WaterFilterBusiness.DAL.EntityConfigurations.Identity;
 

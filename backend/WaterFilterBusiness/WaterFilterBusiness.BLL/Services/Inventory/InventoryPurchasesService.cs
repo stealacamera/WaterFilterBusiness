@@ -21,7 +21,7 @@ internal class InventoryPurchasesService : Service, IInventoryPurchasesService
     public async Task<Result<InventoryPurchase>> CreateAsync(int toolId, int quantity)
     {
         if (!await _utilityService.DoesInventoryItemExistAsync(toolId))
-            return InventoryItemErrors.NotFound;
+            return InventoryItemErrors.NotFound(nameof(toolId));
          
         var dbModel = await _workUnit.InventoryPurchasesRepository
                                      .AddAsync(new DAL.Entities.Inventory.InventoryPurchase

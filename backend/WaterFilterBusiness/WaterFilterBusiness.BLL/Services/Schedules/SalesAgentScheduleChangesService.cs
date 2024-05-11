@@ -28,7 +28,7 @@ internal class SalesAgentScheduleChangesService : Service, ISalesAgentScheduleCh
         SalesAgentSchedule oldSchedule)
     {
         if (!await _utilityService.DoesScheduleExistAsync(scheduleId))
-            return SalesAgentScheduleErrors.NotFound;
+            return SalesAgentScheduleErrors.NotFound(nameof(scheduleId));
 
         if (oldSchedule.Equals(newSchedule))
             return GeneralErrors.UnchangedUpdate;
@@ -58,7 +58,7 @@ internal class SalesAgentScheduleChangesService : Service, ISalesAgentScheduleCh
     public async Task<Result<CursorPaginatedList<SalesAgentScheduleChange, int>>> GetAllForSalesAgentAsync(int salesAgentId, int paginationCursor, int pageSize)
     {
         if (!await _utilityService.DoesUserExistAsync(salesAgentId))
-            return SalesAgentScheduleErrors.SalesAgentNotFound;
+            return SalesAgentScheduleErrors.SalesAgentNotFound(nameof(salesAgentId));
 
         var dbValues = await _workUnit.SalesAgentScheduleChangesRepository
                                .GetAllForSalesAgentAsync(salesAgentId, paginationCursor, pageSize);
@@ -82,7 +82,7 @@ internal class SalesAgentScheduleChangesService : Service, ISalesAgentScheduleCh
     public async Task<Result> RemoveAllForScheduleAsync(int scheduleId)
     {
         if (!await _utilityService.DoesScheduleExistAsync(scheduleId))
-            return SalesAgentScheduleErrors.NotFound;
+            return SalesAgentScheduleErrors.NotFound(nameof(scheduleId));
 
         await _workUnit.SalesAgentScheduleChangesRepository.RemoveAllForScheduleAsync(scheduleId);
         await _workUnit.SaveChangesAsync();

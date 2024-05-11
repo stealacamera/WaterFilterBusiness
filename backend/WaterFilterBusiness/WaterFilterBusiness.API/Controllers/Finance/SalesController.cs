@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs.Finance;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
 {
@@ -15,9 +17,23 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         {
         }
 
+        [HasPermission(Permission.ReadSales)]
+        [HttpGet]
+        public async Task<IActionResult> GetAll(
+            [Required, Range(1, int.MaxValue)] int page,
+            [Required, Range(1, int.MaxValue)] int pageSize)
+        {
+            var sales = await _servicesManager.SalesService.GetAllByAsync(page, pageSize);
+            return Ok(sales);
+        }
+
+        [HasPermission(Permission.CreateSales)]
         [HttpPost]
         public async Task<IActionResult> Create(Sale_AddRequestModel model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _servicesManager.WrapInTransactionAsync(async () =>
             {
                 var createResult = await _servicesManager.SalesService.CreateAsync(model);
@@ -41,17 +57,11 @@ namespace WaterFilterBusiness.API.Controllers.Finance
 
             return result.IsSuccess
                    ? Created(nameof(Create), result.Value)
-                   : BadRequest(result.Errors);
+                   : BadRequest(result.GetErrorsDictionary());
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll(int page, int pageSize)
-        {
-            var sales = await _servicesManager.SalesService.GetAllByAsync(page, pageSize);
-            return Ok(sales);
-        }
-
-        [HttpPatch("{meetingId:int}")]
+        [HasPermission(Permission.VerifySales)]
+        [HttpPatch("{meetingId:int}/verify")]
         public async Task<IActionResult> Verify(int meetingId, [FromBody, MaxLength(210)] string? verificationNote)
         {
             var verifyResult = await _servicesManager.SalesService
@@ -59,7 +69,7 @@ namespace WaterFilterBusiness.API.Controllers.Finance
 
             return verifyResult.IsSuccess
                    ? Ok(verifyResult.Value)
-                   : BadRequest(verifyResult.Errors);
+                   : BadRequest(verifyResult.GetErrorsDictionary());
         }
     }
 }

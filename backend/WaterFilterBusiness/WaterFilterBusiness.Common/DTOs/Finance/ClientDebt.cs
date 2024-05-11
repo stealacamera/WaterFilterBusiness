@@ -5,7 +5,7 @@ public record ClientDebt(
     Sale_BriefDecsription Sale,
     decimal Amount,
     DateOnly DeadlineAt,
-    bool IsCompleted);
+    DateOnly? CompletedAt);
 
 public record ClientDebt_AddRequestModel
 {

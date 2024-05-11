@@ -30,9 +30,9 @@ internal class ClientDebtsService : Service, IClientDebtsService
         var dbModel = await _workUnit.ClientDebtsRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return ClientDebtErrors.NotFound;
+            return ClientDebtErrors.NotFound(nameof(id));
 
-        dbModel.IsCompleted = true;
+        dbModel.CompletedAt = DateOnly.FromDateTime(DateTime.Now);
         await _workUnit.SaveChangesAsync();
 
         return ConvertEntityToModel(dbModel);
@@ -43,22 +43,21 @@ internal class ClientDebtsService : Service, IClientDebtsService
         var sale = await _utilityService.GetSaleById(saleId);
 
         if (sale == null)
-            return SalesErrors.NotFound;
+            return SalesErrors.NotFound(nameof(saleId));
         else if (sale.PaymentType != PaymentType.MonthlyInstallments)
-            return ClientDebtErrors.InvalidSalePaymentType;
+            return ClientDebtErrors.InvalidSalePaymentType(nameof(sale.PaymentType));
         else if (monthlyPayment >= sale.TotalAmount - sale.UpfrontPaymentAmount)
-            return ClientDebtErrors.InvalidMonthlyPayment;
+            return ClientDebtErrors.InvalidMonthlyPayment(nameof(monthlyPayment));
 
         var debtEntities = new List<DAL.Entities.Clients.ClientDebt>();
         int nrMonths = 1;
 
-        for (decimal amountLeft = sale.TotalAmount; amountLeft > 0; amountLeft -= monthlyPayment, nrMonths++)
+        for (decimal amountLeft = sale.TotalAmount - sale.UpfrontPaymentAmount; amountLeft > 0; amountLeft -= monthlyPayment, nrMonths++)
         {
             debtEntities.Add(new DAL.Entities.Clients.ClientDebt
             {
                 Amount = monthlyPayment,
                 DeadlineAt = DateOnly.FromDateTime(sale.CreatedAt.AddMonths(nrMonths)),
-                IsCompleted = false,
                 SaleId = saleId
             });
 
@@ -96,6 +95,6 @@ internal class ClientDebtsService : Service, IClientDebtsService
             new Sale_BriefDecsription { Meeting = new ClientMeeting_BriefDescription { Id = entity.SaleId } },
             entity.Amount,
             entity.DeadlineAt,
-            entity.IsCompleted);
+            entity.CompletedAt);
     }
 }

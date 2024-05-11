@@ -12,13 +12,13 @@ public record Customer_BriefDescription
 public record Customer
 {
     public int Id { get; set; }
-    public string FullName { get; set; }
-    public string PhoneNumber { get; set; }
+    public string FullName { get; set; } = null!;
+    public string PhoneNumber { get; set; } = null!;
 
     public string? Address { get; set; }
-    public string City { get; set; }
+    public string City { get; set; } = null!;
 
-    public string Profession { get; set; }
+    public string Profession { get; set; } = null!;
     public bool? IsQualified { get; set; }
 
     public DateTime? RedListedAt { get; set; }
@@ -28,32 +28,32 @@ public record Customer_AddRequestModel
 {
     [Required]
     [StringLength(55)]
-    public string FullName { get; set; }
+    public string FullName { get; set; } = null!;
 
     [Required]
-    [StringLength(30)]
-    public string PhoneNumber { get; set; }
+    [Phone]
+    public string PhoneNumber { get; set; } = null!;
 
     [StringLength(70)]
     public string? Address { get; set; }
 
     [Required]
     [StringLength(70)]
-    public string City { get; set; }
+    public string City { get; set; } = null!;
 
     [Required]
     [StringLength(65)]
-    public string Profession { get; set; }
+    public string Profession { get; set; } = null!;
 
     public bool? IsQualified { get; set; }
 }
 
-public class CustomerUpdateRequestModel
+public class Customer_UpdateRequestModel
 {
     [StringLength(55)]
     public string? FullName { get; set; }
 
-    [StringLength(30)]
+    [Phone]
     public string? PhoneNumber { get; set; }
 
     [StringLength(70)]
@@ -86,6 +86,6 @@ public class CustomerChange
 
 public class CustomerUpdate
 {
-    public Customer Customer { get; set; }
-    public CustomerChange OldCustomer { get; set; }
+    public Customer Customer { get; set; } = null!;
+    public CustomerChange OldCustomer { get; set; } = null!;
 }

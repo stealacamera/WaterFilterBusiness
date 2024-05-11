@@ -10,7 +10,6 @@ public class SalesAgentSchedule : StrongEntity, IValidatableObject
     public int DayOfWeekId { get; set; }
 
     public TimeOnly BeginHour { get; set; }
-
     public TimeOnly EndHour { get; set; }
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
@@ -31,7 +30,6 @@ public class SalesAgentScheduleChange : StrongEntity
     public int? OldDayOfWeekId { get; set; }
 
     public TimeOnly? OldBeginHour { get; set; }
-
     public TimeOnly? OldEndHour { get; set; }
 
     public DateTime ChangedAt { get; set; }

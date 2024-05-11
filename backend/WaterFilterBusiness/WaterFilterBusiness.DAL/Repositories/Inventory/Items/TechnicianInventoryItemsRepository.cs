@@ -13,9 +13,7 @@ public interface ITechnicianInventoryItemsRepository : ICompositeRepository<Tech
         bool? orderByQuantity = null);
 }
 
-internal class TechnicianInventoryItemsRepository :
-    CompositeRepository<TechnicianInventoryItem, int, int>,
-    ITechnicianInventoryItemsRepository
+internal class TechnicianInventoryItemsRepository : Repository<TechnicianInventoryItem>, ITechnicianInventoryItemsRepository
 {
     public TechnicianInventoryItemsRepository(AppDbContext dbContext) : base(dbContext)
     {
@@ -34,5 +32,10 @@ internal class TechnicianInventoryItemsRepository :
                     : query.OrderBy(e => e.Quantity);
 
         return await OffsetPaginatedEnumerable<TechnicianInventoryItem>.CreateAsync(query, page, pageSize);
+    }
+
+    public async Task<TechnicianInventoryItem?> GetByIdsAsync(int technicianId, int toolId)
+    {
+        return await _set.FindAsync(technicianId, toolId);
     }
 }

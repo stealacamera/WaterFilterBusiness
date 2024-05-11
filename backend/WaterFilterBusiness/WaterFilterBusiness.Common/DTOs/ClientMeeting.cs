@@ -27,7 +27,6 @@ public record ClientMeeting_BriefDescription
 
 public record ClientMeeting_UpdateRequestModel
 {
-    public int Id { get; set; }
     public MeetingOutcome Outcome { get; set; }
     public string? Afternotes { get; set; }
 }

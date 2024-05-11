@@ -6,23 +6,23 @@ namespace WaterFilterBusiness.DAL.DAOs;
 public sealed class CursorPaginatedEnumerable<TEntity, TKey> where TEntity : BaseEntity<TKey> where TKey : IComparable<TKey>
 {
     public TKey Cursor { get; private set; }
-    public IEnumerable<TEntity> Values { get; private set; } = new List<TEntity>();
+    public IList<TEntity> Values { get; private set; } = new List<TEntity>();
 
-    private CursorPaginatedEnumerable()
-    {
-    }
+    private CursorPaginatedEnumerable() { }
 
     public static async Task<CursorPaginatedEnumerable<TEntity, TKey>> CreateFromStrongEntityAsync(
         IQueryable<TEntity> query,
-        TKey paginationCursor, int pageSize)
+        TKey paginationCursor, 
+        int pageSize)
     {
-        return await CreateAsync(query, "Id", paginationCursor, pageSize);
+        return await CreateAsync(query, nameof(StrongEntity.Id), paginationCursor, pageSize);
     }
 
     public static async Task<CursorPaginatedEnumerable<TEntity, TKey>> CreateAsync(
         IQueryable<TEntity> query, 
         string primaryKeyName, 
-        TKey paginationCursor, int pageSize)
+        TKey paginationCursor, 
+        int pageSize)
     {
         query = query.Where(e => EF.Property<TKey>(e, primaryKeyName).CompareTo(paginationCursor) >= 0);
         query = query.Take(pageSize + 1);

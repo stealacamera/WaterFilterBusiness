@@ -19,13 +19,18 @@ internal interface IUtilityService
     Task<bool> DoesCustomerHaveAScheduledCallAsync(int customerId);
     Task<bool> IsCustomerRedListedAsync(int customerId);
     Task<bool> IsTimespanWithinSalesAgentScheduleAsync(int salesAgentId, DateTime scheduledAt);
+    Task<bool> DoesPhoneAgentHaveAScheduledCallInTimespanAsync(int phoneAgentId, DateTime schedule, int withinMinutes);
 
     Task<bool> DoesInventoryItemExistAsync(int id);
     Task<int> GetSmallInventoryItemQuantityAsync(int toolId);
     Task<int> GetBigInventoryItemQuantityAsync(int toolId);
     Task<decimal?> GetInventoryItemPriceAsync(int toolId);
 
+    Task<bool> DoesBaseInventoryRequestBelongToRequest(int id);
+    bool IsRequestStatusChangeValid(int requestStatusId, InventoryRequestStatus newStatus);
+
     Task<bool> DoesMeetingExistAsync(int meetingId);
+    Task<MeetingOutcome?> GetMeetingOutcomeAsync(int meetingId);
 
     Task<Sale?> GetSaleById(int saleId);
 
@@ -48,14 +53,26 @@ internal sealed class UtilityService : IUtilityService
             return false;
 
         return await _workUnit.ScheduledCallsRepository
-                              .DoesCustomerHaveAny(customerId);
+                              .DoesCustomerHaveNonCompletedCallsAsync(customerId);
+    }
+
+    public async Task<bool> DoesPhoneAgentHaveAScheduledCallInTimespanAsync(
+        int phoneAgentId, 
+        DateTime schedule, 
+        int withinMinutes)
+    {
+        if (!await IsUserInRoleAsync(phoneAgentId, Role.PhoneOperator))
+            return false;
+
+        return await _workUnit.ScheduledCallsRepository
+                                .IsPhoneAgentBusyForTimespanAsync(phoneAgentId, schedule, withinMinutes);
     }
 
     public async Task<bool> DoesInventoryItemExistAsync(int id) =>
         (await _workUnit.InventoryItemsRepository.GetByIdAsync(id)) != null;
 
     public async Task<bool> DoesMeetingExistAsync(int meetingId)
-        => (await _workUnit.SalesRepository.GetByIdAsync(meetingId)) != null;
+        => (await _workUnit.ClientMeetingsRepository.GetByIdAsync(meetingId)) != null;
 
     public async Task<bool> DoesScheduleExistAsync(int id) =>
         (await _workUnit.SalesAgentSchedulesRepository.GetByIdAsync(id)) != null;
@@ -137,6 +154,30 @@ internal sealed class UtilityService : IUtilityService
         };
     }
 
+    public async Task<bool> DoesBaseInventoryRequestBelongToRequest(int id)
+    {
+        return await _workUnit.SmallInventoryRequestsRepository.GetByIdAsync(id) != null
+               || await _workUnit.TechnicianInventoryRequestsRepository.GetByIdAsync(id) != null;
+    }
+
+    public bool IsRequestStatusChangeValid(int requestStatusId, InventoryRequestStatus newStatus)
+    {
+        bool isRequestFinalized = requestStatusId == InventoryRequestStatus.Cancelled.Value
+                                  || requestStatusId == InventoryRequestStatus.Completed.Value;
+
+        bool isRequestInProgress = requestStatusId == InventoryRequestStatus.InProgress.Value;
+
+        return !isRequestFinalized && !(isRequestInProgress && newStatus == InventoryRequestStatus.Pending);
+    }
+
+    public async Task<MeetingOutcome?> GetMeetingOutcomeAsync(int meetingId)
+    {
+        var meeting = await _workUnit.ClientMeetingsRepository.GetByIdAsync(meetingId);
+        return (meeting != null && meeting.MeetingOutcomeId.HasValue) 
+               ? MeetingOutcome.FromValue(meeting.MeetingOutcomeId.Value) 
+               : null;
+    }
+    
     public async Task<bool> DoesCommissionExistAsync(int commissionId)
         => (await _workUnit.CommissionsRepository.GetByIdAsync(commissionId)) != null;
 

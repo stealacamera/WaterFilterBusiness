@@ -5,7 +5,7 @@ using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.DTOs.ViewModels;
 using WaterFilterBusiness.Common.Enums;
 using WaterFilterBusiness.Common.ErrorHandling.Errors;
-using WaterFilterBusiness.Common.Results;
+using WaterFilterBusiness.Common.Utilities;
 using WaterFilterBusiness.DAL;
 
 namespace WaterFilterBusiness.BLL.Services.Identity;
@@ -41,8 +41,8 @@ internal sealed class UsersService : Service, IUsersService
     {
         var dbModel = await _workUnit.UsersRepository.GetByIdAsync(id);
 
-        if (dbModel == null || dbModel.DeletedAt != null)
-            return UserErrors.NotFound;
+        if (dbModel == null)
+            return UserErrors.NotFound(nameof(id));
 
         return new User
         {
@@ -69,10 +69,18 @@ internal sealed class UsersService : Service, IUsersService
         var result = await _workUnit.UsersRepository.AddAsync(entity, model.Password);
 
         if (!result.Succeeded)
-            return new IdentityErrorsResult(_identityErrorDescriber, result.Errors);
+            return ResultUtility.CreateResult(_identityErrorDescriber, result.Errors);
 
         await _workUnit.SaveChangesAsync();
-        return await ConvertEntityToModel(entity);
+
+        return new User
+        {
+            Id = entity.Id,
+            Email = entity.Email,
+            Name = entity.Name,
+            Surname = entity.Surname,
+            Username = entity.UserName
+        };
     }
 
     public async Task<Result<User>> AddUserToRole(int userId, string roleName)
@@ -80,7 +88,7 @@ internal sealed class UsersService : Service, IUsersService
         Role? role;
 
         if (!Role.TryFromName(roleName, ignoreCase: true, out role))
-            return UserErrors.RoleNotFound;
+            return UserErrors.RoleNotFound(nameof(role));
 
         return await AddUserToRole(userId, role);
     }
@@ -90,7 +98,7 @@ internal sealed class UsersService : Service, IUsersService
         var user = await _workUnit.UsersRepository.GetByIdAsync(userId);
 
         if (user == null)
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(userId));
 
         var result = await _workUnit.UsersRepository.AddToRoleAsync(user, role);
 
@@ -125,7 +133,7 @@ internal sealed class UsersService : Service, IUsersService
         var user = await _workUnit.UsersRepository.GetByIdAsync(id);
 
         if (user == null || user.DeletedAt != null)
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(id));
 
         user.DeletedAt = DateTime.Now;
         await _workUnit.SaveChangesAsync();
@@ -138,7 +146,7 @@ internal sealed class UsersService : Service, IUsersService
         var dbModel = await _workUnit.UsersRepository.GetByIdAsync(id);
 
         if (dbModel == null)
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(id));
 
         return await _workUnit.UsersRepository.GetRoleAsync(dbModel);
     }
@@ -149,7 +157,7 @@ internal sealed class UsersService : Service, IUsersService
                                   .GetByCredentials(credentials.Email, credentials.Password);
 
         if (user == null)
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(string.Empty);
 
         return await ConvertEntityToModel(user);
     }

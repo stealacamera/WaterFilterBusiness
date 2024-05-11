@@ -24,6 +24,7 @@ public static class Startup
                         options.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+/ ";
                         options.User.RequireUniqueEmail = true;
 
+                        options.SignIn.RequireConfirmedAccount = false;
                         options.Lockout.AllowedForNewUsers = false;
                         options.SignIn.RequireConfirmedAccount = false;
                     })

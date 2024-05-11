@@ -23,6 +23,7 @@ public record InventoryRequest_AddRequestModel
     public int ToolId { get; set; }
 
     [Required]
+    [Range(1, int.MaxValue)]
     public int Quantity { get; set; }
 
     [StringLength(210)]

@@ -140,7 +140,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.ToTable("PermissionRole");
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ClientDebt", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ClientDebt", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -152,11 +152,11 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasPrecision(10, 4)
                         .HasColumnType("decimal(10,4)");
 
-                    b.Property<DateOnly>("DeadlineAt")
+                    b.Property<DateOnly?>("CompletedAt")
                         .HasColumnType("date");
 
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
+                    b.Property<DateOnly>("DeadlineAt")
+                        .HasColumnType("date");
 
                     b.Property<int>("SaleId")
                         .HasColumnType("int");
@@ -168,7 +168,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.ToTable("ClientDebts", (string)null);
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ClientMeeting", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ClientMeeting", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -213,61 +213,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.ToTable("SalesAgentsMeetings", (string)null);
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Commission", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasPrecision(10, 4)
-                        .HasColumnType("decimal(10,4)");
-
-                    b.Property<DateTime>("ApprovedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("CommissionTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Reason")
-                        .IsRequired()
-                        .HasMaxLength(210)
-                        .HasColumnType("nvarchar(210)");
-
-                    b.Property<DateTime>("ReleasedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("WorkerId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CommissionTypeId");
-
-                    b.HasIndex("WorkerId");
-
-                    b.ToTable("Commissions", (string)null);
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CommissionRequest", b =>
-                {
-                    b.Property<int>("CommissionId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CompletedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("CommissionId");
-
-                    b.ToTable("CommissionRequests", (string)null);
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Customer", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.Customer", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -316,7 +262,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.ToTable("Customers", (string)null);
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CustomerCall", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.CustomerCall", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -347,7 +293,7 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.ToTable("CustomerCallsHistory", (string)null);
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CustomerChange", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.CustomerChange", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -384,6 +330,89 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.HasIndex("CustomerId");
 
                     b.ToTable("CustomerChangesHistory", (string)null);
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ScheduledCall", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PhoneAgentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ScheduledAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CustomerId");
+
+                    b.HasIndex("PhoneAgentId");
+
+                    b.ToTable("ScheduledCalls", (string)null);
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Commission", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("Amount")
+                        .HasPrecision(10, 4)
+                        .HasColumnType("decimal(10,4)");
+
+                    b.Property<DateTime>("ApprovedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CommissionTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(210)
+                        .HasColumnType("nvarchar(210)");
+
+                    b.Property<DateTime?>("ReleasedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("WorkerId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CommissionTypeId");
+
+                    b.HasIndex("WorkerId");
+
+                    b.ToTable("Commissions", (string)null);
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CommissionRequest", b =>
+                {
+                    b.Property<int>("CommissionId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("CompletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("CommissionId");
+
+                    b.ToTable("CommissionRequests", (string)null);
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Enums.CallOutcome", b =>
@@ -676,9 +705,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.Property<int>("ToolId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -695,7 +721,7 @@ namespace WaterFilterBusiness.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("DeletedAt")
+                    b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
@@ -764,11 +790,8 @@ namespace WaterFilterBusiness.DAL.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("CompletedAt")
+                    b.Property<DateTime>("OccurredAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsCompleted")
-                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasPrecision(10, 4)
@@ -801,7 +824,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ConclusionNote")
-                        .IsRequired()
                         .HasMaxLength(210)
                         .HasColumnType("nvarchar(210)");
 
@@ -812,7 +834,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("RequestNote")
-                        .IsRequired()
                         .HasMaxLength(210)
                         .HasColumnType("nvarchar(210)");
 
@@ -836,9 +857,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.Property<int>("ToolId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
@@ -852,10 +870,12 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.Property<int>("InventoryRequestId")
                         .HasColumnType("int");
 
-                    b.Property<int>("Id")
+                    b.Property<int>("RequesterId")
                         .HasColumnType("int");
 
                     b.HasKey("InventoryRequestId");
+
+                    b.HasIndex("RequesterId");
 
                     b.ToTable("SmallInventoryRequests", (string)null);
                 });
@@ -866,9 +886,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ToolId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<int>("Quantity")
@@ -885,9 +902,6 @@ namespace WaterFilterBusiness.DAL.Migrations
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.TechnicianInventoryRequest", b =>
                 {
                     b.Property<int>("InventoryRequestId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Id")
                         .HasColumnType("int");
 
                     b.Property<int>("TechnicianId")
@@ -921,122 +935,202 @@ namespace WaterFilterBusiness.DAL.Migrations
                         new
                         {
                             Id = 1,
-                            Name = "ReadUsers"
+                            Name = "ManageUsers"
                         },
                         new
                         {
                             Id = 2,
-                            Name = "CreateUser"
+                            Name = "ManageInventoryItems"
                         },
                         new
                         {
                             Id = 3,
-                            Name = "DeleteUser"
+                            Name = "ReadInventoryMovements"
                         },
                         new
                         {
                             Id = 4,
-                            Name = "ReadInventoryItems"
-                        },
-                        new
-                        {
-                            Id = 5,
-                            Name = "CreateInventoryItem"
-                        },
-                        new
-                        {
-                            Id = 6,
-                            Name = "DeleteInventoryItem"
-                        },
-                        new
-                        {
-                            Id = 7,
-                            Name = "UpdateInventoryItem"
-                        },
-                        new
-                        {
-                            Id = 8,
                             Name = "ReadInventoryPurchases"
                         },
                         new
                         {
+                            Id = 5,
+                            Name = "ManageBigInventory"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Name = "ReadSmallInventory"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Name = "ReadTechnicianInventory"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Name = "CreateSmallInventoryRequests"
+                        },
+                        new
+                        {
                             Id = 9,
-                            Name = "CreateInventoryPurchase"
+                            Name = "ReadSmallInventoryRequests"
                         },
                         new
                         {
                             Id = 10,
-                            Name = "ReadInventoryRequests"
+                            Name = "ResolveSmallInventoryRequests"
                         },
                         new
                         {
                             Id = 11,
-                            Name = "CreateInventoryRequest"
+                            Name = "CreateTechinicianInventoryRequests"
                         },
                         new
                         {
                             Id = 12,
-                            Name = "UpdateInventoryRequest"
+                            Name = "ReadTechinicianInventoryRequests"
                         },
                         new
                         {
                             Id = 13,
-                            Name = "DeleteInventoryRequest"
+                            Name = "ResolveTechnicianInventoryRequests"
                         },
                         new
                         {
                             Id = 14,
-                            Name = "ReadCustomers"
+                            Name = "DecreaseTechnicianStock"
                         },
                         new
                         {
                             Id = 15,
-                            Name = "CreateCustomer"
+                            Name = "ReadSalesAgentSchedules"
                         },
                         new
                         {
                             Id = 16,
-                            Name = "UpdateCustomer"
+                            Name = "ReadSalesAgentScheduleChangeHistories"
                         },
                         new
                         {
                             Id = 17,
-                            Name = "ReadCustomerMeetings"
+                            Name = "CreateSalesAgentSchedules"
                         },
                         new
                         {
                             Id = 18,
-                            Name = "CreateCustomerMeeting"
+                            Name = "UpdateSalesAgentSchedules"
                         },
                         new
                         {
                             Id = 19,
-                            Name = "UpdateCustomerMeeting"
+                            Name = "DeleteSalesAgentSchedules"
                         },
                         new
                         {
                             Id = 20,
-                            Name = "ReadSales"
+                            Name = "ReadCustomers"
                         },
                         new
                         {
                             Id = 21,
-                            Name = "CreateSale"
+                            Name = "ReadCustomerDetails"
                         },
                         new
                         {
                             Id = 22,
-                            Name = "UpdateSale"
+                            Name = "ReadCustomerChangeHistories"
                         },
                         new
                         {
                             Id = 23,
-                            Name = "AccessPerformanceMetricsStatistics"
+                            Name = "CreateCustomers"
                         },
                         new
                         {
                             Id = 24,
-                            Name = "AccessOperationalMetricsStatistics"
+                            Name = "UpdateCustomers"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Name = "ReadCustomerCalls"
+                        },
+                        new
+                        {
+                            Id = 26,
+                            Name = "CreateCustomerCalls"
+                        },
+                        new
+                        {
+                            Id = 27,
+                            Name = "ReadScheduledCalls"
+                        },
+                        new
+                        {
+                            Id = 28,
+                            Name = "CreateScheduledCalls"
+                        },
+                        new
+                        {
+                            Id = 29,
+                            Name = "EditScheduledCalls"
+                        },
+                        new
+                        {
+                            Id = 30,
+                            Name = "DeleteScheduledCalls"
+                        },
+                        new
+                        {
+                            Id = 31,
+                            Name = "ReadClientMeetings"
+                        },
+                        new
+                        {
+                            Id = 32,
+                            Name = "ReadClientMeetingsForWorker"
+                        },
+                        new
+                        {
+                            Id = 33,
+                            Name = "CreateClientMeetings"
+                        },
+                        new
+                        {
+                            Id = 34,
+                            Name = "ConcludeClientMeetings"
+                        },
+                        new
+                        {
+                            Id = 35,
+                            Name = "ReadClientDebts"
+                        },
+                        new
+                        {
+                            Id = 36,
+                            Name = "EditClientDebts"
+                        },
+                        new
+                        {
+                            Id = 37,
+                            Name = "ReadSales"
+                        },
+                        new
+                        {
+                            Id = 38,
+                            Name = "CreateSales"
+                        },
+                        new
+                        {
+                            Id = 39,
+                            Name = "VerifySales"
+                        },
+                        new
+                        {
+                            Id = 40,
+                            Name = "ReadStatistics"
                         });
                 });
 
@@ -1135,23 +1229,203 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.HasData(
                         new
                         {
-                            RoleId = 1,
-                            PermissionId = 1
+                            RoleId = 7,
+                            PermissionId = 26
                         },
                         new
                         {
-                            RoleId = 1,
-                            PermissionId = 2
+                            RoleId = 7,
+                            PermissionId = 27
                         },
                         new
                         {
-                            RoleId = 1,
-                            PermissionId = 3
+                            RoleId = 7,
+                            PermissionId = 29
                         },
                         new
                         {
-                            RoleId = 2,
+                            RoleId = 7,
+                            PermissionId = 32
+                        },
+                        new
+                        {
+                            RoleId = 7,
+                            PermissionId = 33
+                        },
+                        new
+                        {
+                            RoleId = 7,
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = 7,
+                            PermissionId = 24
+                        },
+                        new
+                        {
+                            RoleId = 7,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 25
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 27
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 28
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 30
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 37
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 39
+                        },
+                        new
+                        {
+                            RoleId = 4,
                             PermissionId = 4
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 31
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 20
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 24
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 22
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 18
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 19
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 16
+                        },
+                        new
+                        {
+                            RoleId = 4,
+                            PermissionId = 40
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 7
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 35
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 36
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 11
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 12
+                        },
+                        new
+                        {
+                            RoleId = 5,
+                            PermissionId = 14
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 38
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 32
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 34
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 21
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 23
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 15
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 17
+                        },
+                        new
+                        {
+                            RoleId = 6,
+                            PermissionId = 16
                         },
                         new
                         {
@@ -1176,77 +1450,52 @@ namespace WaterFilterBusiness.DAL.Migrations
                         new
                         {
                             RoleId = 2,
+                            PermissionId = 10
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 6
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 8
+                        },
+                        new
+                        {
+                            RoleId = 3,
+                            PermissionId = 9
+                        },
+                        new
+                        {
+                            RoleId = 3,
                             PermissionId = 12
                         },
                         new
                         {
                             RoleId = 3,
+                            PermissionId = 13
+                        },
+                        new
+                        {
+                            RoleId = 3,
                             PermissionId = 4
                         },
                         new
                         {
-                            RoleId = 3,
-                            PermissionId = 11
+                            RoleId = 1,
+                            PermissionId = 1
                         },
                         new
                         {
-                            RoleId = 3,
-                            PermissionId = 20
-                        },
-                        new
-                        {
-                            RoleId = 3,
+                            RoleId = 1,
                             PermissionId = 22
                         },
                         new
                         {
-                            RoleId = 5,
-                            PermissionId = 4
-                        },
-                        new
-                        {
-                            RoleId = 5,
-                            PermissionId = 11
-                        },
-                        new
-                        {
-                            RoleId = 6,
-                            PermissionId = 15
-                        },
-                        new
-                        {
-                            RoleId = 6,
-                            PermissionId = 17
-                        },
-                        new
-                        {
-                            RoleId = 6,
-                            PermissionId = 19
-                        },
-                        new
-                        {
-                            RoleId = 6,
-                            PermissionId = 21
-                        },
-                        new
-                        {
-                            RoleId = 7,
-                            PermissionId = 14
-                        },
-                        new
-                        {
-                            RoleId = 7,
+                            RoleId = 1,
                             PermissionId = 16
-                        },
-                        new
-                        {
-                            RoleId = 7,
-                            PermissionId = 18
-                        },
-                        new
-                        {
-                            RoleId = 7,
-                            PermissionId = 19
                         });
                 });
 
@@ -1270,11 +1519,10 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasColumnType("decimal(10,4)");
 
                     b.Property<string>("VerificationNote")
-                        .IsRequired()
                         .HasMaxLength(210)
                         .HasColumnType("nvarchar(210)");
 
-                    b.Property<DateTime>("VerifiedAt")
+                    b.Property<DateTime?>("VerifiedAt")
                         .HasColumnType("datetime2");
 
                     b.HasKey("MeetingId");
@@ -1345,33 +1593,6 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("SalesAgentScheduleChanges_History", (string)null);
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ScheduledCall", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PhoneAgentId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("ScheduledAt")
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId")
-                        .IsUnique();
-
-                    b.HasIndex("PhoneAgentId");
-
-                    b.ToTable("ScheduledCalls", (string)null);
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.User", b =>
@@ -1521,20 +1742,22 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ClientDebt", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ClientDebt", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Sale", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Sale", "Sale")
                         .WithMany()
                         .HasForeignKey("SaleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Sale");
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ClientMeeting", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ClientMeeting", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.Customer", null)
                         .WithOne()
-                        .HasForeignKey("WaterFilterBusiness.DAL.Entities.ClientMeeting", "CustomerId")
+                        .HasForeignKey("WaterFilterBusiness.DAL.Entities.Clients.ClientMeeting", "CustomerId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -1551,6 +1774,51 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
                         .WithMany("ClientMeetings")
                         .HasForeignKey("SalesAgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.CustomerCall", b =>
+                {
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.Customer", null)
+                        .WithMany("CallHistory")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Enums.CallOutcome", null)
+                        .WithMany()
+                        .HasForeignKey("OutcomeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("PhoneAgentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.CustomerChange", b =>
+                {
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.Customer", null)
+                        .WithMany()
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.ScheduledCall", b =>
+                {
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.Customer", null)
+                        .WithMany("ScheduledCalls")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("PhoneAgentId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });
@@ -1579,43 +1847,15 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CustomerCall", b =>
-                {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
-                        .WithMany("CallHistory")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Enums.CallOutcome", null)
-                        .WithMany()
-                        .HasForeignKey("OutcomeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("PhoneAgentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.CustomerChange", b =>
-                {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.BigInventoryItem", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", "Tool")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Inventory.BigInventoryItem", "ToolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItemMovement", b =>
@@ -1677,20 +1917,30 @@ namespace WaterFilterBusiness.DAL.Migrations
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.SmallInventoryItem", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", "Tool")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Inventory.SmallInventoryItem", "ToolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.SmallInventoryRequest", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryRequest", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryRequest", "InventoryRequest")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Inventory.SmallInventoryRequest", "InventoryRequestId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
+                        .WithMany()
+                        .HasForeignKey("RequesterId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("InventoryRequest");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.TechnicianInventoryItem", b =>
@@ -1701,16 +1951,18 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryItem", "Tool")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Inventory.TechnicianInventoryItem", "ToolId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Tool");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Inventory.TechnicianInventoryRequest", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryRequest", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Inventory.InventoryRequest", "InventoryRequest")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Inventory.TechnicianInventoryRequest", "InventoryRequestId")
                         .OnDelete(DeleteBehavior.Restrict)
@@ -1721,6 +1973,8 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasForeignKey("TechnicianId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("InventoryRequest");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.RolePermission", b =>
@@ -1740,7 +1994,7 @@ namespace WaterFilterBusiness.DAL.Migrations
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Sale", b =>
                 {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.ClientMeeting", null)
+                    b.HasOne("WaterFilterBusiness.DAL.Entities.Clients.ClientMeeting", "Meeting")
                         .WithOne()
                         .HasForeignKey("WaterFilterBusiness.DAL.Entities.Sale", "MeetingId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1751,6 +2005,8 @@ namespace WaterFilterBusiness.DAL.Migrations
                         .HasForeignKey("PaymentTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Meeting");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.SalesAgentSchedule", b =>
@@ -1787,27 +2043,11 @@ namespace WaterFilterBusiness.DAL.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.ScheduledCall", b =>
-                {
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.Customer", null)
-                        .WithOne("ScheduledCall")
-                        .HasForeignKey("WaterFilterBusiness.DAL.Entities.ScheduledCall", "CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WaterFilterBusiness.DAL.Entities.User", null)
-                        .WithMany()
-                        .HasForeignKey("PhoneAgentId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Customer", b =>
+            modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.Clients.Customer", b =>
                 {
                     b.Navigation("CallHistory");
 
-                    b.Navigation("ScheduledCall")
-                        .IsRequired();
+                    b.Navigation("ScheduledCalls");
                 });
 
             modelBuilder.Entity("WaterFilterBusiness.DAL.Entities.User", b =>

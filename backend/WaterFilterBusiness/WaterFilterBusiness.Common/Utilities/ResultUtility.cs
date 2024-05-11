@@ -1,48 +1,45 @@
 ﻿using FluentResults;
 using Microsoft.AspNetCore.Identity;
-using WaterFilterBusiness.Common.DTOs;
 
-namespace WaterFilterBusiness.Common.Results;
+namespace WaterFilterBusiness.Common.Utilities;
 
-public class IdentityErrorsResult : Result<User>
+public static class ResultUtility
 {
-    public Dictionary<string, IList<string>> BaseErrors { get; } = new();
-
-    public IdentityErrorsResult(
-        IdentityErrorDescriber errorDescriber,
-        IEnumerable<IdentityError> identityErrors)
+    public static Dictionary<string, string[]> GetErrorsDictionary(this Result result)
     {
-        if (!identityErrors.Any())
-            return;
+        return result.Errors
+                     .ToDictionary(
+                        e => e.Message,
+                        e => e.Reasons.Select(e => e.Message).ToArray());
+    }
 
+    public static Dictionary<string, string[]> GetErrorsDictionary<T>(this Result<T> result)
+    {
+        return result.Errors
+                     .ToDictionary(
+                        e => e.Message,
+                        e => e.Reasons.Select(e => e.Message).ToArray());
+    }
+
+    public static Result CreateResult(IdentityErrorDescriber errorDescriber, IEnumerable<IdentityError> identityErrors)
+    {
         var errors = new Dictionary<string, Error>();
 
-        /*
-         * For each error,
-         * get the attribute it targets (e.g.: password, email, etc.)
-         * and group the errors for each attribute
-         */
         foreach (var error in identityErrors)
         {
             string errorProperty = GetPropertyOfError(errorDescriber, error.Code);
             Error reason = new Error(error.Description);
 
             if (errors.ContainsKey(errorProperty))
-            {
                 errors[errorProperty].Reasons.Add(reason);
-                BaseErrors[errorProperty].Add(error.Description);
-            }
             else
-            {
                 errors.Add(errorProperty, new Error(errorProperty, reason));
-                BaseErrors.Add(errorProperty, new List<string> { error.Description });
-            }
         }
-        
-        Reasons.AddRange(errors.Values.ToList());
+
+        return Result.Fail(errors.Values.ToList());
     }
 
-    private string GetPropertyOfError(IdentityErrorDescriber errorDescriber, string code)
+    private static string GetPropertyOfError(IdentityErrorDescriber errorDescriber, string code)
     {
         switch (code)
         {

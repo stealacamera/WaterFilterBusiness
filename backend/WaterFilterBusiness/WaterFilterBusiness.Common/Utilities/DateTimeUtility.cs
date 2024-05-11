@@ -1,4 +1,4 @@
-﻿namespace WaterFilterBusiness.Common;
+﻿namespace WaterFilterBusiness.Common.Utilities;
 
 public static class DateTimeUtility
 {

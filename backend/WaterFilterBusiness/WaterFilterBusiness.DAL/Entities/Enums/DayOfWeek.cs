@@ -1,5 +1,3 @@
 ﻿namespace WaterFilterBusiness.DAL.Entities.Enums;
 
-internal class DayOfWeek : PlainStrongEntity
-{
-}
+internal class DayOfWeek : PlainStrongEntity { }

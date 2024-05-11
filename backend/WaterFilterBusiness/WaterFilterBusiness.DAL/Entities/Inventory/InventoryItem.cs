@@ -2,7 +2,7 @@
 
 public class InventoryItem : StrongEntity
 {
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
     public decimal Price { get; set; }
     public DateTime? DeletedAt { get; set; }
 }
@@ -19,20 +19,17 @@ public abstract class InventoryTypeItem : BaseEntity<int>
         set
         {
             if (value < 0)
-                throw new Exception("Quantity cannot be a negative integer");
+                throw new ArgumentOutOfRangeException(nameof(Quantity));
+
+            _quantity = value;
         }
     }
 }
 
-public class BigInventoryItem : InventoryTypeItem
-{
-}
+public class BigInventoryItem : InventoryTypeItem { }
+public class SmallInventoryItem : InventoryTypeItem { }
 
-public class SmallInventoryItem : InventoryTypeItem
-{
-}
-
-public class TechnicianInventoryItem : WeakCompositeEntity<int, int>
+public class TechnicianInventoryItem : CompositeEntity<int, int>
 {
     public int TechnicianId { get; set; }
 
@@ -46,7 +43,9 @@ public class TechnicianInventoryItem : WeakCompositeEntity<int, int>
         set
         {
             if (value < 0)
-                throw new Exception("Quantity cannot be a negative integer");
+                throw new ArgumentOutOfRangeException(nameof(Quantity));
+
+            _quantity = value;
         }
     }
 }

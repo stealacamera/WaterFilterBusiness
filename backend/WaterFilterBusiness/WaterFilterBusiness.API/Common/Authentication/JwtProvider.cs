@@ -3,7 +3,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using WaterFilterBusiness.BLL.Services.Identity;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Options;
 
@@ -11,23 +10,19 @@ namespace WaterFilterBusiness.API.Common.Authentication;
 
 public interface IJwtProvider
 {
-    Task<string> GenerateAsync(User user);
+    string Generate(User user);
 }
 
 internal sealed class JwtProvider : IJwtProvider
 {
     private readonly JwtOptions _options;
-    private readonly IPermissionsService _permissionsService;
 
-    public JwtProvider(
-        IOptions<JwtOptions> options,
-        IPermissionsService permissionsService)
+    public JwtProvider(IOptions<JwtOptions> options)
     {
         _options = options.Value;
-        _permissionsService = permissionsService;
     }
 
-    public async Task<string> GenerateAsync(User user)
+    public string Generate(User user)
     {
         var claims = new List<Claim>
         {

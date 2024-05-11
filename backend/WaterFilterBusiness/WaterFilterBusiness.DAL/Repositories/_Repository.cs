@@ -13,7 +13,7 @@ public interface ISimpleRepository<TEntity, TKey> : IRepository<TEntity> where T
     Task<TEntity?> GetByIdAsync(TKey id);
 }
 
-public interface ICompositeRepository<TEntity, TKey1, TKey2> : IRepository<TEntity> where TEntity : WeakCompositeEntity<TKey1, TKey2>
+public interface ICompositeRepository<TEntity, TKey1, TKey2> : IRepository<TEntity> where TEntity : CompositeEntity<TKey1, TKey2>
 {
     Task<TEntity?> GetByIdsAsync(TKey1 key1, TKey2 key2);
 }
@@ -47,16 +47,4 @@ internal abstract class SimpleRepository<TEntity, TKey> :
     }
 
     public async Task<TEntity?> GetByIdAsync(TKey id) => await _set.FindAsync(id);
-}
-
-internal abstract class CompositeRepository<TEntity, TKey1, TKey2> : 
-    Repository<TEntity>, 
-    ICompositeRepository<TEntity, TKey1, TKey2> 
-    where TEntity : WeakCompositeEntity<TKey1, TKey2>
-{
-    protected CompositeRepository(AppDbContext dbContext) : base(dbContext)
-    {
-    }
-
-    public async virtual Task<TEntity?> GetByIdsAsync(TKey1 key1, TKey2 key2) => await _set.FindAsync(key1, key2);
 }

@@ -1,10 +1,12 @@
-﻿using FluentResults;
+using FluentResults;
 using Microsoft.AspNetCore.Mvc;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
+using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.Common.DTOs.Calls;
 using WaterFilterBusiness.Common.Enums;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Calls;
 
@@ -16,9 +18,11 @@ public class CustomerCallsController : Controller
     {
     }
 
+    [HasPermission(Permission.ReadCustomerCalls)]
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        int page, int pageSize,
+        [Required, Range(1, int.MaxValue)] int page,
+        [Required, Range(1, int.MaxValue)] int pageSize,
         DateOnly? from = null, DateOnly? to = null,
         [FromQuery] CallOutcome? filterByOutcome = null)
     {
@@ -26,28 +30,33 @@ public class CustomerCallsController : Controller
                                           .GetAllAsync(page, pageSize, from, to, filterByOutcome);
 
         foreach (var call in calls.Values)
-        {
-            var phoneAgent = (await _servicesManager.UsersService
-                                                    .GetByIdAsync(call.PhoneAgent.Id))
-                                                    .Value;
-
-            call.PhoneAgent.Surname = phoneAgent.Surname;
-            call.PhoneAgent.Username = phoneAgent.Username;
-            call.PhoneAgent.Name = phoneAgent.Name;
-        }
+            await PopulateCall(call);
 
         return Ok(calls);
     }
 
-    [HttpGet("customers/{customerId:int}")]
-    public async Task<IActionResult> GetHistoryForCustomer(int customerId, int pageSize, int page = 1)
+    [HasPermission(Permission.ReadCustomerCalls)]
+    [HttpGet("customers/{customerId:int}/history")]
+    public async Task<IActionResult> GetHistoryForCustomer(
+        int customerId,
+        [Required, Range(1, int.MaxValue)] int pageSize,
+        [Required, Range(1, int.MaxValue)] int page)
     {
         var result = await _servicesManager.CustomerCallsService
                                            .GetCallHistoryForCustomerAsync(customerId, page, pageSize);
 
-        return result.IsFailed ? BadRequest(result) : Ok(result.Value);
+        if (result.IsFailed)
+            return BadRequest(result.GetErrorsDictionary());
+
+        var calls = result.Value;
+
+        foreach (var call in calls.Values)
+            await PopulateCall(call);
+
+        return Ok(calls);
     }
 
+    [HasPermission(Permission.CreateCustomerCalls)]
     [HttpPost]
     public async Task<IActionResult> Create(CustomerCall_AddRequestModel customerCall)
     {
@@ -57,7 +66,7 @@ public class CustomerCallsController : Controller
         var result = await _servicesManager.WrapInTransactionAsync<CustomerCall>(async () =>
         {
             var createCallResult = await _servicesManager.CustomerCallsService
-                                               .CreateAsync(customerCall);
+                                                         .CreateAsync(customerCall);
 
             if (createCallResult.IsFailed)
                 return Result.Fail(createCallResult.Errors);
