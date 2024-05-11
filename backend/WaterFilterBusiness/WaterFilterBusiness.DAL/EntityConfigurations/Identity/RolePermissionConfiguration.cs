@@ -54,6 +54,7 @@ internal class RolePermissionConfiguration : IEntityTypeConfiguration<Entities.R
         builder.HasData(Create(Role.MarketingChief, Permission.DeleteSalesAgentSchedules));
         builder.HasData(Create(Role.MarketingChief, Permission.ReadSalesAgentScheduleChangeHistories));
         builder.HasData(Create(Role.MarketingChief, Permission.ReadStatistics));
+        builder.HasData(Create(Role.MarketingChief, Permission.CreateCustomers));
         #endregion
 
         #region Technician permissions
