@@ -142,7 +142,7 @@ export default function Router() {
             { path: ':conversationKey', element: <Chat /> },
           ],
         },
-        { path: 'schedule', element: <Calendar /> },
+        { path: 'schedule', element: <>{user === 2 ? <Calendar /> : <PhoneAgentCalendar />}</> },
         { path: 'kanban', element: <Kanban /> },
       ],
     },
@@ -221,6 +221,7 @@ const UserCreate = Loadable(lazy(() => import('../pages/dashboard/UserCreate')))
 const Chat = Loadable(lazy(() => import('../pages/dashboard/Chat')));
 const Mail = Loadable(lazy(() => import('../pages/dashboard/Mail')));
 const Calendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
+const PhoneAgentCalendar = Loadable(lazy(() => import('../pages/dashboard/PhoneAgentCalendar')));
 const Kanban = Loadable(lazy(() => import('../pages/dashboard/Kanban')));
 
 // MAIN

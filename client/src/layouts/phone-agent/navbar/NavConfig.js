@@ -31,7 +31,7 @@ const navConfig = [
     subheader: 'general',
     items: [
       { title: 'dashboard', path: PATH_DASHBOARD.general.dashboard, icon: ICONS.dashboard },
-      { title: 'schedule', path: PATH_DASHBOARD.schedule, icon: ICONS.calendar },
+      { title: 'sales agent schedule', path: PATH_DASHBOARD.schedule, icon: ICONS.calendar },
       // { title: 'e-commerce', path: PATH_DASHBOARD.general.ecommerce, icon: ICONS.ecommerce },
       // { title: 'analytics', path: PATH_DASHBOARD.general.analytics, icon: ICONS.analytics },
       // { title: 'banking', path: PATH_DASHBOARD.general.banking, icon: ICONS.banking },
