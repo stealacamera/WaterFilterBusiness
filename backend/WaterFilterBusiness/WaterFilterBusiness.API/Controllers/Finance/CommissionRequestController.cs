@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.DTOs;
-using WaterFilterBusiness.Common.DTOs.ViewModels;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
 {
@@ -22,7 +22,10 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         {
             var results = await _servicesManager.CommissionRequestsService
                                                 .GetAllAsync(page, pageSize, filterByCompleted);
-            
+
+            foreach (var request in results.Values)
+                await PopulateModel(request);
+
             return Ok(results);
         }
 
@@ -36,7 +39,13 @@ namespace WaterFilterBusiness.API.Controllers.Finance
             var results = await _servicesManager.CommissionRequestsService
                                                 .GetAllFromWorkerAsync(page, pageSize, workerId, filterByCompleted);
 
-            return GetResult(results, Ok(results.Value));
+            if (results.IsFailed)
+                return BadRequest(results.GetErrorsDictionary());
+
+            foreach (var request in results.Value.Values)
+                await PopulateModel(request);
+
+            return Ok(results.Value);
         }
 
         [HttpPatch("{commissionId:int}/markComplete")]
@@ -44,8 +53,37 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         {
             var updateResult = await _servicesManager.CommissionRequestsService
                                                      .UpdateAsync(commissionId);
-            
-            return GetResult(updateResult, Ok(updateResult.Value));
+
+            if (updateResult.IsFailed)
+                return BadRequest(updateResult.GetErrorsDictionary());
+
+            await PopulateModel(updateResult.Value);
+            return Ok(updateResult.Value);
+        }
+
+        private async Task PopulateModel(CommissionRequest model)
+        {
+            var commission = (await _servicesManager.CommissionsService
+                                                        .GetByIdAsync(model.Commission.Id))
+                                                        .Value;
+
+            var worker = (await _servicesManager.UsersService
+                                                .GetByIdAsync(commission.Worker.Id))
+                                                .Value;
+
+            model.Commission = new Commission_BriefDescription
+            {
+                Amount = commission.Amount,
+                CommissionType = commission.CommissionType,
+                Id = commission.Id,
+                Worker = new User_BriefDescription
+                {
+                    Id = worker.Id,
+                    Name = worker.Name,
+                    Surname = worker.Surname,
+                    Username = worker.Username
+                }
+            };
         }
     }
 }

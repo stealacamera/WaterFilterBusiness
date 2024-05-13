@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using WaterFilterBusiness.BLL;
+using WaterFilterBusiness.Common.DTOs;
+using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers.Finance
 {
@@ -19,7 +21,10 @@ namespace WaterFilterBusiness.API.Controllers.Finance
         {
             var result = await _servicesManager.CommissionsService
                                                .GetAllAsync(page, pageSize);
-            
+
+            foreach (var commission in result.Values)
+                await PopulateModel(commission);
+
             return Ok(result);
         }
 
@@ -32,14 +37,25 @@ namespace WaterFilterBusiness.API.Controllers.Finance
             var result = await _servicesManager.CommissionsService
                                                .GetAllForWorkerAsync(page, pageSize, workerId);
 
-            return GetResult(result, Ok(result.Value));
+            if (result.IsFailed)
+                return BadRequest(result.GetErrorsDictionary());
+
+            foreach (var commission in result.Value.Values)
+                await PopulateModel(commission);
+
+            return Ok(result.Value);
         }
 
         [HttpPatch("{id:int}/approve")]
         public async Task<IActionResult> Approve(int id)
         {
             var updateResult = await _servicesManager.CommissionsService.ApproveAsync(id);
-            return GetResult(updateResult, Ok(updateResult.Value));
+
+            if (updateResult.IsFailed)
+                return BadRequest(updateResult.GetErrorsDictionary());
+
+            await PopulateModel(updateResult.Value);
+            return Ok(updateResult.Value);
         }
 
         [HttpPatch("{id:int}/releaseEarly")]
@@ -56,9 +72,12 @@ namespace WaterFilterBusiness.API.Controllers.Finance
                 return updateResult.Value;
             });
 
-            return GetResult(result, Ok(result.Value));
-        }
+            if (result.IsFailed)
+                return BadRequest(result.GetErrorsDictionary());
 
+            await PopulateModel(result.Value);
+            return Ok(result.Value);
+        }
 
         [HttpPost("{id:int}/requestRelease")]
         public async Task<IActionResult> RequestEarlyRelease(int id)
@@ -66,7 +85,52 @@ namespace WaterFilterBusiness.API.Controllers.Finance
             var result = await _servicesManager.CommissionRequestsService
                                                .CreateAsync(id);
 
-            return GetResult(result, Created(nameof(RequestEarlyRelease), result));
+            if (result.IsFailed)
+                return BadRequest(result.GetErrorsDictionary());
+
+            await PopulateModel(result.Value);
+            return Created(nameof(RequestEarlyRelease), result);
+        }
+
+        private async Task PopulateModel(CommissionRequest model)
+        {
+            var commission = (await _servicesManager.CommissionsService
+                                                    .GetByIdAsync(model.Commission.Id))
+                                                    .Value;
+
+            var worker = (await _servicesManager.UsersService
+                                                .GetByIdAsync(commission.Worker.Id))
+                                                .Value;
+
+            model.Commission = new Commission_BriefDescription
+            {
+                Id = commission.Id,
+                Amount = commission.Amount,
+                CommissionType = commission.CommissionType,
+                Worker = new User_BriefDescription
+                {
+                    Id = worker.Id,
+                    Name = worker.Name,
+                    Surname = worker.Surname,
+                    Username = worker.Username
+                }
+            };
+        }
+
+        private async Task PopulateModel(Commission model)
+        {
+            var worker = (await _servicesManager.UsersService
+                                                .GetByIdAsync(model.Worker.Id))
+                                                .Value;
+
+            model.Worker = new User_BriefDescription
+            {
+                Id = worker.Id,
+                Name = worker.Name,
+                Surname = worker.Surname,
+                Username = worker.Username
+            };
+
         }
     }
 }

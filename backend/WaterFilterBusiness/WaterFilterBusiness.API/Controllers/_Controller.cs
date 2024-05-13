@@ -25,9 +25,4 @@ public abstract class Controller : ControllerBase
             
         return parsedUserId;
     }
-    
-    protected IActionResult GetResult<T>(Result<T> result, IActionResult onSuccess)
-        {
-            return result.IsFailed ? BadRequest(result) : onSuccess;
-        }
 }
