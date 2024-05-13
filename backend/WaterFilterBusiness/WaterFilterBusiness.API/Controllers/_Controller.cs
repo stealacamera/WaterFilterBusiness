@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using FluentResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.JsonWebTokens;
 using WaterFilterBusiness.BLL;
 
@@ -10,7 +11,8 @@ public abstract class Controller : ControllerBase
 {
     protected readonly IServicesManager _servicesManager;
 
-    public Controller(IServicesManager servicesManager) => _servicesManager = servicesManager;
+    public Controller(IServicesManager servicesManager) 
+          => _servicesManager = servicesManager;
 
     protected int GetCurrentUserId()
     {
@@ -20,7 +22,7 @@ public abstract class Controller : ControllerBase
 
         if (!int.TryParse(userId, out int parsedUserId))
             return 0;
-
+            
         return parsedUserId;
     }
 }

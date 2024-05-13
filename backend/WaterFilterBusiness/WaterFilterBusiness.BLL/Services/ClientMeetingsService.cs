@@ -14,6 +14,7 @@ public interface IClientMeetingsService
 {
     Task<Result<ClientMeeting>> CreateAsync(ClientMeeting_AddRequestModel clientMeeting);
     Task<Result<ClientMeeting>> UpdateAsync(int id, ClientMeeting_UpdateRequestModel meeting);
+    Task<Result<ClientMeeting>> GetByIdAsync(int id);
 
     Task<OffsetPaginatedList<ClientMeeting>> GetAllAsync(
         int page,
@@ -263,6 +264,14 @@ internal class ClientMeetingsService : Service, IClientMeetingsService
         };
     }
 
+    public async Task<Result<ClientMeeting>> GetByIdAsync(int id)
+    {
+        var dbModel = await _workUnit.ClientMeetingsRepository.GetByIdAsync(id);
+
+        return dbModel == null
+               ? ClientMeetingErrors.NotFound(nameof(id))
+               : ConvertEntityToModel(dbModel);
+    }
     private ClientMeeting ConvertEntityToModel(DAL.Entities.Clients.ClientMeeting entity)
     {
         return new ClientMeeting
