@@ -2,7 +2,6 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
 // layouts
 import MainLayout from '../layouts/main';
-import DashboardLayout from '../layouts/dashboard';
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
 // guards
 import GuestGuard from '../guards/GuestGuard';
@@ -14,6 +13,8 @@ import { PATH_DASHBOARD } from './paths';
 
 // components
 import LoadingScreen from '../components/LoadingScreen';
+
+import DashboardLayout from '../layouts/dashboard';
 import PhoneAgentDashboard from '../layouts/phone-agent';
 import MarketingManagerDashboard from '../layouts/marketing-manager';
 import ChiefOperationDashboard from '../layouts/chief-operation';
@@ -39,7 +40,7 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
-  const user = 4;
+  const user = 2;
   useEffect(() => {
     console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
