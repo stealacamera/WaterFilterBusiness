@@ -166,7 +166,6 @@ export default function PhoneAgentCalendar() {
         <HeaderBreadcrumbs
           heading="Sales Agent Calendar"
           links={[{ name: 'Dashboard', href: PATH_DASHBOARD.root }, { name: 'Calendar' }]}
-          moreLink="https://fullcalendar.io/docs/react"
           action={
             <Stack spacing={2} direction={{ xs: 'column', md: 'row' }} sx={{ py: 2.5, px: 3 }}>
               <TextField

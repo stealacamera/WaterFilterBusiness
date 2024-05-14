@@ -61,7 +61,7 @@ export default function NavbarAccount({ isCollapse }) {
           </Typography>
           <Typography variant="body2" noWrap sx={{ color: 'text.secondary' }}>
             {/* {user?.role} */}
-            sales agent
+            phone agent
           </Typography>
         </Box>
       </RootStyle>
