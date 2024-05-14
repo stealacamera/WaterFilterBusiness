@@ -27,6 +27,8 @@ public interface IServicesManager
     #region Finance
     ISalesService SalesService { get; }
     IClientDebtsService ClientDebtsService { get; }
+    ICommissionsService CommissionsService { get; }
+    ICommissionRequestsService CommissionRequestsService { get; }
     #endregion
 
     #region Clients
@@ -45,6 +47,7 @@ public interface IServicesManager
     ISmallInventoryItemsService SmallInventoryItemsService { get; }
     IBigInventoryItemsService BigInventoryItemsService { get; }
     #endregion
+
     #region Requests
     IBaseInventoryRequestsService BaseInventoryRequestsService { get; }
     ISmallInventoryRequestsService SmallInventoryRequestsService { get; }
@@ -109,6 +112,7 @@ public sealed class ServicesManager : IServicesManager
         }
     }
 
+    #region Finance
     private ISalesService _salesService;
     public ISalesService SalesService
     {
@@ -118,6 +122,27 @@ public sealed class ServicesManager : IServicesManager
             return _salesService;
         }
     }
+
+    private ICommissionsService _commissionsService;
+    public ICommissionsService CommissionsService
+    {
+        get
+        {
+            _commissionsService ??= new CommissionsService(_workUnit, _utilityService);
+            return _commissionsService;
+        }
+    }
+
+    private ICommissionRequestsService _commissionRequestsService;
+    public ICommissionRequestsService CommissionRequestsService
+    {
+        get
+        {
+            _commissionRequestsService ??= new CommissionRequestsService(_workUnit, _utilityService);
+            return _commissionRequestsService;
+        }
+    }
+    #endregion
 
     private ISalesAgentSchedulesService _salesAgentSchedulesService;
     public ISalesAgentSchedulesService SalesAgentSchedulesService
@@ -161,7 +186,15 @@ public sealed class ServicesManager : IServicesManager
     }
 
     private ICustomerCallsService _customerCallsService;
-    
+    public ICustomerCallsService CustomerCallsService
+    {
+        get
+        {
+            _customerCallsService ??= new CustomerCallsService(_workUnit, _utilityService);
+            return _customerCallsService;
+        }
+    }
+
     private IClientDebtsService _clientDebtsService;
     public IClientDebtsService ClientDebtsService
     {
@@ -171,7 +204,7 @@ public sealed class ServicesManager : IServicesManager
             return _clientDebtsService;
         }
     }
-    
+
     private IClientMeetingsService _clientMeetings;
     public IClientMeetingsService ClientMeetingsService
     {
@@ -182,15 +215,6 @@ public sealed class ServicesManager : IServicesManager
         }
     }
     #endregion
-
-    public ICustomerCallsService CustomerCallsService
-    {
-        get
-        {
-            _customerCallsService ??= new CustomerCallsService(_workUnit, _utilityService);
-            return _customerCallsService;
-        }
-    }
 
     private IScheduledCallsService _scheduledCallsService;
     public IScheduledCallsService ScheduledCallsService

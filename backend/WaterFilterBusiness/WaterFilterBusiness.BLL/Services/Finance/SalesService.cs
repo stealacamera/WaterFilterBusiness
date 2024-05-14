@@ -13,6 +13,8 @@ public interface ISalesService
 {
     Task<Result<Sale>> CreateAsync(Sale_AddRequestModel model);
     Task<Result<Sale>> VerifyAsync(int meetingId, string? verificationNote);
+
+    Task<Result<Sale>> GetByIdAsync(int meetingId);
     Task<OffsetPaginatedList<Sale>> GetAllByAsync(int page, int pageSize);
     Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null);
 }
@@ -64,6 +66,15 @@ internal class SalesService : Service, ISalesService
             TotalCount = sales.TotalCount,
             Values = sales.Values.Select(ConvertEntityToModel).ToList()
         };
+    }
+
+    public async Task<Result<Sale>> GetByIdAsync(int meetingId)
+    {
+        var dbModel = await _workUnit.SalesRepository.GetByIdAsync(meetingId);
+
+        return dbModel == null
+               ? SalesErrors.NotFound(nameof(meetingId))
+               : ConvertEntityToModel(dbModel);
     }
 
     public async Task<Result<int>> GetTotalSalesCreatedBySalesAgentAsync(int salesAgentId, DateOnly? filterByDate = null)

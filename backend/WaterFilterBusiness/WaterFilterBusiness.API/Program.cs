@@ -12,6 +12,7 @@ builder.Services.RegisterDALServices(builder.Configuration);
 builder.Services.RegisterBLLServices();
 builder.Services.RegisterAuthorizationServices(builder.Configuration);
 builder.Services.RegisterQuartzServices();
+builder.Services.RegisterCors();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
@@ -46,6 +47,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(CorsStartup.CorsPolicyName);
 
 app.UseAuthentication();
 app.UseAuthorization();
