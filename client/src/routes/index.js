@@ -16,6 +16,7 @@ import { PATH_DASHBOARD } from './paths';
 import LoadingScreen from '../components/LoadingScreen';
 import PhoneAgentDashboard from '../layouts/phone-agent';
 import MarketingManagerDashboard from '../layouts/marketing-manager';
+import ChiefOperationDashboard from '../layouts/chief-operation';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +39,7 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
-  const user = 3;
+  const user = 4;
   useEffect(() => {
     console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
@@ -77,6 +78,7 @@ export default function Router() {
           {user === 1 && <PhoneAgentDashboard />}
           {user === 2 && <DashboardLayout />}
           {user === 3 && <MarketingManagerDashboard />}
+          {user === 4 && <ChiefOperationDashboard />}
         </AuthGuard>
       ),
       children: [
@@ -156,6 +158,7 @@ export default function Router() {
               {user === 1 && <Calendar />}
               {user === 2 && <PhoneAgentCalendar />}
               {user === 3 && <MarketingManagerCalendar />}
+              {user === 4 && <ChiefOperationCalendar />}
             </>
           ),
         },
@@ -239,6 +242,7 @@ const Mail = Loadable(lazy(() => import('../pages/dashboard/Mail')));
 const Calendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
 const PhoneAgentCalendar = Loadable(lazy(() => import('../pages/dashboard/PhoneAgentCalendar')));
 const MarketingManagerCalendar = Loadable(lazy(() => import('../pages/dashboard/MarketingManagerCalendar')));
+const ChiefOperationCalendar = Loadable(lazy(() => import('../pages/dashboard/ChiefOperationCalendar')));
 const Kanban = Loadable(lazy(() => import('../pages/dashboard/Kanban')));
 
 // MAIN
