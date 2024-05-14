@@ -15,6 +15,7 @@ import { PATH_DASHBOARD } from './paths';
 // components
 import LoadingScreen from '../components/LoadingScreen';
 import PhoneAgentDashboard from '../layouts/phone-agent';
+import MarketingManagerDashboard from '../layouts/marketing-manager';
 
 // ----------------------------------------------------------------------
 
@@ -37,7 +38,7 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
-  const user = 1;
+  const user = 3;
   useEffect(() => {
     console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
@@ -71,7 +72,13 @@ export default function Router() {
     // Dashboard Routes
     {
       path: '/',
-      element: <AuthGuard>{user === 2 ? <DashboardLayout /> : <PhoneAgentDashboard />}</AuthGuard>,
+      element: (
+        <AuthGuard>
+          {user === 1 && <PhoneAgentDashboard />}
+          {user === 2 && <DashboardLayout />}
+          {user === 3 && <MarketingManagerDashboard />}
+        </AuthGuard>
+      ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         { path: 'dashboard', element: <>{user === 2 ? <GeneralApp /> : <PhoneAgentApp />}</> },
@@ -142,7 +149,16 @@ export default function Router() {
             { path: ':conversationKey', element: <Chat /> },
           ],
         },
-        { path: 'schedule', element: <>{user === 2 ? <Calendar /> : <PhoneAgentCalendar />}</> },
+        {
+          path: 'schedule',
+          element: (
+            <>
+              {user === 1 && <Calendar />}
+              {user === 2 && <PhoneAgentCalendar />}
+              {user === 3 && <MarketingManagerCalendar />}
+            </>
+          ),
+        },
         { path: 'kanban', element: <Kanban /> },
       ],
     },
@@ -222,6 +238,7 @@ const Chat = Loadable(lazy(() => import('../pages/dashboard/Chat')));
 const Mail = Loadable(lazy(() => import('../pages/dashboard/Mail')));
 const Calendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
 const PhoneAgentCalendar = Loadable(lazy(() => import('../pages/dashboard/PhoneAgentCalendar')));
+const MarketingManagerCalendar = Loadable(lazy(() => import('../pages/dashboard/MarketingManagerCalendar')));
 const Kanban = Loadable(lazy(() => import('../pages/dashboard/Kanban')));
 
 // MAIN
