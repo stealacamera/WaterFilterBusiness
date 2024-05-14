@@ -12,27 +12,29 @@ import NotistackProvider from './components/NotistackProvider';
 import ThemeColorPresets from './components/ThemeColorPresets';
 import ThemeLocalization from './components/ThemeLocalization';
 import MotionLazyContainer from './components/animate/MotionLazyContainer';
-
+import { AuthProvider } from './contexts/JWTContext';
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <ThemeColorPresets>
-        <ThemeLocalization>
-          <RtlLayout>
-            <NotistackProvider>
-              <MotionLazyContainer>
-                <ProgressBarStyle />
-                <ChartStyle />
-                <Settings />
-                <ScrollToTop />
-                <Router />
-              </MotionLazyContainer>
-            </NotistackProvider>
-          </RtlLayout>
-        </ThemeLocalization>
-      </ThemeColorPresets>
-    </ThemeProvider>
+    <AuthProvider>
+      <ThemeProvider>
+        <ThemeColorPresets>
+          <ThemeLocalization>
+            <RtlLayout>
+              <NotistackProvider>
+                <MotionLazyContainer>
+                  <ProgressBarStyle />
+                  <ChartStyle />
+                  <Settings />
+                  <ScrollToTop />
+                  <Router />
+                </MotionLazyContainer>
+              </NotistackProvider>
+            </RtlLayout>
+          </ThemeLocalization>
+        </ThemeColorPresets>
+      </ThemeProvider>
+    </AuthProvider>
   );
 }
