@@ -77,8 +77,8 @@ internal class ClientDebtsService : Service, IClientDebtsService
     {
         var debts = await _workUnit.ClientDebtsRepository
                                    .GetAllAsync(
-                                        cursor, pageSize, 
-                                        filterByClient, 
+                                        cursor, pageSize,
+                                        filterByClient,
                                         filterByCompletionStatus);
 
         return new CursorPaginatedList<ClientDebt, int>
@@ -90,11 +90,13 @@ internal class ClientDebtsService : Service, IClientDebtsService
 
     private ClientDebt ConvertEntityToModel(DAL.Entities.Clients.ClientDebt entity)
     {
-        return new ClientDebt(
-            entity.Id,
-            new Sale_BriefDecsription { Meeting = new ClientMeeting_BriefDescription { Id = entity.SaleId } },
-            entity.Amount,
-            entity.DeadlineAt,
-            entity.CompletedAt);
+        return new ClientDebt
+        {
+            Id = entity.Id,
+            Sale = new Sale_BriefDecsription { Meeting = new ClientMeeting_BriefDescription { Id = entity.SaleId } },
+            Amount = entity.Amount,
+            DeadlineAt = entity.DeadlineAt,
+            CompletedAt = entity.CompletedAt
+        };
     }
 }

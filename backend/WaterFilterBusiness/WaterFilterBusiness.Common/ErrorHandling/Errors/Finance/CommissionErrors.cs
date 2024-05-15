@@ -5,8 +5,8 @@ namespace WaterFilterBusiness.Common.ErrorHandling.Errors.Finance;
 
 public static class CommissionErrors
 {
-    public static Error NotFound(string reasonKey) 
-        => GeneralErrors.NotFoundError(nameof(Commission));
+    public static Error NotFound(string reasonKey)
+        => GeneralErrors.EntityNotFound(nameof(Commission));
 
     public static Error ExistingRequest(string reasonKey) 
         => new Error(reasonKey, new Error("A request already exists for the given commission"));

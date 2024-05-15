@@ -183,7 +183,7 @@ internal sealed class UtilityService : IUtilityService
 
     public async Task<bool> IsCommissionReleasedAsync(int commissionId)
     {
-        var commission = await _workUnit.CommissionsRepository.GetByIdAsync(commissionId)
+        var commission = await _workUnit.CommissionsRepository.GetByIdAsync(commissionId);
         return commission == null ? false : commission.ReleasedAt != null;
     }
 }
