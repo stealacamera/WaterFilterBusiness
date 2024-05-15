@@ -2,7 +2,6 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Navigate, useRoutes, useLocation } from 'react-router-dom';
 // layouts
 import MainLayout from '../layouts/main';
-import DashboardLayout from '../layouts/dashboard';
 import LogoOnlyLayout from '../layouts/LogoOnlyLayout';
 // guards
 import GuestGuard from '../guards/GuestGuard';
@@ -14,8 +13,11 @@ import { PATH_DASHBOARD } from './paths';
 
 // components
 import LoadingScreen from '../components/LoadingScreen';
+
+import DashboardLayout from '../layouts/dashboard';
 import PhoneAgentDashboard from '../layouts/phone-agent';
 import MarketingManagerDashboard from '../layouts/marketing-manager';
+import ChiefOperationDashboard from '../layouts/chief-operation';
 
 // ----------------------------------------------------------------------
 
@@ -38,7 +40,7 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
-  const user = 3;
+  const user = 2;
   useEffect(() => {
     console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
@@ -74,14 +76,15 @@ export default function Router() {
       path: '/',
       element: (
         <AuthGuard>
-          {user === 1 && <PhoneAgentDashboard />}
-          {user === 2 && <DashboardLayout />}
+          {user === 1 && <DashboardLayout />}
+          {user === 2 && <PhoneAgentDashboard />}
           {user === 3 && <MarketingManagerDashboard />}
+          {user === 4 && <ChiefOperationDashboard />}
         </AuthGuard>
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'dashboard', element: <>{user === 2 ? <GeneralApp /> : <PhoneAgentApp />}</> },
+        { path: 'dashboard', element: <>{user === 1 ? <GeneralApp /> : <PhoneAgentApp />}</> },
         { path: 'ecommerce', element: <GeneralEcommerce /> },
         { path: 'analytics', element: <GeneralAnalytics /> },
         { path: 'banking', element: <GeneralBanking /> },
@@ -156,6 +159,7 @@ export default function Router() {
               {user === 1 && <Calendar />}
               {user === 2 && <PhoneAgentCalendar />}
               {user === 3 && <MarketingManagerCalendar />}
+              {user === 4 && <ChiefOperationCalendar />}
             </>
           ),
         },
@@ -239,6 +243,7 @@ const Mail = Loadable(lazy(() => import('../pages/dashboard/Mail')));
 const Calendar = Loadable(lazy(() => import('../pages/dashboard/Calendar')));
 const PhoneAgentCalendar = Loadable(lazy(() => import('../pages/dashboard/PhoneAgentCalendar')));
 const MarketingManagerCalendar = Loadable(lazy(() => import('../pages/dashboard/MarketingManagerCalendar')));
+const ChiefOperationCalendar = Loadable(lazy(() => import('../pages/dashboard/ChiefOperationCalendar')));
 const Kanban = Loadable(lazy(() => import('../pages/dashboard/Kanban')));
 
 // MAIN

@@ -47,6 +47,9 @@ public class ScheduledCallsController : Controller
     [HttpPost]
     public async Task<IActionResult> Create(ScheduledCall_AddRequestModel call)
     {
+        if (!ModelState.IsValid)
+            return BadRequest(ModelState);
+
         var result = await _servicesManager.ScheduledCallsService
                                            .CreateAsync(call);
 

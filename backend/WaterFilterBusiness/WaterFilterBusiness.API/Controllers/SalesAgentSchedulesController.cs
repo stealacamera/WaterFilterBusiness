@@ -5,7 +5,6 @@ using WaterFilterBusiness.BLL;
 using WaterFilterBusiness.Common.Attributes;
 using WaterFilterBusiness.Common.DTOs;
 using WaterFilterBusiness.Common.Enums;
-using WaterFilterBusiness.Common.ErrorHandling.Exceptions;
 using WaterFilterBusiness.Common.Utilities;
 
 namespace WaterFilterBusiness.API.Controllers;

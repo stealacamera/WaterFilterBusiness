@@ -33,6 +33,9 @@ internal interface IUtilityService
     Task<MeetingOutcome?> GetMeetingOutcomeAsync(int meetingId);
 
     Task<Sale?> GetSaleById(int saleId);
+
+    Task<bool> DoesCommissionExistAsync(int commissionId);
+    Task<bool> IsCommissionReleasedAsync(int commissionId);
 }
 
 internal sealed class UtilityService : IUtilityService
@@ -173,5 +176,14 @@ internal sealed class UtilityService : IUtilityService
         return (meeting != null && meeting.MeetingOutcomeId.HasValue) 
                ? MeetingOutcome.FromValue(meeting.MeetingOutcomeId.Value) 
                : null;
+    }
+    
+    public async Task<bool> DoesCommissionExistAsync(int commissionId)
+        => (await _workUnit.CommissionsRepository.GetByIdAsync(commissionId)) != null;
+
+    public async Task<bool> IsCommissionReleasedAsync(int commissionId)
+    {
+        var commission = await _workUnit.CommissionsRepository.GetByIdAsync(commissionId)
+        return commission == null ? false : commission.ReleasedAt != null;
     }
 }
