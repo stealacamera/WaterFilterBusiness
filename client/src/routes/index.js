@@ -40,7 +40,7 @@ const Loadable = (Component) => (props) => {
 };
 
 export default function Router() {
-  const user = 2;
+  const user = 3;
   useEffect(() => {
     console.log(PATH_DASHBOARD.general.dashboard);
   }, []);
@@ -84,7 +84,17 @@ export default function Router() {
       ),
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
-        { path: 'dashboard', element: <>{user === 1 ? <GeneralApp /> : <PhoneAgentApp />}</> },
+        {
+          path: 'dashboard',
+          element: (
+            <>
+              {user === 1 && <GeneralApp />}
+              {user === 2 && <PhoneAgentApp />}
+              {user === 3 && <MarketingManagerApp />}
+              {user === 4 && <ChiefOperationApp />}
+            </>
+          ),
+        },
         { path: 'ecommerce', element: <GeneralEcommerce /> },
         { path: 'analytics', element: <GeneralAnalytics /> },
         { path: 'banking', element: <GeneralBanking /> },
@@ -206,6 +216,8 @@ const VerifyCode = Loadable(lazy(() => import('../pages/auth/VerifyCode')));
 // GENERAL
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
 const PhoneAgentApp = Loadable(lazy(() => import('../pages/dashboard/PhoneAgentApp')));
+const MarketingManagerApp = Loadable(lazy(() => import('../pages/dashboard/MarketingManagerApp')));
+const ChiefOperationApp = Loadable(lazy(() => import('../pages/dashboard/ChiefOperationApp')));
 const GeneralEcommerce = Loadable(lazy(() => import('../pages/dashboard/GeneralEcommerce')));
 const GeneralAnalytics = Loadable(lazy(() => import('../pages/dashboard/GeneralAnalytics')));
 const GeneralBanking = Loadable(lazy(() => import('../pages/dashboard/GeneralBanking')));
