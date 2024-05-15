@@ -105,7 +105,21 @@ export function getEvents() {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/calendar/events');
-      dispatch(slice.actions.getEventsSuccess(response.data.events));
+      const events = [
+        {
+          id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d7b2',
+          allDay: false,
+          textColor: '#00AB55',
+          description:
+            'Atque eaque ducimus minima distinctio velit. Laborum et veniam officiis. Delectus ex saepe hic id laboriosam officia. Odit nostrum qui illum saepe debitis ullam. Laudantium beatae modi fugit ut. Dolores consequatur beatae nihil voluptates rem maiores.',
+          start: '2024-05-03T07:30:40.420Z',
+          end: '2024-05-03T09:00:40.420Z',
+          title: 'Brinaldo Gaayyyyy',
+        },
+      ];
+      // console.log(JSON.stringify(response.data.events));
+      // dispatch(slice.actions.getEventsSuccess(response.data.events));
+      dispatch(slice.actions.getEventsSuccess(events));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }
