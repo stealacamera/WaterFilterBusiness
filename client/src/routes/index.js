@@ -41,9 +41,7 @@ const Loadable = (Component) => (props) => {
 
 export default function Router() {
   const user = 2;
-  useEffect(() => {
-    console.log(PATH_DASHBOARD.general.dashboard);
-  }, []);
+
   return useRoutes([
     {
       path: 'auth',

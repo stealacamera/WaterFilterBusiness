@@ -28,7 +28,7 @@ AppTimer.propTypes = {
   chartData: PropTypes.arrayOf(PropTypes.number).isRequired,
   percent: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
-  total: PropTypes.number.isRequired,
+  total: PropTypes.string.isRequired,
 };
 
 export default function AppTimer({ title, percent, total, chartColor, chartData }) {
