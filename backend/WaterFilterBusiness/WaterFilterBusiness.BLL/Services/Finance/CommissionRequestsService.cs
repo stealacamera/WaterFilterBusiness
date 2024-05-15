@@ -35,7 +35,7 @@ internal class CommissionRequestsService : Service, ICommissionRequestsService
     public async Task<Result<CommissionRequest>> CreateAsync(int commissionId)
     {
         if (!await _utilityService.DoesCommissionExistAsync(commissionId))
-            return GeneralErrors.NotFoundError(nameof(Commission));
+            return GeneralErrors.EntityNotFound(nameof(Commission));
         else if (await _utilityService.IsCommissionReleasedAsync(commissionId))
             return CommissionErrors.AlreadyReleased(nameof(commissionId));
 
@@ -79,7 +79,7 @@ internal class CommissionRequestsService : Service, ICommissionRequestsService
         var userRole = await _utilityService.GetUserRoleAsync(workerId);
 
         if (userRole == null || userRole != Role.PhoneOperator || userRole != Role.SalesAgent)
-            return GeneralErrors.Unauthorized;
+            return GeneralErrors.Unauthorized(nameof(workerId));
 
         var requests = await _workUnit.CommissionRequestsRepository
                                       .GetAllFromWorkerAsync(page, pageSize, workerId, filterByCompleted);
@@ -98,7 +98,7 @@ internal class CommissionRequestsService : Service, ICommissionRequestsService
         var dbModel = await _workUnit.CommissionRequestsRepository.GetByIdAsync(id);
 
         return dbModel == null
-               ? GeneralErrors.NotFoundError(nameof(CommissionRequest))
+               ? GeneralErrors.EntityNotFound(nameof(CommissionRequest))
                : ConvertEntityToModel(dbModel);
     }
 

@@ -56,7 +56,7 @@ internal class CommissionsService : Service, ICommissionsService
     public async Task<Result<Commission>> CreateCustomerAddedCommission(int salesAgentId, string baseCustomerFullName)
     {
         if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(salesAgentId));
 
         var dbModel = await _workUnit.CommissionsRepository
                                      .AddAsync(new DAL.Entities.Commission
@@ -74,7 +74,7 @@ internal class CommissionsService : Service, ICommissionsService
     public async Task<Result<Commission>> CreateMonthlyPaymentContractComission(int salesAgentId, string customerFullName)
     {
         if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(salesAgentId));
 
         var dbModel = await _workUnit.CommissionsRepository
                                      .AddAsync(new DAL.Entities.Commission
@@ -92,7 +92,7 @@ internal class CommissionsService : Service, ICommissionsService
     public async Task<Result<Commission>> CreateWaterFilterInstalledCommission(int technicianId, string customerFullName)
     {
         if (!await _utilityService.IsUserInRoleAsync(technicianId, Role.SalesAgent))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(technicianId));
 
         var dbModel = await _workUnit.CommissionsRepository
                                      .AddAsync(new DAL.Entities.Commission
@@ -114,7 +114,7 @@ internal class CommissionsService : Service, ICommissionsService
         string customerFullName)
     {
         if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(salesAgentId));
 
         decimal amount;
 
@@ -159,7 +159,7 @@ internal class CommissionsService : Service, ICommissionsService
         string customerFullName)
     {
         if (!await _utilityService.IsUserInRoleAsync(phoneAgentId, Role.PhoneOperator))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(phoneAgentId));
 
         if (contractPaymentAmount <= 50)
             return Result.Ok();
@@ -182,7 +182,7 @@ internal class CommissionsService : Service, ICommissionsService
         int salesNumber)
     {
         if (!await _utilityService.IsUserInRoleAsync(salesAgentId, Role.SalesAgent))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(salesAgentId));
 
         decimal amount;
 
@@ -218,7 +218,7 @@ internal class CommissionsService : Service, ICommissionsService
         int salesNumber)
     {
         if (!await _utilityService.IsUserInRoleAsync(phoneAgentId, Role.PhoneOperator))
-            return UserErrors.NotFound;
+            return UserErrors.NotFound(nameof(phoneAgentId));
 
         var dbModel = await _workUnit.CommissionsRepository
                                      .AddAsync(new DAL.Entities.Commission
