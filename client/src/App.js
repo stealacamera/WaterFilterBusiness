@@ -17,24 +17,24 @@ import { AuthProvider } from './contexts/JWTContext';
 
 export default function App() {
   return (
-    <AuthProvider>
-      <ThemeProvider>
-        <ThemeColorPresets>
-          <ThemeLocalization>
-            <RtlLayout>
-              <NotistackProvider>
-                <MotionLazyContainer>
-                  <ProgressBarStyle />
-                  <ChartStyle />
-                  <Settings />
-                  <ScrollToTop />
-                  <Router />
-                </MotionLazyContainer>
-              </NotistackProvider>
-            </RtlLayout>
-          </ThemeLocalization>
-        </ThemeColorPresets>
-      </ThemeProvider>
-    </AuthProvider>
+    // <AuthProvider>
+    <ThemeProvider>
+      <ThemeColorPresets>
+        <ThemeLocalization>
+          <RtlLayout>
+            <NotistackProvider>
+              <MotionLazyContainer>
+                <ProgressBarStyle />
+                <ChartStyle />
+                <Settings />
+                <ScrollToTop />
+                <Router />
+              </MotionLazyContainer>
+            </NotistackProvider>
+          </RtlLayout>
+        </ThemeLocalization>
+      </ThemeColorPresets>
+    </ThemeProvider>
+    // </AuthProvider>
   );
 }
