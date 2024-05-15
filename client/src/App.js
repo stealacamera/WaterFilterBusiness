@@ -12,11 +12,12 @@ import NotistackProvider from './components/NotistackProvider';
 import ThemeColorPresets from './components/ThemeColorPresets';
 import ThemeLocalization from './components/ThemeLocalization';
 import MotionLazyContainer from './components/animate/MotionLazyContainer';
-
+import { AuthProvider } from './contexts/JWTContext';
 // ----------------------------------------------------------------------
 
 export default function App() {
   return (
+    // <AuthProvider>
     <ThemeProvider>
       <ThemeColorPresets>
         <ThemeLocalization>
@@ -34,5 +35,6 @@ export default function App() {
         </ThemeLocalization>
       </ThemeColorPresets>
     </ThemeProvider>
+    // </AuthProvider>
   );
 }

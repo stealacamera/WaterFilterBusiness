@@ -23,18 +23,18 @@ public class ClientMeetingsController : Controller
         [Required, Range(1, int.MaxValue)] int pageSize,
         DateOnly? from = null,
         DateOnly? to = null,
-        int? filterByOutcome = null, 
+        int? filterByOutcome = null,
         bool? filterExpressMeetings = null)
     {
         var meetings = await _servicesManager.ClientMeetingsService
                                              .GetAllAsync(
-                                                page, pageSize, 
-                                                from, to, 
-                                                filterByOutcome, 
+                                                page, pageSize,
+                                                from, to,
+                                                filterByOutcome,
                                                 filterExpressMeetings);
 
-        //foreach (var meeting in meetings.Values)
-        //    await CompleteMeetingInformation(meeting);
+        foreach (var meeting in meetings.Values)
+            await CompleteMeetingInformation(meeting);
 
         return Ok(meetings);
     }
@@ -69,7 +69,7 @@ public class ClientMeetingsController : Controller
     [HasPermission(Permission.ReadClientMeetingsForWorker)]
     [HttpGet("worker/{userId:int}/week/{date}")]
     public async Task<IActionResult> GetAllByWeekForWorker(
-        int userId, 
+        int userId,
         DateOnly date,
         [Required, Range(0, int.MaxValue)] int paginationCursor,
         [Required, Range(1, int.MaxValue)] int pageSize,
@@ -101,10 +101,14 @@ public class ClientMeetingsController : Controller
             return BadRequest(ModelState);
 
         var result = await _servicesManager.ClientMeetingsService.CreateAsync(meeting);
-        
-        return result.IsFailed 
-               ? BadRequest(result.GetErrorsDictionary()) 
-               : Ok(result.Value);
+
+        if (result.IsSuccess)
+        {
+            await CompleteMeetingInformation(result.Value);
+            return Ok(result.Value);
+        }
+        else
+            return BadRequest(result.GetErrorsDictionary());
     }
 
     [HasPermission(Permission.ConcludeClientMeetings)]
@@ -115,10 +119,14 @@ public class ClientMeetingsController : Controller
             return BadRequest(ModelState);
 
         var result = await _servicesManager.ClientMeetingsService.UpdateAsync(id, meeting);
-        
-        return result.IsFailed 
-               ? BadRequest(result.GetErrorsDictionary()) 
-               : Ok(result.Value);
+
+        if (result.IsSuccess)
+        {
+            await CompleteMeetingInformation(result.Value);
+            return Ok(result.Value);
+        }
+        else
+            return BadRequest(result.GetErrorsDictionary());
     }
 
     private async Task CompleteMeetingInformation(ClientMeeting meeting)

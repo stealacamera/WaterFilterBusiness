@@ -6,6 +6,8 @@ namespace WaterFilterBusiness.Common.DTOs.Calls;
 public record CustomerCall
 {
     public User_BriefDescription PhoneAgent { get; set; }
+    public Customer_BriefDescription Customer { get; set; }
+
     public CallOutcome Outcome { get; set; }
     public DateTime OccuredAt { get; set; }
 }

@@ -24,7 +24,13 @@ public interface IWorkUnit
     IUsersRepository UsersRepository { get; }
     IRolePermissionsRepository RolePermissionsRepository { get; }
     #endregion
+
+    #region Finance
     ISalesRepository SalesRepository { get; }
+    ICommissionsRepository CommissionsRepository { get; }
+    ICommissionRequestsRepository CommissionRequestsRepository { get; }
+    #endregion
+
     ISalesAgentSchedulesRepository SalesAgentSchedulesRepository { get; }
     ISalesAgentScheduleChangesRepository SalesAgentScheduleChangesRepository { get; }
     ICustomerCallsRepository CustomerCallsRepository { get; }
@@ -100,6 +106,7 @@ internal sealed class WorkUnit : IWorkUnit
     }
     #endregion
 
+    #region Finance
     private ISalesRepository _salesRepository;
     public ISalesRepository SalesRepository
     {
@@ -109,6 +116,28 @@ internal sealed class WorkUnit : IWorkUnit
             return _salesRepository;
         }
     }
+
+
+    private ICommissionsRepository _commissionsRepository;
+    public ICommissionsRepository CommissionsRepository
+    {
+        get
+        {
+            _commissionsRepository ??= new CommissionsRepository(_dbContext);
+            return _commissionsRepository;
+        }
+    }
+
+    private ICommissionRequestsRepository _commissionRequestsRepository;
+    public ICommissionRequestsRepository CommissionRequestsRepository
+    {
+        get
+        {
+            _commissionRequestsRepository ??= new CommissionRequestsRepository(_dbContext);
+            return _commissionRequestsRepository;
+        }
+    }
+    #endregion
 
     private ISalesAgentSchedulesRepository _salesAgentSchedulesRepository;
     public ISalesAgentSchedulesRepository SalesAgentSchedulesRepository
