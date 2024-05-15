@@ -8,11 +8,13 @@ using WaterFilterBusiness.DAL;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.AddCors();
+//builder.Services.RegisterCors();
 builder.Services.RegisterDALServices(builder.Configuration);
 builder.Services.RegisterBLLServices();
 builder.Services.RegisterAuthorizationServices(builder.Configuration);
 builder.Services.RegisterQuartzServices();
-builder.Services.RegisterCors();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
@@ -48,7 +50,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseCors(CorsStartup.CorsPolicyName);
+app.UseCors(options => options.AllowAnyHeader()
+                              .AllowAnyMethod()
+                              .WithOrigins("http://localhost:3000",
+                                           "http://localhost:3001",
+                                           "https://localhost:44340"));
 
 app.UseAuthentication();
 app.UseAuthorization();
