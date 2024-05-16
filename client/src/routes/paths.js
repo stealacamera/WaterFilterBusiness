@@ -42,6 +42,13 @@ export const PATH_DASHBOARD = {
     meeting: '/meeting',
     newMeeting: '/meeting/new',
   },
+  calls: {
+    root: '/calls',
+    list: '/calls/list',
+    new: '/calls/new',
+    edit: (name) => `/calls/${name}/edit`,
+    // demoEdit: `calls/nike-blazer-low-77-vintage/edit`,
+  },
   mail: {
     root: '/mail',
     all: '/mail/all',

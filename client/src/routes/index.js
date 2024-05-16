@@ -83,12 +83,43 @@ export default function Router() {
       children: [
         { element: <Navigate to={PATH_AFTER_LOGIN} replace />, index: true },
         { path: 'dashboard', element: <>{user === 1 ? <GeneralApp /> : <PhoneAgentApp />}</> },
+        {
+          path: 'schedule',
+          element: (
+            <>
+              {user === 1 && <Calendar />}
+              {user === 2 && <PhoneAgentCalendar />}
+              {user === 3 && <MarketingManagerCalendar />}
+              {user === 4 && <ChiefOperationCalendar />}
+            </>
+          ),
+        },
+        {
+          path: 'calls',
+          children: [
+            { element: <Navigate to="/calls/list" replace />, index: true },
+            { path: 'list', element: <CallHistoryList /> },
+            { path: 'new', element: <CallHistoryCreate /> },
+            { path: ':name/edit', element: <CallHistoryCreate /> },
+          ],
+        },
+        {
+          path: 'e-commerce',
+          children: [
+            { element: <Navigate to="/dashboard/e-commerce/shop" replace />, index: true },
+            { path: 'shop', element: <EcommerceShop /> },
+            { path: 'product/:name', element: <EcommerceProductDetails /> },
+            { path: 'list', element: <EcommerceProductList /> },
+            { path: 'product/new', element: <EcommerceProductCreate /> },
+            { path: 'product/:name/edit', element: <EcommerceProductCreate /> },
+            { path: 'checkout', element: <EcommerceCheckout /> },
+          ],
+        },
         { path: 'ecommerce', element: <GeneralEcommerce /> },
         { path: 'analytics', element: <GeneralAnalytics /> },
         { path: 'banking', element: <GeneralBanking /> },
         { path: 'meeting', element: <MeetingOverview /> },
         { path: 'meeting/new', element: <MeetingCreate /> },
-
         {
           path: 'e-commerce',
           children: [
@@ -150,17 +181,7 @@ export default function Router() {
             { path: ':conversationKey', element: <Chat /> },
           ],
         },
-        {
-          path: 'schedule',
-          element: (
-            <>
-              {user === 1 && <Calendar />}
-              {user === 2 && <PhoneAgentCalendar />}
-              {user === 3 && <MarketingManagerCalendar />}
-              {user === 4 && <ChiefOperationCalendar />}
-            </>
-          ),
-        },
+
         { path: 'kanban', element: <Kanban /> },
       ],
     },
@@ -200,6 +221,10 @@ const ResetPassword = Loadable(lazy(() => import('../pages/auth/ResetPassword'))
 const VerifyCode = Loadable(lazy(() => import('../pages/auth/VerifyCode')));
 
 // DASHBOARD
+
+// CALL
+const CallHistoryList = Loadable(lazy(() => import('../pages/dashboard/CallHistoryList')));
+const CallHistoryCreate = Loadable(lazy(() => import('../pages/dashboard/CallHistoryCreate')));
 
 // GENERAL
 const GeneralApp = Loadable(lazy(() => import('../pages/dashboard/GeneralApp')));
