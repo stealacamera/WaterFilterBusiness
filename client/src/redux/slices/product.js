@@ -215,7 +215,47 @@ export function getProducts() {
     dispatch(slice.actions.startLoading());
     try {
       const response = await axios.get('/api/products');
-      dispatch(slice.actions.getProductsSuccess(response.data.products));
+      // console.log(JSON.stringify(response.data.products[0]));
+      const call = [
+        {
+          id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d7b1',
+          status: 'answered',
+          from: 'Latif Ertekin',
+          to: 'Doe John',
+          createdAt: '2024-05-16T10:36:54.083Z',
+          endedAt: '2024-05-16T10:39:54.083Z',
+          time: '5 min',
+        },
+        {
+          id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d72a',
+          status: 'pending',
+          from: 'Omar Alsafarti',
+          to: 'John Doe',
+          createdAt: '2024-05-16T10:36:54.083Z',
+          endedAt: '2024-05-16T10:39:54.083Z',
+          time: '5 min',
+        },
+        {
+          id: 'e99f09a7-dd88-49d5-b1c8-1daf80c232b1',
+          status: 'missed',
+          from: 'Mark Alsafarti',
+          to: 'Lee Doe',
+          createdAt: '2024-05-16T10:36:54.083Z',
+          endedAt: '2024-05-16T10:39:54.083Z',
+          time: '5 min',
+        },
+        {
+          id: 'e99f09a7-dd88-49d5-b1c8-1daf120c2d7b1',
+          status: 'answered',
+          from: 'Naruto Alsafarti',
+          to: 'John Uchiha',
+          createdAt: '2024-05-16T10:36:54.083Z',
+          endedAt: '2024-05-16T10:39:54.083Z',
+          time: '5 min',
+        },
+      ];
+      // dispatch(slice.actions.getProductsSuccess(response.data.products));
+      dispatch(slice.actions.getProductsSuccess(call));
     } catch (error) {
       dispatch(slice.actions.hasError(error));
     }

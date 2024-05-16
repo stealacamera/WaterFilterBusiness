@@ -42,12 +42,12 @@ import { CallTableRow, CallTableToolbar } from '../../sections/@dashboard/call-h
 // ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
-  { id: 'status', label: 'Status', align: 'left' },
-  { id: 'from', label: 'From', align: 'left' },
-  { id: 'to', label: 'To', align: 'left' },
-  { id: 'createdAt', label: 'Create at', align: 'left' },
-  { id: 'endedAt', label: 'Ended at', align: 'left' },
-  { id: 'time', label: 'Time', align: 'right' },
+  { id: 'status', label: 'Status', align: 'center' },
+  { id: 'from', label: 'From', align: 'center' },
+  { id: 'to', label: 'To', align: 'center' },
+  { id: 'createdAt', label: 'Create at', align: 'center' },
+  { id: 'endedAt', label: 'Ended at', align: 'center' },
+  { id: 'time', label: 'Time', align: 'center' },
   { id: '' },
 ];
 
@@ -257,7 +257,7 @@ function applySortFilter({ tableData, comparator, filterName }) {
   tableData = stabilizedThis.map((el) => el[0]);
 
   if (filterName) {
-    tableData = tableData.filter((item) => item.name.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
+    tableData = tableData.filter((item) => item.from.toLowerCase().indexOf(filterName.toLowerCase()) !== -1);
   }
 
   return tableData;

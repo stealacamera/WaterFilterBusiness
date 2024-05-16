@@ -5,7 +5,7 @@ import { sentenceCase } from 'change-case';
 import { useTheme } from '@mui/material/styles';
 import { TableRow, Checkbox, TableCell, Typography, MenuItem } from '@mui/material';
 // utils
-import { fDate } from '../../../../utils/formatTime';
+import { fDate, fDateTime, fTimestamp } from '../../../../utils/formatTime';
 import { fCurrency } from '../../../../utils/formatNumber';
 // components
 import Label from '../../../../components/Label';
@@ -27,7 +27,7 @@ CallTableRow.propTypes = {
 export default function CallTableRow({ row, selected, onEditRow, onSelectRow, onDeleteRow }) {
   const theme = useTheme();
 
-  const { name, cover, createdAt, inventoryType, price } = row;
+  const { status, from, to, createdAt, endedAt, time } = row;
 
   const [openMenu, setOpenMenuActions] = useState(null);
 
@@ -45,28 +45,32 @@ export default function CallTableRow({ row, selected, onEditRow, onSelectRow, on
         <Checkbox checked={selected} onClick={onSelectRow} />
       </TableCell>
 
-      <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
-        <Image disabledEffect alt={name} src={cover} sx={{ borderRadius: 1.5, width: 48, height: 48, mr: 2 }} />
-        <Typography variant="subtitle2" noWrap>
-          {name}
-        </Typography>
-      </TableCell>
-
-      <TableCell>{fDate(createdAt)}</TableCell>
-
       <TableCell align="center">
         <Label
           variant={theme.palette.mode === 'light' ? 'ghost' : 'filled'}
           color={
-            (inventoryType === 'out_of_stock' && 'error') || (inventoryType === 'low_stock' && 'warning') || 'success'
+            (status === 'answered' && 'success') ||
+            (status === 'missed' && 'error') ||
+            (status === 'pending' && 'warning')
           }
           sx={{ textTransform: 'capitalize' }}
         >
-          {inventoryType ? sentenceCase(inventoryType) : ''}
+          {status ? sentenceCase(status) : ''}
         </Label>
       </TableCell>
 
-      <TableCell align="right">{fCurrency(price)}</TableCell>
+      {/* <TableCell sx={{ display: 'flex', alignItems: 'center' }}>
+        <Image disabledEffect alt={name} src={cover} sx={{ borderRadius: 1.5, width: 48, height: 48, mr: 2 }} />
+        <Typography variant="subtitle2" noWrap>
+          {name}
+        </Typography>
+      </TableCell> */}
+      <TableCell align="center">{from}</TableCell>
+      <TableCell align="center">{to}</TableCell>
+
+      <TableCell align="center">{fDateTime(createdAt)}</TableCell>
+      <TableCell align="center">{fDateTime(endedAt)}</TableCell>
+      <TableCell align="center">{time}</TableCell>
 
       <TableCell align="right">
         <TableMoreMenu

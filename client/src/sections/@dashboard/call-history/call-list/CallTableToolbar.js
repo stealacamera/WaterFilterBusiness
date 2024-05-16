@@ -17,7 +17,7 @@ export default function CallTableToolbar({ filterName, onFilterName }) {
       <TextField
         value={filterName}
         onChange={(event) => onFilterName(event.target.value)}
-        placeholder="Search product..."
+        placeholder="Search from..."
         InputProps={{
           startAdornment: (
             <InputAdornment position="start">
