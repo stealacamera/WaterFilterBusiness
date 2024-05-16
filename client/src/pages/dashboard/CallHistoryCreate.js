@@ -21,10 +21,10 @@ export default function CallHistoryCreate() {
   const { themeStretch } = useSettings();
   const dispatch = useDispatch();
   const { pathname } = useLocation();
-  const { name } = useParams();
+  const { id } = useParams();
   const { products } = useSelector((state) => state.product);
   const isEdit = pathname.includes('edit');
-  const currentProduct = products.find((product) => paramCase(product.name) === name);
+  const currentProduct = products.find((product) => paramCase(product.id) === id);
 
   useEffect(() => {
     dispatch(getProducts());
@@ -35,7 +35,10 @@ export default function CallHistoryCreate() {
       <Container maxWidth={themeStretch ? false : 'lg'}>
         <HeaderBreadcrumbs
           heading={!isEdit ? 'Create a new call' : 'Edit call'}
-          links={[{ name: 'Call History', href: PATH_DASHBOARD.calls.list }, { name: !isEdit ? 'New Call' : name }]}
+          links={[
+            { name: 'Call History', href: PATH_DASHBOARD.calls.list },
+            { name: !isEdit ? 'New Call' : 'Edit Call' },
+          ]}
         />
 
         <CallNewEditForm isEdit={isEdit} currentProduct={currentProduct} />

@@ -225,6 +225,7 @@ export function getProducts() {
           createdAt: '2024-05-16T10:36:54.083Z',
           endedAt: '2024-05-16T10:39:54.083Z',
           time: '5 min',
+          note: 'This is a note',
         },
         {
           id: 'e99f09a7-dd88-49d5-b1c8-1daf80c2d72a',
@@ -234,6 +235,7 @@ export function getProducts() {
           createdAt: '2024-05-16T10:36:54.083Z',
           endedAt: '2024-05-16T10:39:54.083Z',
           time: '5 min',
+          note: 'This is a note',
         },
         {
           id: 'e99f09a7-dd88-49d5-b1c8-1daf80c232b1',
@@ -243,6 +245,7 @@ export function getProducts() {
           createdAt: '2024-05-16T10:36:54.083Z',
           endedAt: '2024-05-16T10:39:54.083Z',
           time: '5 min',
+          note: 'This is a note',
         },
         {
           id: 'e99f09a7-dd88-49d5-b1c8-1daf120c2d7b1',
@@ -252,6 +255,7 @@ export function getProducts() {
           createdAt: '2024-05-16T10:36:54.083Z',
           endedAt: '2024-05-16T10:39:54.083Z',
           time: '5 min',
+          note: 'This is a note',
         },
       ];
       // dispatch(slice.actions.getProductsSuccess(response.data.products));

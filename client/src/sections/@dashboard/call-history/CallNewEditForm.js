@@ -8,7 +8,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 // @mui
 import { styled } from '@mui/material/styles';
-import { LoadingButton } from '@mui/lab';
+import { LoadingButton, DateTimePicker } from '@mui/lab';
 import { Card, Chip, Grid, Stack, TextField, Typography, Autocomplete, InputAdornment } from '@mui/material';
 // routes
 import { PATH_DASHBOARD } from '../../../routes/paths';
@@ -25,7 +25,7 @@ import {
 
 // ----------------------------------------------------------------------
 
-const GENDER_OPTION = ['Men', 'Women', 'Kids'];
+const STATUS_OPTION = ['Answered', 'Missed', 'Pending'];
 
 const CATEGORY_OPTION = [
   { group: 'Clothing', classify: ['Shirts', 'T-shirts', 'Jeans', 'Leather'] },
@@ -69,13 +69,24 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
 
   const NewProductSchema = Yup.object().shape({
     name: Yup.string().required('Name is required'),
-    description: Yup.string().required('Description is required'),
-    images: Yup.array().min(1, 'Images is required'),
-    price: Yup.number().moreThan(0, 'Price should not be $0.00'),
+    from: Yup.string().required('Call From is required'),
+    to: Yup.string().required('Call To is required'),
+    time: Yup.string().required('Time is required'),
+    createdAt: Yup.date().required('Created at is required'),
+    endedAt: Yup.date().required('Ended at is required'),
+    note: Yup.string().required('Note is required'),
   });
 
   const defaultValues = useMemo(
     () => ({
+      status: currentProduct?.status || '',
+      from: currentProduct?.from || '',
+      to: currentProduct?.to || '',
+      createdAt: currentProduct?.createdAt || '',
+      endedAt: currentProduct?.endedAt || '',
+      time: currentProduct?.time || '',
+      note: currentProduct?.note || '',
+
       name: currentProduct?.name || '',
       description: currentProduct?.description || '',
       images: currentProduct?.images || [],
@@ -86,7 +97,6 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
       tags: currentProduct?.tags || [TAGS_OPTION[0]],
       inStock: true,
       taxes: true,
-      gender: currentProduct?.gender || GENDER_OPTION[2],
       category: currentProduct?.category || CATEGORY_OPTION[0].classify[1],
     }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -125,7 +135,7 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
       await new Promise((resolve) => setTimeout(resolve, 500));
       reset();
       enqueueSnackbar(!isEdit ? 'Create success!' : 'Update success!');
-      navigate(PATH_DASHBOARD.eCommerce.list);
+      navigate(PATH_DASHBOARD.calls.list);
     } catch (error) {
       console.error(error);
     }
@@ -160,24 +170,12 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Stack spacing={3}>
-              <RHFTextField name="name" label="Call Name" />
+              <RHFTextField name="from" label="Call From" />
+              <RHFTextField name="to" label="Call To" />
 
               <div>
-                <LabelStyle>Description</LabelStyle>
-                <RHFEditor simple name="description" />
-              </div>
-
-              <div>
-                <LabelStyle>Images</LabelStyle>
-                <RHFUploadMultiFile
-                  name="images"
-                  showPreview
-                  accept="image/*"
-                  maxSize={3145728}
-                  onDrop={handleDrop}
-                  onRemove={handleRemove}
-                  onRemoveAll={handleRemoveAll}
-                />
+                <LabelStyle>Note</LabelStyle>
+                <RHFEditor simple name="note" />
               </div>
             </Stack>
           </Card>
@@ -186,23 +184,20 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
         <Grid item xs={12} md={4}>
           <Stack spacing={3}>
             <Card sx={{ p: 3 }}>
-              <RHFSwitch name="inStock" label="In stock" />
-
               <Stack spacing={3} mt={2}>
-                <RHFTextField name="code" label="Call Code" />
-                <RHFTextField name="sku" label="Call SKU" />
+                <RHFTextField name="code" label="Call Codes" />
 
+                <RHFTextField name="sku" label="Call SKU" />
                 <div>
-                  <LabelStyle>Gender</LabelStyle>
+                  <LabelStyle>Status</LabelStyle>
                   <RHFRadioGroup
-                    name="gender"
-                    options={GENDER_OPTION}
+                    name="status"
+                    options={STATUS_OPTION}
                     sx={{
                       '& .MuiFormControlLabel-root': { mr: 4 },
                     }}
                   />
                 </div>
-
                 <RHFSelect name="category" label="Category">
                   {CATEGORY_OPTION.map((category) => (
                     <optgroup key={category.group} label={category.group}>
@@ -214,7 +209,6 @@ export default function CallNewEditForm({ isEdit, currentProduct }) {
                     </optgroup>
                   ))}
                 </RHFSelect>
-
                 <Controller
                   name="tags"
                   control={control}
