@@ -8,11 +8,12 @@ using WaterFilterBusiness.DAL;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+builder.Services.RegisterCors();
 builder.Services.RegisterDALServices(builder.Configuration);
 builder.Services.RegisterBLLServices();
 builder.Services.RegisterAuthorizationServices(builder.Configuration);
 builder.Services.RegisterQuartzServices();
-builder.Services.RegisterCors();
 
 builder.Services.AddTransient<ExceptionHandlingMiddleware>();
 
