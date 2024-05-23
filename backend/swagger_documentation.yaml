@@ -38,8 +38,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/toolId'
         - name: increaseBy
           in: query
           style: form
@@ -59,8 +58,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/toolId'
         - name: decreaseBy
           in: query
           style: form
@@ -111,8 +109,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -277,7 +274,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: string
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -327,8 +324,7 @@ paths:
           in: query
           style: form
           schema:
-            type: string
-            example: Success
+            $ref: '#/components/schemas/CallOutcome'
       responses:
         '200':
           description: Success
@@ -449,8 +445,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -463,8 +458,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -489,8 +483,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -559,8 +552,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -573,8 +565,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -693,8 +684,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/meetingId'
       requestBody:
         content:
           application/json:
@@ -722,8 +712,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/salesAgentId'
       responses:
         '200':
           description: Success
@@ -736,8 +725,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/salesAgentId'
       requestBody:
         content:
           application/json:
@@ -762,8 +750,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -776,8 +763,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -802,8 +788,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/salesAgentId'
         - name: pageSize
           in: query
           style: form
@@ -830,8 +815,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/phoneOperatorId'
         - name: pageSize
           in: query
           style: form
@@ -883,8 +867,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -923,8 +906,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -938,8 +920,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -967,8 +948,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -1020,6 +1000,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: filterByRequestStatus
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/InventoryRequesStatus'
       responses:
         '200':
           description: Success
@@ -1033,8 +1018,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/technicianId'
         - name: page
           in: query
           style: form
@@ -1060,15 +1044,13 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/technicianId'
         - name: toolId
           in: path
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/toolId'
       requestBody:
         content:
           application/json:
@@ -1120,6 +1102,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: filterByRequestStatus
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/InventoryRequesStatus'
       responses:
         '200':
           description: Success
@@ -1133,8 +1120,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -1162,8 +1148,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '200':
           description: Success
@@ -1177,8 +1162,7 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       requestBody:
         content:
           application/json:
@@ -1286,13 +1270,268 @@ paths:
           required: true
           style: simple
           schema:
-            type: integer
-            format: int32
+             $ref: '#/components/schemas/id'
       responses:
         '204':
           description: No content
         '404':
           description: Not found
+    
+  /api/Commission:
+    get:
+      tags:
+        - Commission
+      parameters:
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 1
+        - name: filterByCommissionType
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/Commissiontype'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          example: 0
+                        Amount:
+                          type: number
+                          format: decimal
+                          example: 0
+                        CommissionTypeId: 
+                          type: integer
+                          example: 0
+                        Reason:
+                          type: string
+                          example: string
+                        WorkerID:
+                          type: integer
+                          example: 0
+                        ApprovedAt:
+                          type: string
+                          format: date-time
+                          example: 1-1-2024
+                        CompletedAt:
+                          type: string
+                          format: date-time
+                          example: 2-2-2024
+                  page:
+                    type: integer
+                    example: 0
+                  pageSize:
+                    type: integer
+                    example: 0
+                  totalCount:
+                    type: integer
+                    example: 0
+                  hasNextPage:
+                    type: boolean
+                    example: false
+                  hasPreviousPage:
+                    type: boolean
+                    example: false
+        '204':
+          description: No content
+                    
+  /api/Commission{WorkerId}:
+   get:
+    tags:
+        - Commission
+    parameters:
+        - name: WorkerId
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/id'
+    responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          example: 0
+                        Amount:
+                          type: number
+                          format: decimal
+                          example: 0
+                        CommissionTypeId: 
+                          type: integer
+                          example: 0
+                        Reason:
+                          type: string
+                          example: string
+                        WorkerID:
+                          type: integer
+                          example: 0
+                        ApprovedAt:
+                          type: string
+                          format: date-time
+                          example: 1-1-2024
+                        CompletedAt:
+                          type: string
+                          format: date-time
+                          example: 2-2-2024
+        '404':
+          description: Not found
+  /api/Commission{id}:
+    patch:
+      tags:
+        - Commission
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+             $ref: '#/components/schemas/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not found
+  
+  /api/CommissionRequest:
+    get:
+      tags:
+        - CommissionRequest
+      parameters:
+        - name: pageSize
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+        - name: page
+          in: query
+          style: form
+          schema:
+            type: integer
+            format: int32
+            default: 1
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  values:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: integer
+                          example: 0
+                        CommissionId: 
+                          type: integer
+                          example: 0
+                        CreatedAt:
+                          type: string
+                          format: date-time
+                          example: 1-1-2024
+                        CompletedAt:
+                          type: string
+                          format: date-time
+                          example: 2-2-2024
+                  page:
+                    type: integer
+                    example: 0
+                  pageSize:
+                    type: integer
+                    example: 0
+                  totalCount:
+                    type: integer
+                    example: 0
+                  hasNextPage:
+                    type: boolean
+                    example: false
+                  hasPreviousPage:
+                    type: boolean
+                    example: false
+        '204':
+          description: No content
+  /api/CommissionRequest{id}:
+    patch:
+      tags:
+        - CommissionRequest
+      parameters:
+        - name: id
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/id'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+          text/json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+          application/*+json:
+            schema:
+              maxLength: 210
+              type: string
+              format: date-time
+      responses:
+        '200':
+          description: Success
+        '404':
+          description: Not found
+  
+      
 components:
   schemas:
     ClientMeeting_AddRequestModel:
@@ -1600,3 +1839,117 @@ components:
           minLength: 0
           type: string
       additionalProperties: false
+    id:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    WorkerId:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    technicianId:
+      type: integer
+      enum: 
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    toolId:
+      type: integer
+      enum: 
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    phoneOperatorId:
+      type: integer
+      enum: 
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    salesAgentId:
+      type: integer
+      enum: 
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    meetingId:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+    CallOutcome:
+      type: string
+      enum: 
+        - "Succesful"
+        - "No awnser"
+        - "Rescheduled"
+        - "Excesive argument"
+        - "Uninterested"
+        
+    Commissiontype:
+      type: string
+      enum:
+        - "Customer added by sales agent"
+        - "Monthly paymenr contract created"
+        - "Upfront payment"
+        - "monthly sales target reached"
+        - "Watter filter installed"
+        - "Sale Created"
+        
+    InventoryRequesStatus:
+      type: string
+      enum:
+        - "Pending"
+        - "In progress"
+        - "Completed"
+        - "Cancelled"
+    
+    InventoryType:
+      type: string
+      enum: 
+        - "Technician inventory"
+        - "Small inventory"
+        - "Big inventory"
+    
+    MeetingOutcome:
+      type: string
+      enum: 
+      - "Succesful"
+      - "Client cancellation"
+      - "Agent cancellation"
+      - "Failed"
+    
+    PaymentType:
+      type: string
+      enum:
+       - "Monthly payment"
+       - "Full payment"
+       
+    Weekday:
+      type: string
+      enum:
+       - "Monday"
+       - "Tuesday"
+       - "Wednsday"
+       - "Thursday"
+       - "Friday"
+       - "Saturday"
+       - "Sunday"
