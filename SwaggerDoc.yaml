@@ -324,8 +324,7 @@ paths:
           in: query
           style: form
           schema:
-            type: string
-            example: Success
+            $ref: '#/components/schemas/CallOutcome'
       responses:
         '200':
           description: Success
@@ -1001,6 +1000,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: filterByRequestStatus
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/InventoryRequesStatus'
       responses:
         '200':
           description: Success
@@ -1098,6 +1102,11 @@ paths:
           schema:
             type: integer
             format: int32
+        - name: filterByRequestStatus
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/InventoryRequesStatus'
       responses:
         '200':
           description: Success
@@ -1286,6 +1295,11 @@ paths:
             type: integer
             format: int32
             default: 1
+        - name: filterByCommissionType
+          in: query
+          style: form
+          schema:
+            $ref: '#/components/schemas/Commissiontype'
       responses:
         '200':
           description: Success
@@ -1881,7 +1895,61 @@ components:
         - 3
         - 4
         - 5
+    CallOutcome:
+      type: string
+      enum: 
+        - "Succesful"
+        - "No awnser"
+        - "Rescheduled"
+        - "Excesive argument"
+        - "Uninterested"
         
+    Commissiontype:
+      type: string
+      enum:
+        - "Customer added by sales agent"
+        - "Monthly paymenr contract created"
+        - "Upfront payment"
+        - "monthly sales target reached"
+        - "Watter filter installed"
+        - "Sale Created"
+        
+    InventoryRequesStatus:
+      type: string
+      enum:
+        - "Pending"
+        - "In progress"
+        - "Completed"
+        - "Cancelled"
     
+    InventoryType:
+      type: string
+      enum: 
+        - "Technician inventory"
+        - "Small inventory"
+        - "Big inventory"
     
+    MeetingOutcome:
+      type: string
+      enum: 
+      - "Succesful"
+      - "Client cancellation"
+      - "Agent cancellation"
+      - "Failed"
     
+    PaymentType:
+      type: string
+      enum:
+       - "Monthly payment"
+       - "Full payment"
+       
+    Weekday:
+      type: string
+      enum:
+       - "Monday"
+       - "Tuesday"
+       - "Wednsday"
+       - "Thursday"
+       - "Friday"
+       - "Saturday"
+       - "Sunday"
