@@ -10,7 +10,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Card, Button, Container, DialogTitle, TextField, MenuItem, Stack } from '@mui/material';
 // redux
 import { useDispatch, useSelector } from '../../redux/store';
-import { getEvents, openModal, closeModal, updateEvent, selectEvent, selectRange } from '../../redux/slices/calendar';
+import { getSchedules, openModal, closeModal, updateSchedule, selectSchedule, selectRange } from '../../redux/slices/calendar';
 // routes
 import { PATH_DASHBOARD } from '../../routes/paths';
 // hooks
@@ -26,10 +26,10 @@ import { CalendarForm, CalendarStyle, CalendarToolbar } from '../../sections/@da
 
 // ----------------------------------------------------------------------
 
-const selectedEventSelector = (state) => {
-  const { events, selectedEventId } = state.calendar;
-  if (selectedEventId) {
-    return events.find((_event) => _event.id === selectedEventId);
+const selectedScheduleSelector = (state) => {
+  const { events, selectedScheduleId } = state.calendar;
+  if (selectedScheduleId) {
+    return events.find((_event) => _event.id === selectedScheduleId);
   }
   return null;
 };
@@ -47,7 +47,7 @@ export default function PhoneAgentCalendar() {
 
   const [view, setView] = useState(isDesktop ? 'timeGridWeek' : 'listWeek');
 
-  const selectedEvent = useSelector(selectedEventSelector);
+  const selectedSchedule = useSelector(selectedScheduleSelector);
 
   const { events, isOpenModal, selectedRange } = useSelector((state) => state.calendar);
 
@@ -60,7 +60,7 @@ export default function PhoneAgentCalendar() {
   };
 
   useEffect(() => {
-    dispatch(getEvents());
+    dispatch(getSchedules());
   }, [dispatch]);
 
   useEffect(() => {
@@ -120,14 +120,14 @@ export default function PhoneAgentCalendar() {
     dispatch(selectRange(arg.start, arg.end));
   };
 
-  const handleSelectEvent = (arg) => {
-    dispatch(selectEvent(arg.event.id));
+  const handleSelectSchedule = (arg) => {
+    dispatch(selectSchedule(arg.event.id));
   };
 
-  const handleResizeEvent = async ({ event }) => {
+  const handleResizeSchedule = async ({ event }) => {
     try {
       dispatch(
-        updateEvent(event.id, {
+        updateSchedule(event.id, {
           allDay: event.allDay,
           start: event.start,
           end: event.end,
@@ -138,10 +138,10 @@ export default function PhoneAgentCalendar() {
     }
   };
 
-  const handleDropEvent = async ({ event }) => {
+  const handleDropSchedule = async ({ event }) => {
     try {
       dispatch(
-        updateEvent(event.id, {
+        updateSchedule(event.id, {
           allDay: event.allDay,
           start: event.start,
           end: event.end,
@@ -152,7 +152,7 @@ export default function PhoneAgentCalendar() {
     }
   };
 
-  const handleAddEvent = () => {
+  const handleAddSchedule = () => {
     dispatch(openModal());
   };
 
@@ -207,10 +207,10 @@ export default function PhoneAgentCalendar() {
               <Button
                 variant="contained"
                 startIcon={<Iconify icon={'eva:plus-fill'} width={20} height={20} />}
-                onClick={handleAddEvent}
+                onClick={handleAddSchedule}
                 sx={{ maxWidth: '200px', minWidth: '150px' }}
               >
-                New Event
+                New Schedule
               </Button>
             </Stack>
           }
@@ -236,15 +236,15 @@ export default function PhoneAgentCalendar() {
               rerenderDelay={10}
               initialDate={date}
               initialView={view}
-              dayMaxEventRows={3}
+              dayMaxScheduleRows={3}
               eventDisplay="block"
               headerToolbar={false}
               allDayMaintainDuration
               eventResizableFromStart
               select={handleSelectRange}
-              eventDrop={handleDropEvent}
-              eventClick={handleSelectEvent}
-              eventResize={handleResizeEvent}
+              eventDrop={handleDropSchedule}
+              eventClick={handleSelectSchedule}
+              eventResize={handleResizeSchedule}
               height={isDesktop ? 720 : 'auto'}
               plugins={[listPlugin, dayGridPlugin, timelinePlugin, timeGridPlugin, interactionPlugin]}
             />
@@ -252,9 +252,9 @@ export default function PhoneAgentCalendar() {
         </Card>
 
         <DialogAnimate open={isOpenModal} onClose={handleCloseModal}>
-          <DialogTitle>{selectedEvent ? 'Edit Event' : 'Add Event'}</DialogTitle>
+          <DialogTitle>{selectedSchedule ? 'Edit Schedule' : 'Add Schedule'}</DialogTitle>
 
-          <CalendarForm event={selectedEvent || {}} range={selectedRange} onCancel={handleCloseModal} />
+          <CalendarForm event={selectedSchedule || {}} range={selectedRange} onCancel={handleCloseModal} />
         </DialogAnimate>
       </Container>
     </Page>
